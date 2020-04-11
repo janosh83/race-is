@@ -6,7 +6,19 @@
         {% block stylesheets %}{% endblock %}
     </head>
     <body>
+        {% block header %}
+            <header>
+            <a href="{{ path('homepage') }}">Home</a>
+
+            {% if app.user %}
+                <a href="{{ path('app_logout')}}">Logout</a>
+
+            {% else %}
+                <a href="{{ path('app_login')}}">Login</a>
+            {% endif %}
+            </header>
+        {% endblock %}
+
         {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
     </body>
 </html>
