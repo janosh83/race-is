@@ -15,5 +15,14 @@
     <div>{{peak.description}}</div>
 </div>
 
+<div>
+{{ form_start(form) }}
+{{ form_widget(form.peak_id, {'value': peak.id})}}
+{{ form_widget(form.team_visited, {'value': app.user.username})}}
+
+
+{{ form_end(form) }}
+</div>
+
 <div><a href="{{ path('all_peaks')}}">Zpět na seznam vrcholů</a></div>
 {% endblock %}

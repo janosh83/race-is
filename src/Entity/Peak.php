@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -40,6 +42,16 @@ class Peak
      * @ORM\Column(type="float", nullable=true)
      */
     private $longitude;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Team", mappedBy="visited_peaks")
+     */
+    private $teams_visits;
+
+    public function __construct()
+    {
+        $this->teams_visits = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -102,6 +114,34 @@ class Peak
     public function setLongitude(?float $longitude): self
     {
         $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Team[]
+     */
+    public function getTeamsVisits(): Collection
+    {
+        return $this->teams_visits;
+    }
+
+    public function addTeamsVisit(Team $teamsVisit): self
+    {
+        if (!$this->teams_visits->contains($teamsVisit)) {
+            $this->teams_visits[] = $teamsVisit;
+            $teamsVisit->addVisitedPeak($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTeamsVisit(Team $teamsVisit): self
+    {
+        if ($this->teams_visits->contains($teamsVisit)) {
+            $this->teams_visits->removeElement($teamsVisit);
+            $teamsVisit->removeVisitedPeak($this);
+        }
 
         return $this;
     }
