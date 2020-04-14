@@ -9,9 +9,19 @@ use App\Entity\Team;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Security\Core\Security;
 
 class PeakController extends AbstractController
 {
+    private $security;
+
+    public function __construct(Security $security)
+    {
+        // Avoid calling getUser() in the constructor: auth may not
+        // be complete yet. Instead, store the entire Security object.
+        $this->security = $security;
+    }
+
     /**
      * @Route("/peak/{id}",methods="GET|POST", name="peak_show")
      */
@@ -33,6 +43,11 @@ class PeakController extends AbstractController
             ->add('save', SubmitType::class, ['label' => 'Log visit'])
             ->getForm();
 
+        $team = $this->security->getUser();
+
+        // TODO: see https://symfony.com/doc/current/doctrine/associations.html#fetching-related-objects for performance optimization
+        $not_visited = !$team->getVisitedPeaks()->contains($peak);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted())
@@ -43,9 +58,9 @@ class PeakController extends AbstractController
             ->getRepository(Team::class)
             ->findOneBy(['username' => $form_data['team_visited']]);
 
-            if (!$peak) {
+            if (!$team) {
                 throw $this->createNotFoundException(
-                    'Peak not found '.$id
+                    'Team not found '.$id
                 );
             }
 
@@ -60,7 +75,8 @@ class PeakController extends AbstractController
             return $this->redirectToRoute('all_peaks');
         }
         
-        return $this->render('peak/show.html.twig', ['peak' => $peak, 
+        return $this->render('peak/show.html.twig', ['peak' => $peak,
+                                                     'not_visited' => $not_visited,
                                                      'form' => $form->createView()]);
     }
 
@@ -73,6 +89,7 @@ class PeakController extends AbstractController
             ->getRepository(Peak::class)
             ->findAll();
                
-        return $this->render('peak/index.html.twig', ['peaks' => $peaks]);
+        $visited = $this->security->getUser()->getVisitedPeaks();
+        return $this->render('peak/index.html.twig', ['peaks' => $peaks, 'visited' => $visited]);
     }
 }
