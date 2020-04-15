@@ -36,6 +36,15 @@ class TeamRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
+    public function countByVisistedPeaks(): array
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQuery(
+            'SELECT t.username, COUNT(p.id) AS visited FROM App\Entity\Team t LEFT JOIN t.visited_peaks p GROUP BY t.username' );
+
+        return $query->getResult();
+    }
+
     // /**
     //  * @return Team[] Returns an array of Team objects
     //  */
