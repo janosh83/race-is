@@ -37,16 +37,26 @@ class PeakController extends AbstractController
             );
         }
 
-        $form = $this->createFormBuilder()
-            ->add('peak_id', HiddenType::class)
-            ->add('team_visited', HiddenType::class)
-            ->add('save', SubmitType::class, ['label' => 'Log visit'])
-            ->getForm();
-
+        
         $team = $this->security->getUser();
 
         // TODO: see https://symfony.com/doc/current/doctrine/associations.html#fetching-related-objects for performance optimization
         $not_visited = !$team->getVisitedPeaks()->contains($peak);
+
+        if ($not_visited)
+        {
+            $form_label = 'Log visit';
+        }
+        else
+        {
+            $form_label = 'Unlog visit';
+        }
+
+        $form = $this->createFormBuilder()
+            ->add('peak_id', HiddenType::class)
+            ->add('team_visited', HiddenType::class)
+            ->add('save', SubmitType::class, ['label' => $form_label])
+            ->getForm();
 
         $form->handleRequest($request);
 
@@ -66,7 +76,14 @@ class PeakController extends AbstractController
 
             $manager = $this->getDoctrine()->getManager();
             
-            $peak->addTeamsVisit($team);
+            if ($not_visited)
+            {
+                $peak->addTeamsVisit($team);
+            }
+            else
+            {
+                $peak->removeTeamsVisit($team);
+            }
             
             $manager->persist($peak);
             $manager->flush();
