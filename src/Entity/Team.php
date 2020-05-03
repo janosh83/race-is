@@ -39,11 +39,6 @@ class Team
      */
     private $signed;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $confirmed;
-
     public function __construct()
     {
         $this->member = new ArrayCollection();
@@ -127,18 +122,6 @@ class Team
         if ($this->signed->contains($signed)) {
             $this->signed->removeElement($signed);
         }
-
-        return $this;
-    }
-
-    public function getConfirmed(): ?string
-    {
-        return $this->confirmed;
-    }
-
-    public function setConfirmed(string $confirmed): self
-    {
-        $this->confirmed = $confirmed;
 
         return $this;
     }
