@@ -5,6 +5,10 @@
 
 {% block body %}
 
-<div>This is homepage of our new web.</div>
+<p>This is homepage of our new web.</p>
+
+    {% if app.user %}
+        <a href="{{ path('all_races')}}">Race index</a>
+    {% endif %}
 
 {% endblock %}
