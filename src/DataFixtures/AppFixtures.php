@@ -5,6 +5,7 @@ namespace App\DataFixtures;
 use App\Entity\Peak;
 use App\Entity\User;
 use App\Entity\Race;
+use App\Entity\Team;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -125,21 +126,62 @@ class AppFixtures extends Fixture
         $manager->flush();
     }
 
+    private function getTeamData(): array
+    {
+        return [
+            // $teamData = [$title, $leader]
+            ['Team 1', 'tom_user@symfony.com'],
+            ['Team 2', 'jack_user@symfony.com']
+        ];
+    }
+
+    private function loadTeams(ObjectManager $manager): void
+    {
+        foreach ($this->getTeamData() as [$title, $leader]) {
+            $team = new Team();
+            $team->setTitle($title);
+            $team->setLeader($this->getReference($leader));
+            $manager->persist($team);
+            $this->addReference($title, $team);
+        }
+
+        $manager->flush();
+    }
+
     private function getRaceData(): array
     {
         return [
-            // $raceData = [$title, $description]
-            ['Hill Bill Rally 2020', 'Objevitelský závod, který nejde prohrát.'],
-            ['Pálavská štreka', 'Pálavská štreka je nevšední amatérský cyklopiknikovací závod.']
+            // $raceData = [$title, $description, $teams, $peaks]
+            [   'Hill Bill Rally 2020', 
+                'Objevitelský závod, který nejde prohrát.', 
+                ['Team 1', 'Team 2'],
+                ['vrchol_01','vrchol_03','vrchol_05']
+            ],
+            [   'Pálavská štreka', 
+                'Pálavská štreka je nevšední amatérský cyklopiknikovací závod.', 
+                [],
+                ['vrchol_02','vrchol_04']
+            ]
         ];
     }
 
     private function loadRaces(ObjectManager $manager): void
     {
-        foreach ($this->getRaceData() as [$title, $description]) {
+        foreach ($this->getRaceData() as [$title, $description, $teams, $peaks]) {
             $race = new Race();
             $race->setTitle($title);
             $race->setDescription($description);
+
+            foreach($teams as $teamTitle)
+            {
+                $race->addSigned($this->getReference($teamTitle));
+            }
+
+            foreach($peaks as $peakId)
+            {
+                $race->addPeak($this->getReference($peakId));
+            }
+
             $manager->persist($race);
             
         }
@@ -154,6 +196,7 @@ class AppFixtures extends Fixture
     {
         $this->loadPeaks($manager);
         $this->loadUsers($manager);
+        $this->loadTeams($manager);
         $this->loadRaces($manager);
         $manager->flush();
     }

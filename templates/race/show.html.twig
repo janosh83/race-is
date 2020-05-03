@@ -7,6 +7,15 @@
 <div>
 <h1>{{race.title}}</h1>
 <p>{{race.description}}</p>
+
+<h2>Vrcholy</h2>
+
+<ul>
+    {% for peak in peaks %}
+        <li><a href="{{ path('peak_show', {id:peak.id}) }}">{{peak.title}}</a></li>
+    {% endfor %}
+</ul>
+
 </div>
 
 {% endblock %}

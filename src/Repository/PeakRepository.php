@@ -22,19 +22,17 @@ class PeakRepository extends ServiceEntityRepository
     // /**
     //  * @return Peak[] Returns an array of Peak objects
     //  */
-    /*
-    public function findByExampleField($value)
+    
+    public function findByRace($race)
     {
         return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
+            ->andWhere('p.race = :race')
+            ->setParameter('race', $race)
             ->getQuery()
             ->getResult()
         ;
     }
-    */
+    
 
     /*
     public function findOneBySomeField($value): ?Peak

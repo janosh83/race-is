@@ -41,6 +41,11 @@ class Peak
      */
     private $longitude;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Race", inversedBy="peaks")
+     */
+    private $race;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -102,6 +107,18 @@ class Peak
     public function setLongitude(?float $longitude): self
     {
         $this->longitude = $longitude;
+
+        return $this;
+    }
+
+    public function getRace(): ?Race
+    {
+        return $this->race;
+    }
+
+    public function setRace(?Race $race): self
+    {
+        $this->race = $race;
 
         return $this;
     }

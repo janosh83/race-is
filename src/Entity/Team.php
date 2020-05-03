@@ -21,7 +21,7 @@ class Team
     /**
      * @ORM\Column(type="string", length=63)
      */
-    private $name;
+    private $title;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="leader")
@@ -50,14 +50,14 @@ class Team
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getTitle(): ?string
     {
-        return $this->name;
+        return $this->title;
     }
 
-    public function setName(string $name): self
+    public function setTitle(string $title): self
     {
-        $this->name = $name;
+        $this->title = $title;
 
         return $this;
     }
