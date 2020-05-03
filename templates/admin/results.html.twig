@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Result page{% endblock %}
+
+{% block body %}
+
+<h1>Aktuální výsledky</h1>
+
+<table>
+    <tr><th>Jméno týmu</th><th>Počet vrcholů</th></tr>
+    {% for team in results %}
+    <tr><td>{{team.username}}</td><td>{{team.visited}}</td></tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

@@ -30,7 +30,6 @@ class RaceController extends AbstractController
             ->getRepository(Race::class)
             ->findAll();
                
-        //$visited = $this->security->getUser()->getVisitedPeaks();
         return $this->render('race/index.html.twig', ['races' => $races]);
     }
 
@@ -53,8 +52,6 @@ class RaceController extends AbstractController
             ->getRepository(Peak::class)
             ->findByRace($race);
 
-        // or render a template
-        // in the template, print things with {{ product.name }}
         return $this->render('race/show.html.twig', ['race' => $race, 'peaks' => $peaks]);
     } 
 

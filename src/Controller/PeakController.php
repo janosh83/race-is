@@ -25,6 +25,6 @@ class PeakController extends AbstractController
 
         // or render a template
         // in the template, print things with {{ product.name }}
-        return $this->render('peak/index.html.twig', ['peak' => $peak]);
+        return $this->render('peak/show.html.twig', ['peak' => $peak]);
     }
 }

@@ -11,6 +11,10 @@
             <header>
             <a href="{{ path('homepage') }}">Home</a>
 
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('admin_home')}}">Admin</a>
+            {% endif %}
+
             {% if app.user %}
                 <a href="{{ path('app_logout')}}">Logout</a>
 
