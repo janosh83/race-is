@@ -19,6 +19,30 @@ class TeamRepository extends ServiceEntityRepository
         parent::__construct($registry, Team::class);
     }
 
+    public function findLeaderByUserAndRace($userid, $raceid)
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager
+            ->createQuery('SELECT t.id, t.title FROM App\Entity\Team t LEFT JOIN t.leader ul LEFT JOIN t.signed us WHERE ul.id = :userid AND us.id = :raceid');
+        $query->setParameter('userid', $userid);
+        $query->setParameter('raceid', $raceid);
+
+        return $query->getOneOrNullResult();
+    }
+
+    public function findMemberByUserAndRace($userid, $raceid)
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager
+            ->createQuery('SELECT t.id, t.title FROM App\Entity\Team t LEFT JOIN t.member ul LEFT JOIN t.signed us WHERE ul.id = :userid AND us.id = :raceid');
+        $query->setParameter('userid', $userid);
+        $query->setParameter('raceid', $raceid);
+
+        return $query->getOneOrNullResult();
+    }
+
     // /**
     //  * @return Team[] Returns an array of Team objects
     //  */

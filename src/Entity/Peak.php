@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -45,6 +47,16 @@ class Peak
      * @ORM\ManyToOne(targetEntity="App\Entity\Race", inversedBy="peaks")
      */
     private $race;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Team", mappedBy="visited")
+     */
+    private $visited;
+
+    public function __construct()
+    {
+        $this->visited = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -119,6 +131,34 @@ class Peak
     public function setRace(?Race $race): self
     {
         $this->race = $race;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Team[]
+     */
+    public function getVisited(): Collection
+    {
+        return $this->visited;
+    }
+
+    public function addVisited(Team $visited): self
+    {
+        if (!$this->visited->contains($visited)) {
+            $this->visited[] = $visited;
+            $visited->addVisited($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVisited(Team $visited): self
+    {
+        if ($this->visited->contains($visited)) {
+            $this->visited->removeElement($visited);
+            $visited->removeVisited($this);
+        }
 
         return $this;
     }

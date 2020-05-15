@@ -106,6 +106,7 @@ class AppFixtures extends Fixture
             ['John Doe', 'john_user@symfony.com', 'kitten', ['ROLE_USER']],
             ['Jack Doe', 'jack_user@symfony.com', 'kitten', ['ROLE_USER']],
             ['Joe Doe', 'joe_user@symfony.com', 'kitten', ['ROLE_USER']],
+            ['Annie Doe', 'annie_user@symfony.com', 'kitten', ['ROLE_USER']],
             ['Fred Doe', 'fred_user@symfony.com', 'kitten', ['ROLE_USER']]
         ];
     }
@@ -129,18 +130,21 @@ class AppFixtures extends Fixture
     private function getTeamData(): array
     {
         return [
-            // $teamData = [$title, $leader]
-            ['Team 1', 'tom_user@symfony.com'],
-            ['Team 2', 'jack_user@symfony.com']
+            // $teamData = [$title, $leader, $members]
+            ['Team 1', 'tom_user@symfony.com', ['john_user@symfony.com', 'jack_user@symfony.com']],
+            ['Team 2', 'joe_user@symfony.com', ['annie_user@symfony.com', 'fred_user@symfony.com']]
         ];
     }
 
     private function loadTeams(ObjectManager $manager): void
     {
-        foreach ($this->getTeamData() as [$title, $leader]) {
+        foreach ($this->getTeamData() as [$title, $leader, $members]) {
             $team = new Team();
             $team->setTitle($title);
             $team->setLeader($this->getReference($leader));
+            foreach($members as $member){
+                $team->addMember($this->getReference($member));
+            }
             $manager->persist($team);
             $this->addReference($title, $team);
         }

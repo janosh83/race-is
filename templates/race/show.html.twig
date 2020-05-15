@@ -8,6 +8,17 @@
 <h1>{{race.title}}</h1>
 <p>{{race.description}}</p>
 
+<div>User role
+{% if teamWhereLeader %}
+    <b>Leader</b> in team: {{ teamWhereLeader.title }}
+{% endif %}
+
+{% if teamWhereMember %}
+    <b>Member</b> in team {{ teamWhereMember.title }}
+{% endif %}
+</div>
+
+<div></din>
 <h2>Vrcholy</h2>
 
 <ul>

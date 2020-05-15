@@ -9,10 +9,21 @@
 
 {% block body %}
 <div>
+    <p>{{race.title}}</p>
+</div>
+<div>
     <h1>{{peak.shortid}}: {{peak.title}}</h1>
     <p><strong>Latitude: </strong> {{peak.latitude}}</p>
     <p><strong>Longitude: </strong> {{peak.longitude}}</p>
     <div>{{peak.description}}</div>
+</div>
+
+<div>
+    {{ form_start(form) }}
+    {{ form_widget(form.peak_id, {'value': peak.id})}}
+    {{ form_widget(form.team_visited, {'value': team.id})}}
+
+    {{ form_end(form) }}
 </div>
 
 <h2>Mapa</h2>

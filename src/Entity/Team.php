@@ -39,10 +39,16 @@ class Team
      */
     private $signed;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Peak", inversedBy="visited")
+     */
+    private $visited;
+
     public function __construct()
     {
         $this->member = new ArrayCollection();
         $this->signed = new ArrayCollection();
+        $this->visited = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -121,6 +127,32 @@ class Team
     {
         if ($this->signed->contains($signed)) {
             $this->signed->removeElement($signed);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Peak[]
+     */
+    public function getVisited(): Collection
+    {
+        return $this->visited;
+    }
+
+    public function addVisited(Peak $visited): self
+    {
+        if (!$this->visited->contains($visited)) {
+            $this->visited[] = $visited;
+        }
+
+        return $this;
+    }
+
+    public function removeVisited(Peak $visited): self
+    {
+        if ($this->visited->contains($visited)) {
+            $this->visited->removeElement($visited);
         }
 
         return $this;
