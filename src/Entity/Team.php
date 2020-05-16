@@ -40,7 +40,7 @@ class Team
     private $signed;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Peak", inversedBy="visited")
+     * @ORM\OneToMany(targetEntity="App\Entity\Visit", mappedBy="team", orphanRemoval=true)
      */
     private $visited;
 
@@ -133,28 +133,34 @@ class Team
     }
 
     /**
-     * @return Collection|Peak[]
+     * @return Collection|Visit[]
      */
     public function getVisited(): Collection
     {
         return $this->visited;
     }
 
-    public function addVisited(Peak $visited): self
+    public function addVisited(Visit $visited): self
     {
         if (!$this->visited->contains($visited)) {
             $this->visited[] = $visited;
+            $visited->setTeam($this);
         }
 
         return $this;
     }
 
-    public function removeVisited(Peak $visited): self
+    public function removeVisited(Visit $visited): self
     {
         if ($this->visited->contains($visited)) {
             $this->visited->removeElement($visited);
+            // set the owning side to null (unless already changed)
+            if ($visited->getTeam() === $this) {
+                $visited->setTeam(null);
+            }
         }
 
         return $this;
     }
+
 }

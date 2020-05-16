@@ -7,6 +7,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Peak;
 use App\Entity\Team;
 use App\Entity\Race;
+use App\Entity\Visit;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -62,20 +63,25 @@ class PeakController extends AbstractController
         }
 
         // TODO: see https://symfony.com/doc/current/doctrine/associations.html#fetching-related-objects for performance optimization
-        $not_visited = !$team->getVisited()->contains($peak);
+        $visit = $this->getDoctrine()
+            ->getRepository(Visit::class)
+            ->findByPeakAndTeam($id, $teamid);
 
-        if ($not_visited)
+        if ($visit)
         {
-            $form_label = 'Log visit';
+            $form_label = 'UnLog visit';
+            $not_visited = false;
         }
         else
         {
-            $form_label = 'Unlog visit';
+            $visit =new Visit();
+            $visit->setPeak($peak);
+            $visit->setTeam($team);
+            $form_label = 'Log visit';
+            $not_visited = true;
         }
 
-        $form = $this->createFormBuilder()
-            ->add('peak_id', HiddenType::class)
-            ->add('team_visited', HiddenType::class)
+        $form = $this->createFormBuilder($visit)
             ->add('save', SubmitType::class, ['label' => $form_label])
             ->getForm();
 
@@ -83,20 +89,19 @@ class PeakController extends AbstractController
 
         if ($form->isSubmitted())
         {
-            $form_data = $form->getData();
+            $visit = $form->getData();
 
             $manager = $this->getDoctrine()->getManager();
             
             if ($not_visited)
             {
-                $peak->addVisited($team);
+                $manager->persist($visit);
             }
             else
             {
-                $peak->removeVisited($team);
+                $manager->remove($visit);
             }
             
-            $manager->persist($peak);
             $manager->flush();
 
             // TODO some better redirect, which will show message Your visit has been successfully logged
@@ -106,7 +111,6 @@ class PeakController extends AbstractController
         return $this->render('peak/show.html.twig', ['peak' => $peak,
                                                      'race' => $race,
                                                      'team' => $team,
-                                                     'not_visited' => $not_visited,
                                                      'form' => $form->createView()]);
     }
 }

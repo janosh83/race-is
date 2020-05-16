@@ -49,13 +49,19 @@ class Peak
     private $race;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Team", mappedBy="visited")
+     * @ORM\OneToMany(targetEntity="App\Entity\Visit", mappedBy="peak", orphanRemoval=true)
      */
-    private $visited;
+    private $visits;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $visit;
 
     public function __construct()
     {
         $this->visited = new ArrayCollection();
+        $this->visits = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -136,30 +142,34 @@ class Peak
     }
 
     /**
-     * @return Collection|Team[]
+     * @return Collection|Visit[]
      */
-    public function getVisited(): Collection
+    public function getVisits(): Collection
     {
-        return $this->visited;
+        return $this->visits;
     }
 
-    public function addVisited(Team $visited): self
+    public function addVisit(Visit $visit): self
     {
-        if (!$this->visited->contains($visited)) {
-            $this->visited[] = $visited;
-            $visited->addVisited($this);
+        if (!$this->visits->contains($visit)) {
+            $this->visits[] = $visit;
+            $visit->setPeak($this);
         }
 
         return $this;
     }
 
-    public function removeVisited(Team $visited): self
+    public function removeVisit(Visit $visit): self
     {
-        if ($this->visited->contains($visited)) {
-            $this->visited->removeElement($visited);
-            $visited->removeVisited($this);
+        if ($this->visits->contains($visit)) {
+            $this->visits->removeElement($visit);
+            // set the owning side to null (unless already changed)
+            if ($visit->getPeak() === $this) {
+                $visit->setPeak(null);
+            }
         }
 
         return $this;
     }
+
 }
