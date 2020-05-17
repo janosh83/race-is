@@ -9,7 +9,7 @@
 <table>
     <tr><th>Jméno týmu</th><th>Počet vrcholů</th></tr>
     {% for team in results %}
-    <tr><td>{{team.title}}</td><td>{{team.num_of_visits}}</td></tr>
+    <tr><td><a href="{{ path('admin_visit_detail', {raceid:race.id,teamid:team.id}) }}">{{team.title}}</a></td><td>{{team.num_of_visits}}</td></tr>
     {% endfor %}
 </table>
 

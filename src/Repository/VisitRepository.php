@@ -31,6 +31,18 @@ class VisitRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findByRaceAndTeam($raceid, $teamid)
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager
+            ->createQuery('SELECT p.id, p.title, v.time, v.note FROM App\Entity\Visit v LEFT JOIN v.peak p WHERE v.race = :raceid AND v.team = :teamid');
+        $query->setParameter('raceid', $raceid);
+        $query->setParameter('teamid', $teamid);
+
+        return $query->getResult();
+    }
+
     // /**
     //  * @return Visit[] Returns an array of Visit objects
     //  */

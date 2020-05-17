@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Visits details{% endblock %}
+
+{% block body %}
+
+<h1>{{team.title}}</h1>
+<div>Leader: {{leader.name}} email: <a href="mailto:{{leader.email}}">{{leader.email}}</a></div>
+
+Other members:
+<ul>
+{% for m in members %}
+    <li>{{m.name}} email: <a href="mailto:{{m.email}}">{{m.email}}</a></li>
+{% endfor %}
+</ul>
+
+<h2>Průchod hrou</h2>
+
+<table>
+    <tr><th>Vrchol</th><th>Čas</th><th>Poznámka</th></tr>
+    {% for visit in visits %}
+    <tr>
+        <td><a href="{{ path('admin_peak_detail', {peakid:visit.id}) }}">{{visit.title}}</a></td>
+        <td>{{visit.time|date('d.m.Y h:i:s')}}</td>
+        <td>{{visit.note}}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

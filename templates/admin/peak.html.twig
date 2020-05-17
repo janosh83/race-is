@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{peak.title}}{% endblock %}
+
+{% block body %}
+
+<div>
+    <h1>{{peak.shortid}}: {{peak.title}}</h1>
+    <p><strong>Latitude: </strong> {{peak.latitude}}</p>
+    <p><strong>Longitude: </strong> {{peak.longitude}}</p>
+    <div>{{peak.description}}</div>
+</div>
+
+{% endblock %}
