@@ -77,12 +77,13 @@ class PeakController extends AbstractController
             $visit =new Visit();
             $visit->setPeak($peak);
             $visit->setTeam($team);
+            $visit->setRace($race);
             $form_label = 'Log visit';
             $not_visited = true;
         }
 
         $form = $this->createFormBuilder($visit)
-            ->add('note', TextareaType::class)
+            ->add('note', TextareaType::class, ['required' => false])
             ->add('save', SubmitType::class, ['label' => $form_label])
             ->getForm();
 
