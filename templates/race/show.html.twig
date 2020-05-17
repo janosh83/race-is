@@ -5,6 +5,8 @@
 {% block body %}
 
 <div>
+<a href="{{ path('all_races')}}">Race index</a>
+
 <h1>{{race.title}}</h1>
 <p>{{race.description}}</p>
 
@@ -24,6 +26,13 @@
 <ul>
     {% for peak in peaks %}
         <li><a href="{{ path('peak_show', {id:peak.id}) }}">{{peak.title}}</a></li>
+    {% endfor %}
+</ul>
+
+<h3>Visited</h3>
+<ul>
+    {% for vp in visitedPeaks %}
+        <li><a href="{{ path('peak_show', {id:vp.id}) }}">{{vp.title}}</a></li>
     {% endfor %}
 </ul>
 
