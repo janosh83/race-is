@@ -38,6 +38,12 @@ class Visit
      */
     private $team;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Race", inversedBy="visits")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $race;
+
     public function __construct()
     {
         $this->time = new \DateTime();
@@ -92,6 +98,18 @@ class Visit
     public function setTeam(?Team $team): self
     {
         $this->team = $team;
+
+        return $this;
+    }
+
+    public function getRace(): ?Race
+    {
+        return $this->race;
+    }
+
+    public function setRace(?Race $race): self
+    {
+        $this->race = $race;
 
         return $this;
     }

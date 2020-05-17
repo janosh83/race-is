@@ -6,4 +6,10 @@
 
 <p>This is admin page of our new web.</p>
 
+<h2>Race results</h2>
+{% for race in races %}
+        <li><a href="{{ path('admin_race_results', {raceid:race.id}) }}">{{race.title}}</a></li>
+    {% endfor %}
+<div><a href="">
+
 {% endblock %}

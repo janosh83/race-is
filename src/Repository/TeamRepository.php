@@ -43,6 +43,16 @@ class TeamRepository extends ServiceEntityRepository
         return $query->getOneOrNullResult();
     }
 
+    public function countByVisistedPeaks($raceid): array
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQuery(
+            'SELECT t.id, t.title, COUNT(v.id) AS num_of_visits FROM App\Entity\Team t LEFT JOIN t.visited v WHERE v.race = :raceid GROUP BY t.id' );
+        $query->setParameter('raceid', $raceid);
+
+        return $query->getResult();
+    }
+
     // /**
     //  * @return Team[] Returns an array of Team objects
     //  */

@@ -38,10 +38,16 @@ class Race
      */
     private $peaks;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Visit", mappedBy="race", orphanRemoval=true)
+     */
+    private $visits;
+
     public function __construct()
     {
         $this->signed = new ArrayCollection();
         $this->peaks = new ArrayCollection();
+        $this->visits = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -126,6 +132,37 @@ class Race
             // set the owning side to null (unless already changed)
             if ($peak->getRace() === $this) {
                 $peak->setRace(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Visit[]
+     */
+    public function getVisits(): Collection
+    {
+        return $this->visits;
+    }
+
+    public function addVisit(Visit $visit): self
+    {
+        if (!$this->visits->contains($visit)) {
+            $this->visits[] = $visit;
+            $visit->setRace($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVisit(Visit $visit): self
+    {
+        if ($this->visits->contains($visit)) {
+            $this->visits->removeElement($visit);
+            // set the owning side to null (unless already changed)
+            if ($visit->getRace() === $this) {
+                $visit->setRace(null);
             }
         }
 

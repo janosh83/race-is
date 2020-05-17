@@ -1,15 +1,15 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Result page{% endblock %}
+{% block title %}{{race.title}} - výsledky{% endblock %}
 
 {% block body %}
 
-<h1>Aktuální výsledky</h1>
+<h1>Aktuální výsledky: {{race.title}}</h1>
 
 <table>
     <tr><th>Jméno týmu</th><th>Počet vrcholů</th></tr>
     {% for team in results %}
-    <tr><td>{{team.username}}</td><td>{{team.visited}}</td></tr>
+    <tr><td>{{team.title}}</td><td>{{team.num_of_visits}}</td></tr>
     {% endfor %}
 </table>
 
