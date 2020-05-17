@@ -9,7 +9,7 @@ use App\Entity\Team;
 use App\Entity\Race;
 use App\Entity\Visit;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -82,6 +82,7 @@ class PeakController extends AbstractController
         }
 
         $form = $this->createFormBuilder($visit)
+            ->add('note', TextareaType::class)
             ->add('save', SubmitType::class, ['label' => $form_label])
             ->getForm();
 
