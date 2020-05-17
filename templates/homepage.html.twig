@@ -7,8 +7,8 @@
 
 <p>This is homepage of our new web.</p>
 
-    {% if app.user %}
-        <a href="{{ path('all_peaks')}}">Peaks index</a>
+    {% if app.user and not is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('all_races')}}">Race index</a>
     {% endif %}
 
 {% endblock %}
