@@ -23,12 +23,6 @@
 <div></din>
 <h2>Vrcholy</h2>
 
-<ul>
-    {% for peak in peaks %}
-        <li><a href="{{ path('peak_show', {id:peak.id}) }}">{{peak.title}}</a></li>
-    {% endfor %}
-</ul>
-
 <h3>Visited</h3>
 <ul>
     {% for vp in visitedPeaks %}
@@ -36,6 +30,12 @@
     {% endfor %}
 </ul>
 
+<h3>Not Visited</h3>
+<ul>
+    {% for nvp in notVisitedPeaks %}
+        <li><a href="{{ path('peak_show', {id:nvp.id}) }}">{{nvp.title}}</a></li>
+    {% endfor %}
+</ul>
 </div>
 
 {% endblock %}

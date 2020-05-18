@@ -53,14 +53,8 @@ class Peak
      */
     private $visits;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $visit;
-
     public function __construct()
     {
-        $this->visited = new ArrayCollection();
         $this->visits = new ArrayCollection();
     }
 

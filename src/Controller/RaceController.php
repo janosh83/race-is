@@ -49,10 +49,6 @@ class RaceController extends AbstractController
             );
         }
 
-        $peaks = $this->getDoctrine()
-            ->getRepository(Peak::class)
-            ->findByRace($race);
-
         $user = $this->security->getUser();
 
         $teamWhereLeader = $this->getDoctrine()
@@ -82,11 +78,15 @@ class RaceController extends AbstractController
             ->getRepository(Peak::class)
             ->findVisitedByTeamAndRace($teamid, $race);
 
+        $not_visited_peaks = $this->getDoctrine()
+            ->getRepository(Peak::class)
+            ->findNotVisitedByTeam($race);
+
         return $this->render('race/show.html.twig', ['race' => $race, 
                                                      'teamWhereLeader'=>$teamWhereLeader, 
                                                      'teamWhereMember'=>$teamWhereMember, 
                                                      'visitedPeaks' => $visited_peaks,
-                                                     'peaks' => $peaks]);
+                                                     'notVisitedPeaks' => $not_visited_peaks]);
     } 
 
 
