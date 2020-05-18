@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20200503165715 extends AbstractMigration
+final class Version20200518200428 extends AbstractMigration
 {
     public function getDescription() : string
     {
@@ -22,9 +22,9 @@ final class Version20200503165715 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE peak ADD race_id INT DEFAULT NULL');
-        $this->addSql('ALTER TABLE peak ADD CONSTRAINT FK_A2E1947D6E59D40D FOREIGN KEY (race_id) REFERENCES race (id)');
-        $this->addSql('CREATE INDEX IDX_A2E1947D6E59D40D ON peak (race_id)');
+        $this->addSql('ALTER TABLE peak DROP visit');
+        $this->addSql('ALTER TABLE visit ADD CONSTRAINT FK_437EE9396E59D40D FOREIGN KEY (race_id) REFERENCES race (id)');
+        $this->addSql('CREATE INDEX IDX_437EE9396E59D40D ON visit (race_id)');
     }
 
     public function down(Schema $schema) : void
@@ -32,8 +32,8 @@ final class Version20200503165715 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('ALTER TABLE peak DROP FOREIGN KEY FK_A2E1947D6E59D40D');
-        $this->addSql('DROP INDEX IDX_A2E1947D6E59D40D ON peak');
-        $this->addSql('ALTER TABLE peak DROP race_id');
+        $this->addSql('ALTER TABLE peak ADD visit VARCHAR(255) CHARACTER SET utf8mb4 NOT NULL COLLATE `utf8mb4_unicode_ci`');
+        $this->addSql('ALTER TABLE visit DROP FOREIGN KEY FK_437EE9396E59D40D');
+        $this->addSql('DROP INDEX IDX_437EE9396E59D40D ON visit');
     }
 }
