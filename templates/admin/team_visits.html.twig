@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Visits details{% endblock %}
+{% block title %}Průchod hrou{% endblock %}
 
 {% block body %}
 
 <h1>{{team.title}}</h1>
-<div>Leader: {{leader.name}} email: <a href="mailto:{{leader.email}}">{{leader.email}}</a></div>
+<div>Kapitán týmu: {{leader.name}} email: <a href="mailto:{{leader.email}}">{{leader.email}}</a></div>
 
-Other members:
+Ostatní členové týmu
 <ul>
 {% for m in members %}
     <li>{{m.name}} email: <a href="mailto:{{m.email}}">{{m.email}}</a></li>

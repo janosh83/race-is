@@ -1,12 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Admin page!{% endblock %}
+{% block title %}Administrace{% endblock %}
 
 {% block body %}
 
-<p>This is admin page of our new web.</p>
+<p>Vítejte v administraci</p>
 
-<h2>Race results</h2>
+<h2>Výsledky</h2>
 {% for race in races %}
         <li><a href="{{ path('admin_race_results', {raceid:race.id}) }}">{{race.title}}</a></li>
     {% endfor %}

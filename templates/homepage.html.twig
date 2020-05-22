@@ -1,14 +1,12 @@
 
 {% extends 'base.html.twig' %}
 
-{% block title %}Main page!{% endblock %}
+{% block title %}Hlavní stránka{% endblock %}
 
 {% block body %}
 
-<p>This is homepage of our new web.</p>
-
     {% if app.user %}
-        <a href="{{ path('all_races')}}">Race index</a>
+        <a href="{{ path('all_races')}}">Seznam závodů</a>
     {% endif %}
 
 {% endblock %}
