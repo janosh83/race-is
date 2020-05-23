@@ -6,7 +6,10 @@
 {% block body %}
 
     <ul>
-    {% for race in races %}
+    {% for race in races_leader %}
+        <li><a href="{{ path('race_show', {id:race.id}) }}">{{race.title}}</a></li>
+    {% endfor %}
+    {% for race in races_member %}
         <li><a href="{{ path('race_show', {id:race.id}) }}">{{race.title}}</a></li>
     {% endfor %}
     </ul>

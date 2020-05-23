@@ -26,12 +26,21 @@ class RaceController extends AbstractController
      */
     public function index()
     {
+        // FIXME: display only races on which currently logged user is signed
+        //$races = $this->getDoctrine()
+        //    ->getRepository(Race::class)
+        //    ->findAll();
         
-        $races = $this->getDoctrine()
+        $user = $this->security->getUser();
+        $raceshereLeader = $this->getDoctrine()
             ->getRepository(Race::class)
-            ->findAll();
-               
-        return $this->render('race/index.html.twig', ['races' => $races]);
+            ->findAllWhereLeader($user->getId());
+        $raceshereMember = $this->getDoctrine()
+            ->getRepository(Race::class)
+            ->findAllWhereMember($user->getId());
+
+        return $this->render('race/index.html.twig', ['races_leader' => $raceshereLeader,
+                                                      'races_member' => $raceshereMember]);
     }
 
      /**
@@ -59,6 +68,8 @@ class RaceController extends AbstractController
             ->getRepository(Team::class)
             ->findMemberByUserAndRace($user->getId(), $race);
 
+        $teamid = -1;
+
         // setore user info related to selected race into session
         $session->set("race_id",$id);
         if ($teamWhereLeader != NULL){
@@ -66,12 +77,20 @@ class RaceController extends AbstractController
             $session->set("is_leader", true);
             $session->set("is_member", false);
             $session->set("team_id",$teamWhereLeader['id']);
+            $teamid = $teamWhereLeader['id'];
         }
         if ($teamWhereMember != NULL){
             $teamid = $teamWhereMember['id'];
             $session->set("is_leader", false);
             $session->set("is_member", true);
             $session->set("team_id",$teamWhereMember['id']);
+            $teamid = $teamWhereMember['id'];
+        }
+
+        if($teamid == -1){
+            throw $this->createNotFoundException(
+                'Race '.$id.' not found, you are probably not signed.'
+            );
         }
 
         $visited_peaks = $this->getDoctrine()
@@ -87,7 +106,6 @@ class RaceController extends AbstractController
                                                      'teamWhereMember'=>$teamWhereMember, 
                                                      'visitedPeaks' => $visited_peaks,
                                                      'notVisitedPeaks' => $not_visited_peaks]);
-    } 
-
+    }
 
 }

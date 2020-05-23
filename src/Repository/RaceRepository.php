@@ -19,6 +19,40 @@ class RaceRepository extends ServiceEntityRepository
         parent::__construct($registry, Race::class);
     }
 
+    public function findByIdAndTeam($raceid, $teamid)
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager
+            ->createQuery('SELECT r.id, r.title FROM App\Entity\Race r LEFT JOIN r.signed rs WHERE r.id = :raceid AND rs.id = :teamid');
+        $query->setParameter('teamid', $teamid);
+        $query->setParameter('raceid', $raceid);
+
+        return $query->getOneOrNullResult();
+    }
+
+    public function findAllWhereLeader($userid)
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager
+            ->createQuery('SELECT r.id, r.title FROM App\Entity\Race r LEFT JOIN r.signed rs LEFT JOIN rs.leader sl WHERE sl.id = :userid');
+        $query->setParameter('userid', $userid);
+        
+        return $query->getResult();
+    }
+
+    public function findAllWhereMember($userid)
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager
+            ->createQuery('SELECT r.id, r.title FROM App\Entity\Race r LEFT JOIN r.signed rs LEFT JOIN rs.member sl WHERE sl.id = :userid');
+        $query->setParameter('userid', $userid);
+        
+        return $query->getResult();
+    }
+
     // /**
     //  * @return Race[] Returns an array of Race objects
     //  */
