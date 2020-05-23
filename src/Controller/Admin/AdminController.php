@@ -23,7 +23,7 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/race/{raceid}", name="admin_race_results")
+     * @Route("/admin/raceresults/{raceid}", name="admin_race_results")
      */
     public function race_results($raceid)
     {
@@ -40,6 +40,34 @@ class AdminController extends AbstractController
         $results = $this->getDoctrine()->getRepository(Team::class)->countByVisistedPeaks($raceid);
         return $this->render('admin/results.html.twig', ['race' => $race,
                                                          'results' => $results]);
+    }
+
+    /**
+     * @Route("/admin/racepeaks/{raceid}", name="admin_peak_table")
+     */
+    public function peak_table($raceid)
+    {
+        $peaks = $this->getDoctrine()
+            ->getRepository(Peak::class)
+            ->findByRace($raceid);
+
+        if (!$peaks) {
+            throw $this->createNotFoundException(
+                'No peaks found for race '.$raceid
+            );
+        }
+
+        $race = $this->getDoctrine()
+            ->getRepository(Race::class)
+            ->find($raceid);
+
+        if (!$race) {
+            throw $this->createNotFoundException(
+                'Race not found '.$raceid
+            );
+        }
+
+        return $this->render('admin/peaks_table.html.twig', ['race' => $race,'peaks' => $peaks]);
     }
 
     /**

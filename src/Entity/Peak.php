@@ -166,4 +166,25 @@ class Peak
         return $this;
     }
 
+    public function getGPS(): string
+    {
+        if ($this->latitude > 0.0){
+            $tmp = $this->latitude."N";
+        }
+        else{
+            $tmp = $this->latitude."S";
+        }
+
+        $tmp = $tmp."; ";
+
+        if ($this->longitude > 0.0){
+            $tmp = $tmp.$this->longitude."E";
+        }
+        else{
+            $tmp = $tmp.$this->longitude."W";
+        }
+
+        return $tmp;
+    }
+
 }
