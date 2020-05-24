@@ -2,25 +2,24 @@
 <html>
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <title>{% block title %}{% endblock %}</title>
         {% block stylesheets %}{% endblock %}
         {% block script %}{% endblock %}
     </head>
     <body>
         {% block header %}
             <header>
-            <a href="{{ path('homepage') }}">Home</a>
+            <a href="{{ path('homepage') }}">Úvod</a>
 
             {% if is_granted('ROLE_ADMIN') %}
-                <a href="{{ path('admin_home')}}">Admin</a>
+                <a href="{{ path('admin_home')}}">Administrace</a>
             {% endif %}
 
             {% if app.user %}
-                <a href="{{ path('app_logout')}}">Logout</a>
+                <a href="{{ path('app_logout')}}">Odhlásit</a>
 
             {% else %}
-                <a href="{{ path('app_login')}}">Login</a>
-                <a href="{{ path('app_register')}}">Register</a>
+                <a href="{{ path('app_login')}}">Přihlášení</a>
             {% endif %}
             </header>
         {% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{race.title}}{% endblock %}
+
+{% block body %}
+
+<div>
+<a href="{{ path('all_races')}}">Seznam závodů</a>
+
+<h1>{{race.title}}</h1>
+<p>{{race.description}}</p>
+
+<div>Role v týmu
+{% if teamWhereLeader %}
+    <b>Velitel</b> týmů: {{ teamWhereLeader.title }}
+{% endif %}
+
+{% if teamWhereMember %}
+    <b>Člen</b> týmu {{ teamWhereMember.title }}
+{% endif %}
+</div>
+
+<div></din>
+<h2>Vrcholy</h2>
+
+<h3>Navštívené</h3>
+<ul>
+    {% for vp in visitedPeaks %}
+        <li><a href="{{ path('peak_show', {id:vp.id}) }}">{{vp.title}}</a></li>
+    {% endfor %}
+</ul>
+
+<h3>Nenavštívené</h3>
+<ul>
+    {% for nvp in notVisitedPeaks %}
+        <li><a href="{{ path('peak_show', {id:nvp.id}) }}">{{nvp.title}}</a></li>
+    {% endfor %}
+</ul>
+</div>
+
+{% endblock %}

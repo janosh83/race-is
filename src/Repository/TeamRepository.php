@@ -5,9 +5,6 @@ namespace App\Repository;
 use App\Entity\Team;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @method Team|null find($id, $lockMode = null, $lockVersion = null)
@@ -15,32 +12,43 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @method Team[]    findAll()
  * @method Team[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class TeamRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
+class TeamRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Team::class);
     }
 
-    /**
-     * Used to upgrade (rehash) the user's password automatically over time.
-     */
-    public function upgradePassword(UserInterface $user, string $newEncodedPassword): void
+    public function findLeaderByUserAndRace($userid, $raceid)
     {
-        if (!$user instanceof Team) {
-            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', \get_class($user)));
-        }
+        $entityManager = $this->getEntityManager();
 
-        $user->setPassword($newEncodedPassword);
-        $this->_em->persist($user);
-        $this->_em->flush();
+        $query = $entityManager
+            ->createQuery('SELECT t.id, t.title FROM App\Entity\Team t LEFT JOIN t.leader ul LEFT JOIN t.signed us WHERE ul.id = :userid AND us.id = :raceid');
+        $query->setParameter('userid', $userid);
+        $query->setParameter('raceid', $raceid);
+
+        return $query->getOneOrNullResult();
     }
 
-    public function countByVisistedPeaks(): array
+    public function findMemberByUserAndRace($userid, $raceid)
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager
+            ->createQuery('SELECT t.id, t.title FROM App\Entity\Team t LEFT JOIN t.member ul LEFT JOIN t.signed us WHERE ul.id = :userid AND us.id = :raceid');
+        $query->setParameter('userid', $userid);
+        $query->setParameter('raceid', $raceid);
+
+        return $query->getOneOrNullResult();
+    }
+
+    public function countByVisistedPeaks($raceid): array
     {
         $entityManager = $this->getEntityManager();
         $query = $entityManager->createQuery(
-            'SELECT t.username, COUNT(p.id) AS visited FROM App\Entity\Team t LEFT JOIN t.visited_peaks p GROUP BY t.username' );
+            'SELECT t.id, t.title, COUNT(v.id) AS num_of_visits FROM App\Entity\Team t LEFT JOIN t.visited v WHERE v.race = :raceid GROUP BY t.id' );
+        $query->setParameter('raceid', $raceid);
 
         return $query->getResult();
     }

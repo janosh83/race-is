@@ -1,11 +1,19 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Admin page!{% endblock %}
+{% block title %}Administrace{% endblock %}
 
 {% block body %}
 
-<p>This is amin page of our new web.</p>
-<ul>
-    <li><a href="{{ path('admin_race_results')}}">Race results</a></li>
-</ul>
+<p>Vítejte v administraci</p>
+
+<h2>Výsledky</h2>
+{% for race in races %}
+    <li><a href="{{ path('admin_race_results', {raceid:race.id}) }}">{{race.title}}</a></li>
+{% endfor %}
+
+<h2>Tabulka vrcholů</h2>
+{% for race in races %}
+    <li><a href="{{ path('admin_peak_table', {raceid:race.id}) }}">{{race.title}}</a></li>
+{% endfor %}
+
 {% endblock %}

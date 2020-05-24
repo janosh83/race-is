@@ -9,6 +9,9 @@
 
 {% block body %}
 <div>
+    <p>{{race.title}}</p>
+</div>
+<div>
     <h1>{{peak.shortid}}: {{peak.title}}</h1>
     <p><strong>Latitude: </strong> {{peak.latitude}}</p>
     <p><strong>Longitude: </strong> {{peak.longitude}}</p>
@@ -16,11 +19,8 @@
 </div>
 
 <div>
-    {{ form_start(form) }}
-    {{ form_widget(form.peak_id, {'value': peak.id})}}
-    {{ form_widget(form.team_visited, {'value': app.user.username})}}
-
-    {{ form_end(form) }}
+    <h2>Zalogování vrcholu</h2>
+    {{ form(form) }}
 </div>
 
 <h2>Mapa</h2>
@@ -30,15 +30,12 @@
 		var m = new SMap(JAK.gel("m"), center, 13);
         m.addDefaultLayer(SMap.DEF_BASE).enable();
         m.addDefaultControls();
-
         var layer = new SMap.Layer.Marker();
         m.addLayer(layer);
         layer.enable();
-
         var card = new SMap.Card();
         card.getHeader().innerHTML = "<strong>{{peak.title}}</strong>";
         card.getBody().innerHTML = "{{peak.description}}";
-
         var options = {title: "{{peak.title}}"};
         var marker = new SMap.Marker(center, "myMarker", options);
         marker.decorate(SMap.Marker.Feature.Card, card);
@@ -46,5 +43,6 @@
 	</script>
 </div>
 
-<div><a href="{{ path('all_peaks')}}">Zpět na seznam vrcholů</a></div>
+<a href="{{ path('race_show', {id:race.id}) }}">Zpět na závod</a>
+
 {% endblock %}
