@@ -53,6 +53,13 @@
                         </div>
                         {% endif %}
 
+                        {% if not app.user %}
+                        <div class="col-lg-1">
+                        <a class="btn btn-sm btn-outline-secondary" href="{{ path('app_register')}}">Registrace</a>
+                        </div>
+
+                        {% endif %}
+
                         <div class="col-lg-1">
                             {% if app.user %}
                             <a class="btn btn-sm btn-outline-secondary" href="{{ path('app_logout')}}">Odhlásit</a>
@@ -99,7 +106,7 @@
                     the gap between solo traveling and guided tours (travel agencies)</p>
                 </div>
 
-                <div class="p-4">
+                <!--<div class="p-4">
                     <h4 class="font-italic">Archives</h4>
                     <ol class="list-unstyled mb-0">
                     <li><a href="#">March 2014</a></li>
@@ -110,7 +117,7 @@
                     <li><a href="#">October 2013</a></li>
                     <li><a href="#">September 2013</a></li>
                     </ol>
-                </div>
+                </div>-->
 
                 <div class="p-4">
                     <h4 class="font-italic">Odkazy</h4>
