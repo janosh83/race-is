@@ -162,7 +162,11 @@ class AppFixtures extends Fixture
                 ['vrchol_01','vrchol_03','vrchol_05']
             ],
             [   'Pálavská štreka', 
-                'Pálavská štreka je nevšední amatérský cyklopiknikovací závod.', 
+                '<p>Pálavská štreka je nevšední amatérský cyklopiknikovací závod. 
+                Během 25 hodin objevíš skryté krásy Vysočiny a Jižní Moravy. Cílem 
+                je navštívit cestou na Pálavu co nejvíce zajímavých míst – bodů 
+                vyznačených v připravené mapě. Závodníci, kteří posbírají nejvíce 
+                těchto bodů stanou v cíli na stupních vítězů.</p>', 
                 [],
                 ['vrchol_02','vrchol_04']
             ]

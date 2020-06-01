@@ -115,4 +115,37 @@ class PeakController extends AbstractController
                                                      'team' => $team,
                                                      'form' => $form->createView()]);
     }
+
+    /**
+     * @Route("/peak_map/{raceid}", name="peak_map")
+     */
+    public function peak_map($raceid)
+    {
+        $race = $this->getDoctrine()
+            ->getRepository(Race::class)
+            ->find($raceid);
+
+        if (!$race) {
+            throw $this->createNotFoundException(
+                'Race not found '.$raceid
+            );
+        }
+
+        $user = $this->security->getUser();
+
+        $team = $this->getDoctrine()
+            ->getRepository(Team::class)
+            ->findMemberByUserAndRace($user->getId(), $race);
+
+        if(!$team){
+            throw $this->createAccessDeniedException('Not enough permission to see '.$raceid. 'probably not signed to the race.');
+        }
+
+        $peaks = $this->getDoctrine()
+            ->getRepository(Peak::class)
+            ->findByRace($raceid);
+
+        return $this->render('peak/map.html.twig', ['peaks' => $peaks]);
+
+    }
 }

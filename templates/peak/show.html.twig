@@ -3,8 +3,21 @@
 {% block title %}{{peak.title}}{% endblock %}
 
 {% block script %}
-    <script src="https://api.mapy.cz/loader.js"></script>
-    <script>Loader.load()</script>
+    <!-- base leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+        integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+        crossorigin=""></script>
+    <!-- geolocation -->
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.72.0/dist/L.Control.Locate.min.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.72.0/dist/L.Control.Locate.min.js"
+        charset="utf-8"></script>
 {% endblock %}
 
 {% block main %}
@@ -24,24 +37,23 @@
 </div>
 
 <h2>Mapa</h2>
-<div id="m" style="width:600px; height:400px;"></div>
-	<script type="text/javascript">
-		var center = SMap.Coords.fromWGS84({{peak.longitude}},{{peak.latitude}} );
-		var m = new SMap(JAK.gel("m"), center, 13);
-        m.addDefaultLayer(SMap.DEF_BASE).enable();
-        m.addDefaultControls();
-        var layer = new SMap.Layer.Marker();
-        m.addLayer(layer);
-        layer.enable();
-        var card = new SMap.Card();
-        card.getHeader().innerHTML = "<strong>{{peak.title}}</strong>";
-        card.getBody().innerHTML = "{{peak.description}}";
-        var options = {title: "{{peak.title}}"};
-        var marker = new SMap.Marker(center, "myMarker", options);
-        marker.decorate(SMap.Marker.Feature.Card, card);
-        layer.addMarker(marker);
-	</script>
-</div>
+<div id="map" style="width:600px; height:400px;"></div>
+<script>
+	var map = L.map('map').setView([{{ peak.latitude}}, {{ peak.longitude }}], 15);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            minZoom: 10,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+    L.control.locate().addTo(map);
+
+    marker = new L.marker([{{ peak.latitude}}, {{ peak.longitude }}])
+        .bindPopup("{{ peak.title }}")
+        .addTo(map);
+</script>
+
 
 <a href="{{ path('race_show', {id:race.id}) }}">Zpět na závod</a>
 
