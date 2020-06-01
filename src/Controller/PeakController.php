@@ -69,7 +69,7 @@ class PeakController extends AbstractController
 
         if ($visit)
         {
-            $form_label = 'UnLog visit';
+            $form_label = 'Zrušit návštěvu vrcholu';
             $not_visited = false;
         }
         else
@@ -78,12 +78,12 @@ class PeakController extends AbstractController
             $visit->setPeak($peak);
             $visit->setTeam($team);
             $visit->setRace($race);
-            $form_label = 'Log visit';
+            $form_label = 'Potvrdit návštěvu vrcholu';
             $not_visited = true;
         }
 
         $form = $this->createFormBuilder($visit)
-            ->add('note', TextareaType::class, ['required' => false])
+            //->add('note', TextareaType::class, ['required' => false])
             ->add('save', SubmitType::class, ['label' => $form_label])
             ->getForm();
 

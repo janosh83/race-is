@@ -10,9 +10,7 @@
 <h1>{{race.title}}</h1>
 <p>{{race.description}}</p>
 
-<div>
-    <a href="{{ path('peak_map', {raceid:race.id}) }}">Mapa vrcholů</a>
-</div>
+
 
 {#<div>Role v týmu
     {% if teamWhereLeader %}
@@ -26,6 +24,9 @@
 
 <div>
 <h2>Vrcholy</h2>
+<p>
+    <a href="{{ path('peak_map', {raceid:race.id}) }}">Mapa všech vrcholů</a>
+</p>
 
 <h3>Navštívené</h3>
 <ul>
