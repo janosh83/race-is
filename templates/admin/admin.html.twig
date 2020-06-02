@@ -6,14 +6,26 @@
 
 <p>Vítejte v administraci</p>
 
+<h2>Závody</h2>
+<ul>
+{% for race in races %}
+    <li><a href="{{ path('admin_race', {raceid:race.id}) }}">{{race.title}}</a></li>
+{% endfor %}
+</ul>
+<div><a href="{{ path('admin_race_new') }}">Založit další závod</a></div>
+
 <h2>Výsledky</h2>
+<ul>
 {% for race in races %}
     <li><a href="{{ path('admin_race_results', {raceid:race.id}) }}">{{race.title}}</a></li>
 {% endfor %}
+</ul>
 
 <h2>Tabulka vrcholů</h2>
+<ul>
 {% for race in races %}
     <li><a href="{{ path('admin_peak_table', {raceid:race.id}) }}">{{race.title}}</a></li>
 {% endfor %}
+</ul>
 
 {% endblock %}

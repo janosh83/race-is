@@ -2,7 +2,9 @@
 namespace App\Controller\Admin;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Request;
 use App\Entity\Race;
+use App\Form\NewRaceFormType;
 use App\Entity\Team;
 use App\Entity\Visit;
 use App\Entity\Peak;
@@ -111,5 +113,48 @@ class AdminController extends AbstractController
         }
 
         return $this->render('admin/peak.html.twig', ['peak' => $peak]);
+    }
+
+    /**
+     * @Route("/admin/race/{raceid}", name="admin_race")
+     */
+    public function race_detail($raceid)
+    {
+        $race = $this->getDoctrine()
+            ->getRepository(Race::class)
+            ->find($raceid);
+
+        if (!$race) {
+            throw $this->createNotFoundException(
+                'Race not found '.$raceid
+            );
+        }
+
+        return $this->render('admin/race.html.twig', ['race' => $race]);
+    }
+
+    /**
+     * @Route("/admin/newrace", name="admin_race_new")
+     */
+    public function race_new(Request $request)
+    {
+        $race = new Race();
+
+        $form = $this->createForm(NewRaceFormType::class, $race);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            
+            $race->setTitle($form->get('title')->getData());
+            $race->setDescription($form->get('description')->getData());
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($race);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('admin_home');
+        }
+
+        return $this->render('admin/newrace.html.twig', ['form' => $form->createView()]);
     }
 }
