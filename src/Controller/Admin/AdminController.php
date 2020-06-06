@@ -3,6 +3,8 @@ namespace App\Controller\Admin;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use App\Entity\Race;
 use App\Form\NewRaceFormType;
 use App\Entity\Team;
@@ -118,7 +120,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/race/{raceid}", name="admin_race")
      */
-    public function race_detail($raceid)
+    public function race_detail($raceid, Request $request)
     {
         $race = $this->getDoctrine()
             ->getRepository(Race::class)
@@ -130,7 +132,57 @@ class AdminController extends AbstractController
             );
         }
 
-        return $this->render('admin/race.html.twig', ['race' => $race]);
+        $peaks = $this->getDoctrine()
+            ->getRepository(Peak::class)
+            ->findByRace($raceid);
+        // NOTE: it shall be fine to pass empty object into template
+
+        $delete_form = $this->createFormBuilder($race)
+            ->add('delete', SubmitType::class, ['label'=>'Smazat závod'])
+            ->getForm();
+
+        $delete_form->handleRequest($request);
+        if($delete_form->isSubmitted() && $delete_form->isValid())
+        {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($race);
+            $entityManager->flush();
+            return $this->redirectToRoute('admin_home');
+        }
+
+        $peaks_form = $this->createFormBuilder()
+            ->add('peaks_json', TextareaType::class, ['label'=>'Vrcholy'])
+            ->add('submit_peaks', SubmitType::class, ['label'=>'Importovat vrcholy'])
+            ->getForm();
+
+        $peaks_form->handleRequest($request);
+        if($peaks_form->isSubmitted() && $peaks_form->isValid())
+        {
+            $entityManager = $this->getDoctrine()->getManager();
+            
+            $peaks_text = $peaks_form->get('peaks_json')->getData();
+            $peaks_json = json_decode($peaks_text, true);
+
+            foreach ($peaks_json as $p) {
+                $peak = new Peak();
+                $peak->setShortId($p['short_id']);
+                $peak->setTitle($p["title"]);
+                $peak->setDescription($p['description']);
+                $peak->setLatitude($p['latitude']);
+                $peak->setLongitude($p['longitude']);
+                $peak->setRace($race);
+                $entityManager->persist($peak);
+            }
+
+            $entityManager->flush();
+            return $this->redirectToRoute('admin_home');
+        }
+
+        return $this->render('admin/race.html.twig', [
+            'race' => $race, 
+            'peaks' => $peaks,
+            'delete_form' => $delete_form->createView(),
+            'peaks_form' => $peaks_form->createView()]);
     }
 
     /**

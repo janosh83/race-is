@@ -4,8 +4,32 @@
 
 {% block main %}
 
+<h1>{{race.title}}</h1>
+<p>{{race.description}}</p>
+
 <div>
-    
-</div>
+    {{ form(delete_form) }}
+</div>    
+
+
+<h2>Vrcholy</h2>
+{% if (peaks) %}
+    <table>
+        <tr><th></th><th>Vrchol</th><th>GPS</th><th>Detail</th><th>Navštíveno</th></tr>
+        {% for peak in peaks %}
+        <tr>
+            <td>{{peak.shortid}}</td>
+            <td>{{peak.title}}</td>
+            <td>{{peak.GPS}}</td>
+            <td>{{peak.description}}</td>
+            <td></td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+
+<div>
+    {{ form(peaks_form) }}
+</div> 
 
 {% endblock %}
