@@ -8,28 +8,43 @@
 <p>{{race.description}}</p>
 
 <div>
-    {{ form(delete_form) }}
+    {{ form(delete_race_form) }}
 </div>    
 
 
 <h2>Vrcholy</h2>
 {% if (peaks) %}
     <table>
-        <tr><th></th><th>Vrchol</th><th>GPS</th><th>Detail</th><th>Navštíveno</th></tr>
+        <tr><th></th><th>Vrchol</th><th>GPS</th>{#<th>Detail</th>#}</tr>
         {% for peak in peaks %}
         <tr>
             <td>{{peak.shortid}}</td>
             <td>{{peak.title}}</td>
             <td>{{peak.GPS}}</td>
-            <td>{{peak.description}}</td>
-            <td></td>
+            {#<td>{{peak.description}}</td>#}
         </tr>
         {% endfor %}
     </table>
 {% endif %}
 
 <div>
-    {{ form(peaks_form) }}
+    {{ form(add_peaks_form) }}
 </div> 
 
+{#<div>
+    {{ form(delete_peaks_form) }}
+</div> #}
+
+<h2>Přihlášené týmy</h2>
+<div>
+    {{ form(add_teams_form) }}
+</div> 
+
+{#<div>
+    {{ form(signin_teams_form) }}
+</div> 
+
+<div>
+    {{ form(signout_teams_form) }}
+</div> #}
 {% endblock %}

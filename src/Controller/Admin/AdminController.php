@@ -5,9 +5,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use App\Entity\Race;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\Form\NewRaceFormType;
+use App\Entity\Race;
 use App\Entity\Team;
+use App\Entity\User;
 use App\Entity\Visit;
 use App\Entity\Peak;
 
@@ -120,7 +122,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/admin/race/{raceid}", name="admin_race")
      */
-    public function race_detail($raceid, Request $request)
+    public function race_detail($raceid, Request $request, UserPasswordEncoderInterface $passwordEncoder)
     {
         $race = $this->getDoctrine()
             ->getRepository(Race::class)
@@ -137,30 +139,43 @@ class AdminController extends AbstractController
             ->findByRace($raceid);
         // NOTE: it shall be fine to pass empty object into template
 
-        $delete_form = $this->createFormBuilder($race)
+        $delete_race_form = $this->createFormBuilder($race)
             ->add('delete', SubmitType::class, ['label'=>'Smazat závod'])
             ->getForm();
 
-        $delete_form->handleRequest($request);
-        if($delete_form->isSubmitted() && $delete_form->isValid())
+        // Delete race
+        $delete_race_form->handleRequest($request);
+        if($delete_race_form->isSubmitted() && $delete_race_form->isValid())
         {
             $entityManager = $this->getDoctrine()->getManager();
+
+            // TODO: delete all visits
+
+            if($peaks){
+                $query = $entityManager->createQuery('DELETE FROM App\Entity\Peak p WHERE p.race = :raceid');
+                $query->setParameter('raceid', $race);
+                $query->execute();
+            }
+
+            // TODO: sign out all teams from race          
+
             $entityManager->remove($race);
             $entityManager->flush();
             return $this->redirectToRoute('admin_home');
         }
 
-        $peaks_form = $this->createFormBuilder()
+        $add_peaks_form = $this->createFormBuilder()
             ->add('peaks_json', TextareaType::class, ['label'=>'Vrcholy'])
-            ->add('submit_peaks', SubmitType::class, ['label'=>'Importovat vrcholy'])
+            ->add('add_peaks', SubmitType::class, ['label'=>'Importovat vrcholy'])
             ->getForm();
 
-        $peaks_form->handleRequest($request);
-        if($peaks_form->isSubmitted() && $peaks_form->isValid())
+        // Import peaks
+        $add_peaks_form->handleRequest($request);
+        if($add_peaks_form->isSubmitted() && $add_peaks_form->isValid())
         {
             $entityManager = $this->getDoctrine()->getManager();
             
-            $peaks_text = $peaks_form->get('peaks_json')->getData();
+            $peaks_text = $add_peaks_form->get('peaks_json')->getData();
             $peaks_json = json_decode($peaks_text, true);
 
             foreach ($peaks_json as $p) {
@@ -178,11 +193,67 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_home');
         }
 
+        $delete_peaks_form = $this->createFormBuilder()
+            ->add('delete_peaks', SubmitType::class, ['label'=>'Vymazat vrcholy'])
+            ->getForm();
+
+        // TODO
+
+        $add_teams_form = $this->createFormBuilder()
+            ->add('teams_json', TextareaType::class, ['label'=>'Týmy'])
+            ->add('submit_teams', SubmitType::class, ['label'=>'Importovat týmy'])
+            ->getForm();
+
+        $add_teams_form->handleRequest($request);
+        if($add_teams_form->isSubmitted() && $add_teams_form->isValid())
+        {
+            $entityManager = $this->getDoctrine()->getManager();
+            
+            $teams_text = $add_teams_form->get('teams_json')->getData();
+            $teams_json = json_decode($teams_text, true);
+
+            foreach ($teams_json as $t) {
+                $user = new User();
+                $user->setName($t["name"]);
+                $user->setEmail($t["email"]);
+                $user->setPassword($passwordEncoder->encodePassword($user, "kitten"));
+                // TODO: generate random password and send email to user
+
+                $team = new Team();
+                $team->setTitle($t["name"]);
+                $team->setLeader($user);
+                $team->addMember($user);
+                $team->addSigned($race);
+
+                $entityManager->persist($user);
+                $entityManager->persist($team);
+            }
+
+            $entityManager->flush();
+            return $this->redirectToRoute('admin_home');
+        }
+
+        $delete_teams_form = $this->createFormBuilder()
+            ->add('delete_teams', SubmitType::class, ['label'=>'Vymazat týmy'])
+            ->getForm();
+
+        $signin_teams_form = $this->createFormBuilder()
+            ->add('signin_teams', SubmitType::class, ['label'=>'Přihlásit týmy'])
+            ->getForm();
+        
+        $signout_teams_form = $this->createFormBuilder()
+            ->add('signout_teams', SubmitType::class, ['label'=>'Odhlásit týmy'])
+            ->getForm();
+
         return $this->render('admin/race.html.twig', [
             'race' => $race, 
             'peaks' => $peaks,
-            'delete_form' => $delete_form->createView(),
-            'peaks_form' => $peaks_form->createView()]);
+            'delete_race_form' => $delete_race_form->createView(),
+            'add_peaks_form' => $add_peaks_form->createView(),
+            'delete_peaks_form' => $delete_peaks_form->createView(),
+            'add_teams_form' => $add_teams_form->createView(),
+            'signin_teams_form' => $signin_teams_form->createView(),
+            'signout_teams_form' => $signout_teams_form->createView()]);
     }
 
     /**
