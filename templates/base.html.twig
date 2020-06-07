@@ -5,6 +5,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>{% block title %}{% endblock %}</title>
 
+        <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon-32x32.png')}}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon-16x16.png')}}">
+
         <!-- CSS only -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
@@ -45,7 +49,10 @@
                     <div class="row flex-nowrap justify-content-between align-items-center">
                         
                         <div class="col-lg-9 text-center">
-                            <a class="blog-header-logo text-dark" href="{{ path('app_home') }}">Závody Picnic Adventures</a>
+                            <a class="blog-header-logo text-dark" href="{{ path('app_home') }}">
+                                <img src="{{ asset('logo.png') }}" width="48 px" height="48 px">
+                                Závody Picnic Adventures
+                            </a>
                         </div>
                         {% if is_granted('ROLE_ADMIN') %}
                         <div class="col text-right">
