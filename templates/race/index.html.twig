@@ -6,9 +6,9 @@
 {% block main %}
 
     <ul>
-    {% for race in races_leader %}
+    {#{% for race in races_leader %}
         <li><a href="{{ path('race_show', {id:race.id}) }}">{{race.title}}</a></li>
-    {% endfor %}
+    {% endfor %}#}
     {% for race in races_member %}
         <li><a href="{{ path('race_show', {id:race.id}) }}">{{race.title}}</a></li>
     {% endfor %}

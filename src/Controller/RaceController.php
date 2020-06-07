@@ -60,9 +60,9 @@ class RaceController extends AbstractController
 
         $user = $this->security->getUser();
 
-        $teamWhereLeader = $this->getDoctrine()
+        /*$teamWhereLeader = $this->getDoctrine()
             ->getRepository(Team::class)
-            ->findLeaderByUserAndRace($user->getId(), $race);
+            ->findLeaderByUserAndRace($user->getId(), $race);*/
 
         $teamWhereMember = $this->getDoctrine()
             ->getRepository(Team::class)
@@ -72,13 +72,13 @@ class RaceController extends AbstractController
 
         // setore user info related to selected race into session
         $session->set("race_id",$id);
-        if ($teamWhereLeader != NULL){
+        /*if ($teamWhereLeader != NULL){
             $teamid = $teamWhereLeader['id'];
             $session->set("is_leader", true);
             $session->set("is_member", false);
             $session->set("team_id",$teamWhereLeader['id']);
             $teamid = $teamWhereLeader['id'];
-        }
+        }*/
         if ($teamWhereMember != NULL){
             $teamid = $teamWhereMember['id'];
             $session->set("is_leader", false);
@@ -102,7 +102,7 @@ class RaceController extends AbstractController
             ->findNotVisitedByTeam($race);
 
         return $this->render('race/show.html.twig', ['race' => $race, 
-                                                     'teamWhereLeader'=>$teamWhereLeader, 
+                                                     /*'teamWhereLeader'=>$teamWhereLeader, */
                                                      'teamWhereMember'=>$teamWhereMember, 
                                                      'visitedPeaks' => $visited_peaks,
                                                      'notVisitedPeaks' => $not_visited_peaks]);
