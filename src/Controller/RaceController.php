@@ -26,21 +26,13 @@ class RaceController extends AbstractController
      */
     public function index()
     {
-        // FIXME: display only races on which currently logged user is signed
-        //$races = $this->getDoctrine()
-        //    ->getRepository(Race::class)
-        //    ->findAll();
-        
         $user = $this->security->getUser();
-        $raceshereLeader = $this->getDoctrine()
-            ->getRepository(Race::class)
-            ->findAllWhereLeader($user->getId());
-        $raceshereMember = $this->getDoctrine()
+        $raceswhereMember = $this->getDoctrine()
             ->getRepository(Race::class)
             ->findAllWhereMember($user->getId());
 
-        return $this->render('race/index.html.twig', ['races_leader' => $raceshereLeader,
-                                                      'races_member' => $raceshereMember]);
+        return $this->render('race/index.html.twig', [/*'races_leader' => $raceshereLeader,*/
+                                                      'races_member' => $raceswhereMember]);
     }
 
      /**
@@ -84,6 +76,7 @@ class RaceController extends AbstractController
             $session->set("is_leader", false);
             $session->set("is_member", true);
             $session->set("team_id",$teamWhereMember['id']);
+            $session->set("team_title", $teamWhereMember["title"]);
             $teamid = $teamWhereMember['id'];
         }
 
