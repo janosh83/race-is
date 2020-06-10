@@ -28,6 +28,12 @@
     <a href="{{ path('peak_map', {raceid:race.id}) }}">Mapa všech vrcholů</a>
 </p>
 
+{% for message in app.flashes('notice') %}
+    <div class="alert alert-primary">
+        {{ message }}
+    </div>
+{% endfor %}
+
 <h3>Navštívené</h3>
 <ul>
     {% for vp in visitedPeaks %}

@@ -98,15 +98,16 @@ class PeakController extends AbstractController
             if ($not_visited)
             {
                 $manager->persist($visit);
+                $this->addFlash('notice', 'Vrchol zalogován');
             }
             else
             {
+                $this->addFlash('notice', 'Vrchol odlogován');
                 $manager->remove($visit);
             }
             
             $manager->flush();
 
-            // TODO some better redirect, which will show message Your visit has been successfully logged
             return $this->redirectToRoute('race_show',array('id' => $raceid));
         }
         
