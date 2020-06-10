@@ -22,12 +22,8 @@
 
 {% block main %}
 <div>
-    <p>{{race.title}}</p>
-</div>
-<div>
-    <h1>{#{{peak.shortid}}: #}{{peak.title}}</h1>
-    <p><strong>Latitude: </strong> {{peak.latitude}}</p>
-    <p><strong>Longitude: </strong> {{peak.longitude}}</p>
+    <h1>{#{{peak.shortid}}: #}{{race.title}} - {{peak.title}}</h1>
+    <p><strong>GPS: </strong> {{peak.GPS}}</p>
     <div>{{peak.description}}</div>
 </div>
 
@@ -54,6 +50,6 @@
 </script>
 
 
-<a href="{{ path('race_show', {id:race.id}) }}">Zpět na závod</a>
+<a href="{{ path('race_show', {id:race.id}) }}">Zpět</a>
 
 {% endblock %}
