@@ -3,9 +3,13 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class SecurityController extends AbstractController
 {
@@ -32,5 +36,51 @@ class SecurityController extends AbstractController
     public function logout()
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+    }
+
+    /**
+     * @Route("/change_password", name="app_change_password")
+     */
+    public function change_password(Request $request, UserPasswordEncoderInterface $passwordEncoder)
+    {
+
+        $form = $this->createFormBuilder()
+            ->add('old_password', PasswordType::class, ['label'=>'Staré heslo'])
+            ->add('new_password', PasswordType::class, ['label'=>'Nové heslo'])
+            ->add('confirm_password', PasswordType::class, ['label'=>'Nové heslo znovu'])
+            ->add('change_password', SubmitType::class, ['label'=>'Změnit heslo'])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $old_pwd = $form->get('old_password')->getData(); 
+            $new_pwd = $form->get('new_password')->getData(); 
+            $new_pwd_confirm = $form->get('confirm_password')->getData();
+            
+            $user = $this->getUser();
+            if($passwordEncoder->isPasswordValid($user, $old_pwd))
+            {
+                if($new_pwd == $new_pwd_confirm){
+                    $user->setPassword(
+                        $passwordEncoder->encodePassword(
+                            $user,
+                            $form->get('new_password')->getData()
+                        )
+                    );
+                    $entityManager = $this->getDoctrine()->getManager();
+                    $entityManager->persist($user);
+                    $entityManager->flush();
+                    $this->addFlash('success','Heslo změněno.');
+
+                    return $this->redirectToRoute('app_home');
+                }
+            }
+            else {
+                $this->addFlash('danger','Neplatné heslo');
+            }
+        }
+
+        return $this->render('security/change_password.html.twig', ['form' => $form->createView()]);
     }
 }

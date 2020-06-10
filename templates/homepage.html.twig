@@ -4,6 +4,11 @@
 {% block title %}Hlavní stránka{% endblock %}
 
 {% block main %}
+    {% for message in app.flashes('success') %}
+    <div class="alert alert-primary">
+        {{ message }}
+    </div>
+    {% endfor %}
 
     {% if app.user %}
         <p><a href="{{ path('all_races')}}">Seznam závodů</a></p>
