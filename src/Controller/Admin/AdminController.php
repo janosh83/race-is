@@ -6,6 +6,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mime\Address;
 use App\Form\NewRaceFormType;
 use App\Entity\Race;
 use App\Entity\Team;
@@ -119,10 +122,108 @@ class AdminController extends AbstractController
         return $this->render('admin/peak.html.twig', ['peak' => $peak]);
     }
 
+    private function delete_all_peaks_by_race($race, $entityManager)
+    {
+        $query = $entityManager->createQuery('DELETE FROM App\Entity\Peak p WHERE p.race = :raceid');
+        $query->setParameter('raceid', $race);
+        $query->execute();
+    }
+
+    private function add_peaks_from_json_text($peaks_text)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $peaks_json = json_decode($peaks_text, true);
+
+        foreach ($peaks_json as $p) {
+            $peak = new Peak();
+            $peak->setShortId($p['short_id']);
+            $peak->setTitle($p["title"]);
+            $peak->setDescription($p['description']);
+            $peak->setLatitude($p['latitude']);
+            $peak->setLongitude($p['longitude']);
+            $peak->setRace($race);
+            $entityManager->persist($peak);
+        }
+
+        $entityManager->flush();
+    }
+
+    /**
+     * Generate a random string, using a cryptographically secure 
+     * pseudorandom number generator (random_int)
+     *
+     * This function uses type hints now (PHP 7+ only), but it was originally
+     * written for PHP 5 as well.
+     * 
+     * For PHP 7, random_int is a PHP core function
+     * For PHP 5.x, depends on https://github.com/paragonie/random_compat
+     * 
+     * @param int $length      How many characters do we want?
+     * @param string $keyspace A string of all possible characters
+     *                         to select from
+     * @return string
+     */
+    private function random_str(
+        int $length = 64,
+        string $keyspace = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    ): string {
+        if ($length < 1) {
+            throw new \RangeException("Length must be a positive integer");
+        }
+        $pieces = [];
+        $max = mb_strlen($keyspace, '8bit') - 1;
+        for ($i = 0; $i < $length; ++$i) {
+            $pieces []= $keyspace[random_int(0, $max)];
+        }
+        return implode('', $pieces);
+    }
+
+    private function add_teams_from_json_text($teams_text, $race, MailerInterface $mailer, UserPasswordEncoderInterface $passwordEncoder)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+            
+        $teams_json = json_decode($teams_text, true);
+
+        foreach ($teams_json as $t) {
+            $user = new User();
+            $user->setName($t["name"]);
+            $user->setEmail($t["email"]);
+            $user->setRoles(['ROLE_USER']);
+            $password = $this->random_str(10);
+            $user->setPassword($passwordEncoder->encodePassword($user, $password));
+            // TODO: generate random password and send email to user
+
+            $team = new Team();
+            $team->setTitle($t["name"]);
+            $team->setLeader($user);
+            $team->addMember($user);
+            $team->addSigned($race);
+
+            $entityManager->persist($user);
+            $entityManager->persist($team);
+
+            $email = (new TemplatedEmail())
+            ->from(new Address('mailer@picnicadventures.com', 'Picnic Adventures Mailbot'))
+            ->to($t["email"])
+            ->subject('['.$race->getTitle().']: Registrace nového uživatele')
+            ->htmlTemplate('admin/new_user_email.html.twig')
+            ->context([
+                'name' => $t["name"],
+                'race' => $race->getTitle(),
+                'password' => $password,
+            ])
+        ;
+
+        $mailer->send($email);
+        }
+
+        $entityManager->flush();
+    }
+
     /**
      * @Route("/admin/race/{raceid}", name="admin_race")
      */
-    public function race_detail($raceid, Request $request, UserPasswordEncoderInterface $passwordEncoder)
+    public function race_detail($raceid, Request $request, MailerInterface $mailer, UserPasswordEncoderInterface $passwordEncoder)
     {
         $race = $this->getDoctrine()
             ->getRepository(Race::class)
@@ -152,9 +253,7 @@ class AdminController extends AbstractController
             // TODO: delete all visits
 
             if($peaks){
-                $query = $entityManager->createQuery('DELETE FROM App\Entity\Peak p WHERE p.race = :raceid');
-                $query->setParameter('raceid', $race);
-                $query->execute();
+                $this->delete_all_peaks_by_race($race, $entityManager);
             }
 
             // TODO: sign out all teams from race          
@@ -173,23 +272,8 @@ class AdminController extends AbstractController
         $add_peaks_form->handleRequest($request);
         if($add_peaks_form->isSubmitted() && $add_peaks_form->isValid())
         {
-            $entityManager = $this->getDoctrine()->getManager();
-            
-            $peaks_text = $add_peaks_form->get('peaks_json')->getData();
-            $peaks_json = json_decode($peaks_text, true);
+            add_peaks_from_json_text($add_peaks_form->get('peaks_json')->getData());
 
-            foreach ($peaks_json as $p) {
-                $peak = new Peak();
-                $peak->setShortId($p['short_id']);
-                $peak->setTitle($p["title"]);
-                $peak->setDescription($p['description']);
-                $peak->setLatitude($p['latitude']);
-                $peak->setLongitude($p['longitude']);
-                $peak->setRace($race);
-                $entityManager->persist($peak);
-            }
-
-            $entityManager->flush();
             return $this->redirectToRoute('admin_home');
         }
 
@@ -197,7 +281,7 @@ class AdminController extends AbstractController
             ->add('delete_peaks', SubmitType::class, ['label'=>'Vymazat vrcholy'])
             ->getForm();
 
-        // TODO
+        // TODO peaks deletion
 
         $add_teams_form = $this->createFormBuilder()
             ->add('teams_json', TextareaType::class, ['label'=>'Týmy'])
@@ -207,29 +291,8 @@ class AdminController extends AbstractController
         $add_teams_form->handleRequest($request);
         if($add_teams_form->isSubmitted() && $add_teams_form->isValid())
         {
-            $entityManager = $this->getDoctrine()->getManager();
+            $this->add_teams_from_json_text($add_teams_form->get('teams_json')->getData(), $race, $mailer, $passwordEncoder);
             
-            $teams_text = $add_teams_form->get('teams_json')->getData();
-            $teams_json = json_decode($teams_text, true);
-
-            foreach ($teams_json as $t) {
-                $user = new User();
-                $user->setName($t["name"]);
-                $user->setEmail($t["email"]);
-                $user->setPassword($passwordEncoder->encodePassword($user, "kitten"));
-                // TODO: generate random password and send email to user
-
-                $team = new Team();
-                $team->setTitle($t["name"]);
-                $team->setLeader($user);
-                $team->addMember($user);
-                $team->addSigned($race);
-
-                $entityManager->persist($user);
-                $entityManager->persist($team);
-            }
-
-            $entityManager->flush();
             return $this->redirectToRoute('admin_home');
         }
 

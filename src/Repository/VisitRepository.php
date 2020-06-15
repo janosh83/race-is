@@ -43,6 +43,16 @@ class VisitRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
+    public function findByRace($raceid)
+    {
+        return $this->createQueryBuilder('v')
+            ->andWhere('v.race = :raceid')
+            ->setParameter('raceid', $raceid)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     // /**
     //  * @return Visit[] Returns an array of Visit objects
     //  */
