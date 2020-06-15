@@ -6,6 +6,14 @@
 
 <p>Vítejte v administraci</p>
 
+{% for label, messages in app.flashes(['danger', 'success', 'primary']) %}
+    {% for message in messages %}
+        <div class="alert alert-{{ label }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
 <h2>Závody</h2>
 <ul>
 {% for race in races %}
@@ -15,6 +23,8 @@
 <div><a href="{{ path('admin_race_new') }}">Založit další závod</a></div>
 
 <h2>Výsledky</h2>
+<p>Výsledky jednotlivách závodů. Aktuálně je jeden bod za jeden navštívený vrchol. Všechny vrcholy mají stejnooou váhu.</p>
+<p>Počítání výsledků má limitaci: nejsou zobrazený týmy které navštívily nula vrcholů a přesto jsou přihlášeny do závodu.</p>
 <ul>
 {% for race in races %}
     <li><a href="{{ path('admin_race_results', {raceid:race.id}) }}">{{race.title}}</a></li>
@@ -22,6 +32,7 @@
 </ul>
 
 <h2>Tabulka vrcholů</h2>
+<p>Zobrazí tabulku všech vrcholů, vhodnou pro tisk, kdyby náhodou aplikace zklamala.</p>
 <ul>
 {% for race in races %}
     <li><a href="{{ path('admin_peak_table', {raceid:race.id}) }}">{{race.title}}</a></li>
