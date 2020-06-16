@@ -138,15 +138,31 @@ class PeakController extends AbstractController
             ->getRepository(Team::class)
             ->findMemberByUserAndRace($user->getId(), $race);
 
-        if(!$team){
+        // FIXME: code below is duplicate of RaceController class
+        $teamWhereMember = $this->getDoctrine()
+            ->getRepository(Team::class)
+            ->findMemberByUserAndRace($user->getId(), $race);
+
+        $teamid = -1;
+        if ($teamWhereMember != NULL){
+            $teamid = $teamWhereMember['id'];
+        }
+
+        if($teamid == -1){
             throw $this->createAccessDeniedException('Not enough permission to see '.$raceid. 'probably not signed to the race.');
         }
 
-        $peaks = $this->getDoctrine()
+        $visited_peaks = $this->getDoctrine()
             ->getRepository(Peak::class)
-            ->findByRace($raceid);
+            ->findVisitedByTeamAndRace($teamid, $race);
 
-        return $this->render('peak/map.html.twig', ['peaks' => $peaks]);
+        $not_visited_peaks = $this->getDoctrine()
+            ->getRepository(Peak::class)
+            ->findNotVisitedByTeam($race);
+
+        return $this->render('peak/map.html.twig', ['race_title' => $race->getTitle(),
+                                                    'visited_peaks' => $visited_peaks, 
+                                                    'nonvisited_peaks' => $not_visited_peaks]);
 
     }
 }

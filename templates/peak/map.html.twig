@@ -2,7 +2,7 @@
 <html>
 <head>
 	
-	<title>Quick Start - Leaflet</title>
+	<title>{{race_title}} - mapa vrcholů</title>
 
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -61,10 +61,31 @@
 <script>
 
     var peaks = [
-        {% for peak in peaks %}
-        ["{{ peak.title }}", {{ peak.latitude}}, {{ peak.longitude }}],
+        {% for peak in visited_peaks %}
+        [ "<a href=\"{{ path('peak_show', {id:peak.id}) }}\">{{ peak.title }}</a>", {{ peak.latitude}}, {{ peak.longitude }}, true],
+        {% endfor %}
+        {% for peak in nonvisited_peaks %}
+        ["<a href=\"{{ path('peak_show', {id:peak.id}) }}\">{{ peak.title }}</a>", {{ peak.latitude}}, {{ peak.longitude }}, false],
         {% endfor %}
     ];
+
+    var greenIcon = new L.Icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
+
+    var blueIcon = new L.Icon({
+        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+    });
 
 	var map = L.map('map').setView([49.34872, 16.42438], 10);
 
@@ -83,8 +104,16 @@
         }
     }));
 
+    var selectedIcon;
     for (var i = 0; i < peaks.length; i++) {
-        marker = new L.marker([peaks[i][1], peaks[i][2]])
+        if (peaks[i][3]){
+            selectedIcon = greenIcon;
+        }
+        else {
+            selectedIcon = blueIcon;
+        }
+            
+        marker = new L.marker([peaks[i][1], peaks[i][2]], {icon: selectedIcon})
             .bindPopup(peaks[i][0])
             .addTo(map);
     }
