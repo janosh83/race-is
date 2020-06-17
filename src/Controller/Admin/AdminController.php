@@ -129,7 +129,7 @@ class AdminController extends AbstractController
         $query->execute();
     }
 
-    private function add_peaks_from_json_text($peaks_text)
+    private function add_peaks_from_json_text($peaks_text, $race)
     {
         $entityManager = $this->getDoctrine()->getManager();
         $peaks_json = json_decode($peaks_text, true);
@@ -272,7 +272,7 @@ class AdminController extends AbstractController
         $add_peaks_form->handleRequest($request);
         if($add_peaks_form->isSubmitted() && $add_peaks_form->isValid())
         {
-            add_peaks_from_json_text($add_peaks_form->get('peaks_json')->getData());
+            $this->add_peaks_from_json_text($add_peaks_form->get('peaks_json')->getData(), $race);
 
             return $this->redirectToRoute('admin_home');
         }
