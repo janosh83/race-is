@@ -158,7 +158,7 @@ class PeakController extends AbstractController
 
         $not_visited_peaks = $this->getDoctrine()
             ->getRepository(Peak::class)
-            ->findNotVisitedByTeam($race);
+            ->findNotVisitedByTeam($teamid, $race);
 
         return $this->render('peak/map.html.twig', ['race_title' => $race->getTitle(),
                                                     'visited_peaks' => $visited_peaks, 

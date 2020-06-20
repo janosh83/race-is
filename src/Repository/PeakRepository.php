@@ -46,12 +46,13 @@ class PeakRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
-    public function findNotVisitedByTeam($raceid)
+    public function findNotVisitedByTeam($teamid, $raceid)
     {
         $entityManager = $this->getEntityManager();
 
         $query = $entityManager
-            ->createQuery('SELECT p.id, p.title, p.latitude, p.longitude FROM App\Entity\Peak p LEFT JOIN p.visits pv WHERE pv IS NULL AND p.race = :raceid');
+            ->createQuery('SELECT p.id, p.title, p.latitude, p.longitude FROM App\Entity\Peak p LEFT JOIN p.visits pv WHERE (pv IS NULL OR pv.team != :teamid) AND p.race = :raceid');
+        $query->setParameter('teamid', $teamid);
         $query->setParameter('raceid', $raceid);      
 
         return $query->getResult();

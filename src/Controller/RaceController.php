@@ -92,7 +92,7 @@ class RaceController extends AbstractController
 
         $not_visited_peaks = $this->getDoctrine()
             ->getRepository(Peak::class)
-            ->findNotVisitedByTeam($race);
+            ->findNotVisitedByTeam($teamid, $race);
 
         return $this->render('race/show.html.twig', ['race' => $race, 
                                                      /*'teamWhereLeader'=>$teamWhereLeader, */
