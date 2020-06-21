@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nový závod{% endblock %}
+
+{% block main %}
+    <h1>Vytvořit závod</h1>
+
+    {{ form_start(form) }}
+        {{ form_row(form.title) }}
+        {{ form_row(form.description) }}
+
+        <button class="btn-primary btn">Vytvořit</button>
+    {{ form_end(form) }}
+{% endblock %}

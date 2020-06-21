@@ -5,14 +5,11 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TeamRepository")
- * @UniqueEntity(fields={"username"}, message="There is already an account with this username")
  */
-class Team implements UserInterface
+class Team
 {
     /**
      * @ORM\Id()
@@ -22,107 +19,41 @@ class Team implements UserInterface
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=180, unique=true)
-     */
-    private $username;
-
-    /**
-     * @ORM\Column(type="json")
-     */
-    private $roles = [];
-
-    /**
-     * @var string The hashed password
-     * @ORM\Column(type="string")
-     */
-    private $password;
-
-    /**
      * @ORM\Column(type="string", length=63)
      */
     private $title;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Peak", inversedBy="teams_visits")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="leader")
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $visited_peaks;
+    private $leader;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="member")
+     */
+    private $member;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Race", inversedBy="signed")
+     */
+    private $signed;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Visit", mappedBy="team", orphanRemoval=true)
+     */
+    private $visited;
 
     public function __construct()
     {
-        $this->visited_peaks = new ArrayCollection();
+        $this->member = new ArrayCollection();
+        $this->signed = new ArrayCollection();
+        $this->visited = new ArrayCollection();
     }
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    /**
-     * A visual identifier that represents this user.
-     *
-     * @see UserInterface
-     */
-    public function getUsername(): string
-    {
-        return (string) $this->username;
-    }
-
-    public function setUsername(string $username): self
-    {
-        $this->username = $username;
-
-        return $this;
-    }
-
-    /**
-     * @see UserInterface
-     */
-    public function getRoles(): array
-    {
-        $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
-
-        return array_unique($roles);
-    }
-
-    public function setRoles(array $roles): self
-    {
-        $this->roles = $roles;
-
-        return $this;
-    }
-
-    /**
-     * @see UserInterface
-     */
-    public function getPassword(): string
-    {
-        return (string) $this->password;
-    }
-
-    public function setPassword(string $password): self
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
-    /**
-     * @see UserInterface
-     */
-    public function getSalt()
-    {
-        // not needed when using the "bcrypt" algorithm in security.yaml
-    }
-
-    /**
-     * @see UserInterface
-     */
-    public function eraseCredentials()
-    {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
     }
 
     public function getTitle(): ?string
@@ -137,27 +68,96 @@ class Team implements UserInterface
         return $this;
     }
 
-    /**
-     * @return Collection|Peak[]
-     */
-    public function getVisitedPeaks(): Collection
+    public function getLeader(): ?User
     {
-        return $this->visited_peaks;
+        return $this->leader;
     }
 
-    public function addVisitedPeak(Peak $visitedPeak): self
+    public function setLeader(?User $leader): self
     {
-        if (!$this->visited_peaks->contains($visitedPeak)) {
-            $this->visited_peaks[] = $visitedPeak;
+        $this->leader = $leader;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getMember(): Collection
+    {
+        return $this->member;
+    }
+
+    public function addMember(User $member): self
+    {
+        if (!$this->member->contains($member)) {
+            $this->member[] = $member;
         }
 
         return $this;
     }
 
-    public function removeVisitedPeak(Peak $visitedPeak): self
+    public function removeMember(User $member): self
     {
-        if ($this->visited_peaks->contains($visitedPeak)) {
-            $this->visited_peaks->removeElement($visitedPeak);
+        if ($this->member->contains($member)) {
+            $this->member->removeElement($member);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Race[]
+     */
+    public function getSigned(): Collection
+    {
+        return $this->signed;
+    }
+
+    public function addSigned(Race $signed): self
+    {
+        if (!$this->signed->contains($signed)) {
+            $this->signed[] = $signed;
+        }
+
+        return $this;
+    }
+
+    public function removeSigned(Race $signed): self
+    {
+        if ($this->signed->contains($signed)) {
+            $this->signed->removeElement($signed);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Visit[]
+     */
+    public function getVisited(): Collection
+    {
+        return $this->visited;
+    }
+
+    public function addVisited(Visit $visited): self
+    {
+        if (!$this->visited->contains($visited)) {
+            $this->visited[] = $visited;
+            $visited->setTeam($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVisited(Visit $visited): self
+    {
+        if ($this->visited->contains($visited)) {
+            $this->visited->removeElement($visited);
+            // set the owning side to null (unless already changed)
+            if ($visited->getTeam() === $this) {
+                $visited->setTeam(null);
+            }
         }
 
         return $this;

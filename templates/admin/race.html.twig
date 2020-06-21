@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{race.title}} - administrace{% endblock %}
+
+{% block main %}
+
+<h1>{{race.title}}</h1>
+<p>{{race.description}}</p>
+
+<div>
+    {{ form(delete_race_form) }}
+</div>
+<p>Mazání závodu je úspěšné jenom pokud nemá žádně přihlášené týmy a zalogovné návštěvy 
+vrcholů.</p> 
+<p>Mazání závodu smaže všechny vrcholy přiřazené k závodu.</p>
+
+
+<h2>Vrcholy</h2>
+{% if (peaks) %}
+    <table class="table">
+        <tr><th scope="col"></th><th scope="col">Vrchol</th><th scope="col">GPS</th>{#<th>Detail</th>#}</tr>
+        {% for peak in peaks %}
+        <tr>
+            <th scope="row">{{peak.shortid}}</th>
+            <td>{{peak.title}}</td>
+            <td>{{peak.GPS}}</td>
+            {#<td>{{peak.description}}</td>#}
+        </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+
+<div>
+    {{ form(add_peaks_form) }}
+</div> 
+
+<p>Přidá vrcholy k závodu. Vrcholy jsou předpokládané v json formátu:</p>
+<pre><code>[{
+    "short_id": "", 
+    "title": "1_Zámek Vranov nad Dyjí", 
+    "description": "", 
+    "latitude":	48.89254, 
+    "longitude":15.81085
+},
+...
+{"
+    short_id": "", 
+    "title": "n_Hardeggská vyhlídka", 
+    "description": "", 
+    "latitude":	48.85741, 
+    "longitude":15.861
+}]</code></pre>
+
+{#<div>
+    {{ form(delete_peaks_form) }}
+</div> #}
+
+<h2>Přihlášené týmy</h2>
+<div>
+    {{ form(add_teams_form) }}
+</div> 
+
+<p>Přidá uživatele (pokud již užvatel existuje, dojde k chybě), vytvoří jednočlený 
+tým pro přidaného uživatele se jménem uživatele a tým přihlásí k závodu (existence 
+týmu se nekontroluje a pokud tým již existuje dojde k chybě). Heslo uživatele je 
+generováno automaticky a je odesláno uživately v úvodním emailu. </p>
+
+<p>Mazání je potřeba provádět přímo v databázi a to, tak že se nejprve smaže účast 
+týmu v závodě, pak tým a pak až uživatel.</p>
+
+<p>Předpokládá se následující json pro přidání týmu</p>
+<pre><code>[{
+    "email": "zdenek.jancik@skaut.cz", 
+    "name": "Jánošík"
+}]</code><pre>
+
+{#<div>
+    {{ form(signin_teams_form) }}
+</div> 
+
+<div>
+    {{ form(signout_teams_form) }}
+</div> #}
+{% endblock %}

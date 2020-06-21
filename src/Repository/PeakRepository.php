@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Peak;
+use App\Entity\Visit;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -22,19 +23,45 @@ class PeakRepository extends ServiceEntityRepository
     // /**
     //  * @return Peak[] Returns an array of Peak objects
     //  */
-    /*
-    public function findByExampleField($value)
+    
+    public function findByRace($race)
     {
         return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
+            ->andWhere('p.race = :race')
+            ->setParameter('race', $race)
             ->getQuery()
             ->getResult()
         ;
     }
-    */
+
+    public function findVisitedByTeamAndRace($teamid, $raceid)
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager
+            ->createQuery('SELECT p.id, p.title, p.latitude, p.longitude FROM App\Entity\Peak p LEFT JOIN p.visits pv WHERE pv.team = :teamid AND pv.race = :raceid');
+        $query->setParameter('teamid', $teamid);
+        $query->setParameter('raceid', $raceid);
+
+        return $query->getResult();
+    }
+
+    public function findNotVisitedByTeam($teamid, $raceid)
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager
+            ->createQuery('SELECT p.id, p.title, p.latitude, p.longitude FROM App\Entity\Peak p WHERE 
+                            p.id NOT IN (SELECT pp.id FROM App\Entity\Peak pp LEFT JOIN pp.visits ppv WHERE 
+                                            ppv.team = :teamid AND ppv.race = :raceid ) AND
+                            p.race = :raceid');
+        $query->setParameter('teamid', $teamid);
+        $query->setParameter('raceid', $raceid);      
+
+        return $query->getResult();
+
+    }
+    
 
     /*
     public function findOneBySomeField($value): ?Peak

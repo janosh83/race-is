@@ -27,12 +27,13 @@
         "symfony/twig-pack": "*",
         "symfony/validator": "5.0.*",
         "symfony/web-link": "5.0.*",
-        "symfony/yaml": "5.0.*"
+        "symfony/yaml": "5.0.*",
+        "symfonycasts/reset-password-bundle": "^1.1"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.3",
         "symfony/debug-pack": "*",
-        "symfony/maker-bundle": "^1.14",
+        "symfony/maker-bundle": "^1.19",
         "symfony/profiler-pack": "*",
         "symfony/test-pack": "*"
     },

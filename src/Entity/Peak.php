@@ -44,13 +44,18 @@ class Peak
     private $longitude;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Team", mappedBy="visited_peaks")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Race", inversedBy="peaks")
      */
-    private $teams_visits;
+    private $race;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Visit", mappedBy="peak", orphanRemoval=true)
+     */
+    private $visits;
 
     public function __construct()
     {
-        $this->teams_visits = new ArrayCollection();
+        $this->visits = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -118,31 +123,68 @@ class Peak
         return $this;
     }
 
+    public function getRace(): ?Race
+    {
+        return $this->race;
+    }
+
+    public function setRace(?Race $race): self
+    {
+        $this->race = $race;
+
+        return $this;
+    }
+
     /**
-     * @return Collection|Team[]
+     * @return Collection|Visit[]
      */
-    public function getTeamsVisits(): Collection
+    public function getVisits(): Collection
     {
-        return $this->teams_visits;
+        return $this->visits;
     }
 
-    public function addTeamsVisit(Team $teamsVisit): self
+    public function addVisit(Visit $visit): self
     {
-        if (!$this->teams_visits->contains($teamsVisit)) {
-            $this->teams_visits[] = $teamsVisit;
-            $teamsVisit->addVisitedPeak($this);
+        if (!$this->visits->contains($visit)) {
+            $this->visits[] = $visit;
+            $visit->setPeak($this);
         }
 
         return $this;
     }
 
-    public function removeTeamsVisit(Team $teamsVisit): self
+    public function removeVisit(Visit $visit): self
     {
-        if ($this->teams_visits->contains($teamsVisit)) {
-            $this->teams_visits->removeElement($teamsVisit);
-            $teamsVisit->removeVisitedPeak($this);
+        if ($this->visits->contains($visit)) {
+            $this->visits->removeElement($visit);
+            // set the owning side to null (unless already changed)
+            if ($visit->getPeak() === $this) {
+                $visit->setPeak(null);
+            }
         }
 
         return $this;
     }
+
+    public function getGPS(): string
+    {
+        if ($this->latitude > 0.0){
+            $tmp = $this->latitude."N";
+        }
+        else{
+            $tmp = $this->latitude."S";
+        }
+
+        $tmp = $tmp."; ";
+
+        if ($this->longitude > 0.0){
+            $tmp = $tmp.$this->longitude."E";
+        }
+        else{
+            $tmp = $tmp.$this->longitude."W";
+        }
+
+        return $tmp;
+    }
+
 }
