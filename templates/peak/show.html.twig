@@ -27,8 +27,12 @@
     <div>{{peak.description}}</div>
 </div>
 
+{% if image %}
+    <img src="{{ asset('uploads/images/' ~ image) }}" width="600px">
+{% endif %}
+
 <div>
-    {{ form(form) }}
+    {{ form(visit_form) }}
 </div>
 
 <h2>Mapa</h2>

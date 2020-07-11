@@ -44,6 +44,11 @@ class Visit
      */
     private $race;
 
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $imageFilename;
+
     public function __construct()
     {
         $this->time = new \DateTime();
@@ -110,6 +115,18 @@ class Visit
     public function setRace(?Race $race): self
     {
         $this->race = $race;
+
+        return $this;
+    }
+
+    public function getImageFilename()
+    {
+        return $this->imageFilename;
+    }
+
+    public function setImageFilename($imageFilename)
+    {
+        $this->imageFilename = $imageFilename;
 
         return $this;
     }

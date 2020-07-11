@@ -9,10 +9,12 @@ use App\Entity\Team;
 use App\Entity\Race;
 use App\Entity\Visit;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class PeakController extends AbstractController
 {
@@ -28,7 +30,7 @@ class PeakController extends AbstractController
     /**
      * @Route("/peak/{id}",methods="GET|POST", name="peak_show")
      */
-    public function show($id, SessionInterface $session, Request $request)
+    public function show($id, SessionInterface $session, Request $request,  SluggerInterface $slugger)
     {
         $peak = $this->getDoctrine()
             ->getRepository(Peak::class)
@@ -69,8 +71,8 @@ class PeakController extends AbstractController
 
         if ($visit)
         {
-            $form_label = 'Zrušit návštěvu vrcholu';
-            $not_visited = false;
+            $form_label = 'Upravit návštěvu vrcholu';
+            $is_visited = true;
         }
         else
         {
@@ -79,42 +81,74 @@ class PeakController extends AbstractController
             $visit->setTeam($team);
             $visit->setRace($race);
             $form_label = 'Potvrdit návštěvu vrcholu';
-            $not_visited = true;
+            $is_visited = false;
         }
 
-        $form = $this->createFormBuilder($visit)
-            //->add('note', TextareaType::class, ['required' => false])
-            ->add('save', SubmitType::class, ['label' => $form_label])
-            ->getForm();
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted())
+        $builder = $this->createFormBuilder($visit)
+            ->add('note', TextareaType::class, ['required' => false])
+            ->add('image', FileType::class, ['label' => 'Obrázek' ,'mapped' => false, 'required' => false])
+            ->add('save', SubmitType::class, ['label' => $form_label]);
+        
+        if ($is_visited)
         {
-            $visit = $form->getData();
+            $builder->add('delete', SubmitType::class, ['label' => 'Zrušit návštěvu vrcholu', 'attr' => [ 'class' => 'btn-danger']]);
+        }
+        
+        $visit_form = $builder->getForm();
 
+        $visit_form->handleRequest($request);
+
+        if ($visit_form->isSubmitted())
+        {
+            $visit = $visit_form->getData();
             $manager = $this->getDoctrine()->getManager();
-            
-            if ($not_visited)
+
+            if ($visit_form->get('save')->isClicked())
             {
+
+                /** @var UploadedFile $imageFile */
+                $imageFile = $visit_form->get('image')->getData();
+
+                // this condition is needed because the 'brochure' field is not required
+                // so the PDF file must be processed only when a file is uploaded
+                if ($imageFile) {
+                    $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
+                    // this is needed to safely include the file name as part of the URL
+                    $safeFilename = $slugger->slug($originalFilename);
+                    $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+
+                    try {
+                        $imageFile->move(
+                            $this->getParameter('images_directory'),
+                            $newFilename
+                        );
+                    } catch (FileException $e) {
+                        // ... handle exception if something happens during file upload
+                    }
+
+                    $visit->setImageFilename($newFilename);
+                }
+                
                 $manager->persist($visit);
-                $this->addFlash('notice', 'Vrchol zalogován');
+                $this->addFlash('notice', 'Vrchol zalogován');                
             }
-            else
+
+            elseif ($visit_form->get('delete')->isClicked())
             {
+                $manager->remove($visit);         
                 $this->addFlash('notice', 'Vrchol odlogován');
-                $manager->remove($visit);
             }
-            
+
             $manager->flush();
 
             return $this->redirectToRoute('race_show',array('id' => $raceid));
         }
-        
+
         return $this->render('peak/show.html.twig', ['peak' => $peak,
                                                      'race' => $race,
                                                      'team' => $team,
-                                                     'form' => $form->createView()]);
+                                                     'image' => $visit->getImageFilename(),
+                                                     'visit_form' => $visit_form->createView()]);
     }
 
     /**
