@@ -6,6 +6,7 @@ use App\Entity\Peak;
 use App\Entity\User;
 use App\Entity\Race;
 use App\Entity\Team;
+use App\Entity\Task;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -69,6 +70,28 @@ class AppFixtures extends Fixture
         return $text;
     }
 
+    private function getTaskData(): array
+    {
+        return [
+            // $taskData = [$title, $description]
+            ['Schody na rozhlednu', 'Vystup na rozhlednu a spočítej kolik schodů tam bylo.'],
+            ['Večeře v restauraci', 'Dej si nějakou dobrou večeři někde v kolibě.'],
+            ['Koupačka pod vodopádem', 'Vykoupej se pod horským vodopádem']
+        ];
+    }
+
+    private function loadTasks(ObjectManager $manager)
+    {
+        foreach ($this->getTaskData() as [$title, $description]) {
+            $task = new Task();
+            $task->setTitle($title);
+            $task->setDescription($description);
+            
+            $manager->persist($task);
+            $this->addReference($title, $task);
+        }
+    }
+
     private function getPeakData(): array
     {
         return [
@@ -78,7 +101,28 @@ class AppFixtures extends Fixture
             ['vrchol_03', 'Třetí vrchol',  $this->getRandomText(), mt_rand(-90, 90), mt_rand(-180, 180) ],
             ['vrchol_04', 'Čtvrtý vrchol', $this->getRandomText(), mt_rand(-90, 90), mt_rand(-180, 180) ],
             ['vrchol_05', 'Pátý vrchol',   $this->getRandomText(), mt_rand(-90, 90), mt_rand(-180, 180) ],
-            ['vrchol_06', 'Šestý vrchol',  $this->getRandomText(), mt_rand(-90, 90), mt_rand(-180, 180) ]
+            ['vrchol_06', 'Šestý vrchol',  $this->getRandomText(), mt_rand(-90, 90), mt_rand(-180, 180) ],
+
+            ["short_01", "1_Zámek Vranov nad Dyjí", $this->getRandomText(), 	48.89254, 15.81085],
+            ["short_02", "2_Hardeggská vyhlídka", $this->getRandomText(), 	48.85741, 15.861],
+            ["short_03", "3_Zámek Jaroměřice nad Rokytnou", $this->getRandomText(), 	49.09362,15.8922],
+            ["short_04", "4_Muzeum kol Boskovštejn", $this->getRandomText(), 	48.98371, 15.92602],
+            ["short_05", "5_Starý zámek Jevišovice", $this->getRandomText(), 	48.99094, 15.98843],
+            ["short_06", "6_Pivovarský Hostinec Heřman", $this->getRandomText(), 49.20995, 15.98931],
+            ["short_07", "7_Muzeum motorismu", $this->getRandomText(), 	48.85418, 16.04284],
+            ["short_08", "8_Rotunda Nanebevzetí Panny Marie", $this->getRandomText(), 	48.92967, 16.07977],
+            ["short_09", "9_Pivovar Dalešice", $this->getRandomText(), 	49.131, 16.08055],
+            ["short_10", "10_Wilsonova skála", $this->getRandomText(), 	49.16154, 16.08981],
+            ["short_11", "11_Rozhledna Ocmanice", $this->getRandomText(), 	49.22773, 16.11759],
+            ["short_12", "12_Jaderná elektrárna Dukovany", $this->getRandomText(), 	49.08508, 16.15009],
+            ["short_13", "13_Zámek Náměšť na Oslavou", $this->getRandomText(), 	49.20873, 16.16241],
+            ["short_14", "14_Mohelenská hadcová step", $this->getRandomText(), 	49.10775, 16.1876],
+            ["short_15", "15_Pivovar Krum", $this->getRandomText(), 	49.03902, 16.31241],
+            ["short_16", "16_Zastavení Zvěrokruh", $this->getRandomText(), 	49.07137, 16.34912],
+            ["short_17", "17_Kostel sv. Linharta", $this->getRandomText(), 	48.89595, 16.59998],
+            ["short_18", "18_Moravské zemské muzeum", $this->getRandomText(), 49.19185, 16.60845],
+            ["short_19", "19_Zámek Mikulov", $this->getRandomText(), 48.80667, 16.6365],
+            ["short_20", "20_Rozhledna Akátová věž", $this->getRandomText(),	49.04181, 16.63916]
         ];
     }
 
@@ -107,7 +151,14 @@ class AppFixtures extends Fixture
             ['Jack Doe', 'jack_user@symfony.com', 'kitten', ['ROLE_USER']],
             ['Joe Doe', 'joe_user@symfony.com', 'kitten', ['ROLE_USER']],
             ['Annie Doe', 'annie_user@symfony.com', 'kitten', ['ROLE_USER']],
-            ['Fred Doe', 'fred_user@symfony.com', 'kitten', ['ROLE_USER']]
+            ['Fred Doe', 'fred_user@symfony.com', 'kitten', ['ROLE_USER']],
+            ['Pepa Doe', 'pepa_user@symfony.com', 'kitten', ['ROLE_USER']],
+            ['Lada Doe', 'lada_user@symfony.com', 'kitten', ['ROLE_USER']],
+            ['Karel Doe', 'karel_user@symfony.com', 'kitten', ['ROLE_USER']],
+            ['Petr Doe', 'petr_user@symfony.com', 'kitten', ['ROLE_USER']],
+            ['Marek Doe', 'marek_user@symfony.com', 'kitten', ['ROLE_USER']],
+            ['Fero Doe', 'fero_user@symfony.com', 'kitten', ['ROLE_USER']],
+            ['Robo Doe', 'robo_user@symfony.com', 'kitten', ['ROLE_USER']]
         ];
     }
 
@@ -132,7 +183,14 @@ class AppFixtures extends Fixture
         return [
             // $teamData = [$title, $leader, $members]
             ['Team 1', 'tom_user@symfony.com', ['john_user@symfony.com', 'jack_user@symfony.com']],
-            ['Team 2', 'joe_user@symfony.com', ['annie_user@symfony.com', 'fred_user@symfony.com']]
+            ['Team 2', 'joe_user@symfony.com', ['annie_user@symfony.com', 'fred_user@symfony.com']],
+            ['Team A', 'pepa_user@symfony.com', ['pepa_user@symfony.com']],
+            ['Team B', 'lada_user@symfony.com', ['lada_user@symfony.com']],
+            ['Team C', 'karel_user@symfony.com', ['karel_user@symfony.com']],
+            ['Team D', 'petr_user@symfony.com', ['petr_user@symfony.com']],
+            ['Team E', 'marek_user@symfony.com', ['marek_user@symfony.com']],
+            ['Team F', 'fero_user@symfony.com', ['fero_user@symfony.com']],
+            ['Team G', 'robo_user@symfony.com', ['robo_user@symfony.com']],
         ];
     }
 
@@ -155,11 +213,12 @@ class AppFixtures extends Fixture
     private function getRaceData(): array
     {
         return [
-            // $raceData = [$title, $description, $teams, $peaks]
+            // $raceData = [$title, $description, $teams, $peaks, $tasks]
             [   'Hill Bill Rally 2020', 
                 'Objevitelský závod, který nejde prohrát.', 
                 ['Team 1', 'Team 2'],
-                ['vrchol_01','vrchol_03','vrchol_05']
+                ['vrchol_01', 'vrchol_02', 'vrchol_03', 'vrchol_04', 'vrchol_05'],
+                ['Schody na rozhlednu', 'Večeře v restauraci', 'Koupačka pod vodopádem']
             ],
             [   'Pálavská štreka', 
                 '<p>Pálavská štreka je nevšední amatérský cyklopiknikovací závod. 
@@ -167,15 +226,19 @@ class AppFixtures extends Fixture
                 je navštívit cestou na Pálavu co nejvíce zajímavých míst – bodů 
                 vyznačených v připravené mapě. Závodníci, kteří posbírají nejvíce 
                 těchto bodů stanou v cíli na stupních vítězů.</p>', 
-                [],
-                ['vrchol_02','vrchol_04']
+                ['Team A', 'Team B', 'Team C', 'Team D', 'Team E', 'Team F', 'Team G'],
+                ['short_01', 'short_02', 'short_03', 'short_04', 'short_05',
+                 'short_06', 'short_07', 'short_08', 'short_09', 'short_10',
+                 'short_11', 'short_12', 'short_13', 'short_14', 'short_15',
+                 'short_16', 'short_17', 'short_18', 'short_19', 'short_20'],
+                []
             ]
         ];
     }
 
     private function loadRaces(ObjectManager $manager): void
     {
-        foreach ($this->getRaceData() as [$title, $description, $teams, $peaks]) {
+        foreach ($this->getRaceData() as [$title, $description, $teams, $peaks, $tasks]) {
             $race = new Race();
             $race->setTitle($title);
             $race->setDescription($description);
@@ -190,7 +253,13 @@ class AppFixtures extends Fixture
                 $race->addPeak($this->getReference($peakId));
             }
 
+            foreach($tasks as $taskId)
+            {
+                $race->addTask($this->getReference($taskId));
+            }
+
             $manager->persist($race);
+            $this->addReference($title, $race);
             
         }
 
@@ -203,6 +272,7 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager)
     {
         $this->loadPeaks($manager);
+        $this->loadTasks($manager);
         $this->loadUsers($manager);
         $this->loadTeams($manager);
         $this->loadRaces($manager);
