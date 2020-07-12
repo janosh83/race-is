@@ -91,7 +91,9 @@ class PeakController extends AbstractController
         
         if ($is_visited)
         {
-            $builder->add('delete', SubmitType::class, ['label' => 'Zrušit návštěvu vrcholu', 'attr' => [ 'class' => 'btn-danger']]);
+            $builder->add('delete', SubmitType::class, [
+                'label' => 'Zrušit návštěvu vrcholu', 
+                'attr' => [ 'class' => 'btn-danger']]);
         }
         
         $visit_form = $builder->getForm();
@@ -105,6 +107,10 @@ class PeakController extends AbstractController
 
             if ($visit_form->get('save')->isClicked())
             {
+                // FIXME: delete old image file when new one is uploaded
+                // FIXME: validate that uploaded file is image
+                // TODO: resize image to reasonable size
+                // TODO: convert to service https://symfony.com/doc/current/controller/upload_file.html#creating-an-uploader-service
 
                 /** @var UploadedFile $imageFile */
                 $imageFile = $visit_form->get('image')->getData();

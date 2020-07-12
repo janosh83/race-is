@@ -27,7 +27,7 @@ class VisitRepository extends ServiceEntityRepository
             ->setParameter('peakid', $peakid)
             ->setParameter('teamid', $teamid)
             ->getQuery()
-            ->getOneOrNullResult();
+            ->getOneOrNullResult()
         ;
     }
 
