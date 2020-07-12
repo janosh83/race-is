@@ -50,6 +50,11 @@ class Answer
      */
     private $imageFilename;
 
+    public function __construct()
+    {
+        $this->time = new \DateTime();
+    }
+
     public function getId(): ?int
     {
         return $this->id;

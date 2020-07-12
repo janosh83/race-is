@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{task.title}}{% endblock %}
+
+
+{% block main %}
+<div>
+    <h1>{{race.title}} - {{task.title}}</h1>
+     <div>{{task.description}}</div>
+
+    {{ form(answer_form) }}
+</div>
+
+<p><a href="{{ path('race_show', {id:race.id}) }}">Zpět na závod</a></p>
+
+{% endblock %}

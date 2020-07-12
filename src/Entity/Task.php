@@ -31,7 +31,6 @@ class Task
 
     /**
      * @ORM\ManyToOne(targetEntity=Race::class, inversedBy="tasks")
-     * @ORM\JoinColumn(nullable=false)
      */
     private $race;
 

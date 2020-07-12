@@ -19,6 +19,18 @@ class AnswerRepository extends ServiceEntityRepository
         parent::__construct($registry, Answer::class);
     }
 
+    public function findByTaskAndTeam($taskid, $teamid)
+    {
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.task = :taskid')
+            ->andWhere('a.team = :teamid')
+            ->setParameter('taskid', $taskid)
+            ->setParameter('teamid', $teamid)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
     // /**
     //  * @return Answer[] Returns an array of Answer objects
     //  */

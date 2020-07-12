@@ -19,6 +19,34 @@ class TaskRepository extends ServiceEntityRepository
         parent::__construct($registry, Task::class);
     }
 
+    public function findAnsweredByTeamAndRace($teamid, $raceid)
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager
+            ->createQuery('SELECT t.id, t.title FROM App\Entity\Task t LEFT JOIN t.answers ta WHERE ta.team = :teamid AND ta.race = :raceid');
+        $query->setParameter('teamid', $teamid);
+        $query->setParameter('raceid', $raceid);
+
+        return $query->getResult();
+    }
+
+    public function findNotAnsweredByTeam($teamid, $raceid)
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager
+            ->createQuery('SELECT t.id, t.title FROM App\Entity\Task t WHERE 
+                            t.id NOT IN (SELECT tt.id FROM App\Entity\Task tt LEFT JOIN tt.answers tta WHERE 
+                                            tta.team = :teamid AND tta.race = :raceid ) AND
+                            t.race = :raceid');
+        $query->setParameter('teamid', $teamid);
+        $query->setParameter('raceid', $raceid);      
+
+        return $query->getResult();
+
+    }
+
     // /**
     //  * @return Task[] Returns an array of Task objects
     //  */

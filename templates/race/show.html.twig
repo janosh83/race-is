@@ -22,17 +22,17 @@
     {% endif %}
 </div>#}
 
-<div>
-<h2>Vrcholy</h2>
-<p>
-    <a href="{{ path('peak_map', {raceid:race.id}) }}">Mapa všech vrcholů</a>
-</p>
-
 {% for message in app.flashes('notice') %}
     <div class="alert alert-primary">
         {{ message }}
     </div>
 {% endfor %}
+
+<div>
+<h2>Vrcholy</h2>
+<p>
+    <a href="{{ path('peak_map', {raceid:race.id}) }}">Mapa všech vrcholů</a>
+</p>
 
 <h3>Navštívené</h3>
 <ul>
@@ -48,6 +48,24 @@
     {% endfor %}
 </ul>
 </div>
+
+<div>
+
+</div>
+<h2>Úkoly</h2>
+<h3>Splněné</h3>
+<ul>
+    {% for at in answeredTasks %}
+        <li><a href="{{ path('task_show', {id:at.id}) }}">{{at.title}}</a></li>
+    {% endfor %}
+</ul>
+
+<h3>Nesplněné</h3>
+<ul>
+    {% for nat in notAnsweredTasks %}
+        <li><a href="{{ path('task_show', {id:nat.id}) }}">{{nat.title}}</a></li>
+    {% endfor %}
+</ul>
 </div>
 
 {% endblock %}

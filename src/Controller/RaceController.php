@@ -5,6 +5,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Race;
+use App\Entity\Task;
 use App\Entity\Peak;
 use App\Entity\Team;
 use Symfony\Component\Security\Core\Security;
@@ -94,11 +95,21 @@ class RaceController extends AbstractController
             ->getRepository(Peak::class)
             ->findNotVisitedByTeam($teamid, $race);
 
+        $answered_tasks = $this->getDoctrine()
+            ->getRepository(Task::class)
+            ->findAnsweredByTeamAndRace($teamid, $race);
+
+        $not_answered_tasks = $this->getDoctrine()
+            ->getRepository(Task::class)
+            ->findNotAnsweredByTeam($teamid, $race);
+
         return $this->render('race/show.html.twig', ['race' => $race, 
                                                      /*'teamWhereLeader'=>$teamWhereLeader, */
                                                      'teamWhereMember'=>$teamWhereMember, 
                                                      'visitedPeaks' => $visited_peaks,
-                                                     'notVisitedPeaks' => $not_visited_peaks]);
+                                                     'notVisitedPeaks' => $not_visited_peaks,
+                                                     'answeredTasks' => $answered_tasks,
+                                                     'notAnsweredTasks' => $not_answered_tasks]);
     }
 
 }
