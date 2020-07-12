@@ -44,11 +44,17 @@ class Team
      */
     private $visited;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Answer::class, mappedBy="team", orphanRemoval=true)
+     */
+    private $answers;
+
     public function __construct()
     {
         $this->member = new ArrayCollection();
         $this->signed = new ArrayCollection();
         $this->visited = new ArrayCollection();
+        $this->answers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -157,6 +163,37 @@ class Team
             // set the owning side to null (unless already changed)
             if ($visited->getTeam() === $this) {
                 $visited->setTeam(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Answer[]
+     */
+    public function getAnswers(): Collection
+    {
+        return $this->answers;
+    }
+
+    public function addAnswer(Answer $answer): self
+    {
+        if (!$this->answers->contains($answer)) {
+            $this->answers[] = $answer;
+            $answer->setTeam($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAnswer(Answer $answer): self
+    {
+        if ($this->answers->contains($answer)) {
+            $this->answers->removeElement($answer);
+            // set the owning side to null (unless already changed)
+            if ($answer->getTeam() === $this) {
+                $answer->setTeam(null);
             }
         }
 

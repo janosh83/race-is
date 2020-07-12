@@ -43,11 +43,23 @@ class Race
      */
     private $visits;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Task::class, mappedBy="race", orphanRemoval=true)
+     */
+    private $tasks;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Answer::class, mappedBy="race", orphanRemoval=true)
+     */
+    private $answers;
+
     public function __construct()
     {
         $this->signed = new ArrayCollection();
         $this->peaks = new ArrayCollection();
         $this->visits = new ArrayCollection();
+        $this->tasks = new ArrayCollection();
+        $this->answers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -163,6 +175,68 @@ class Race
             // set the owning side to null (unless already changed)
             if ($visit->getRace() === $this) {
                 $visit->setRace(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Task[]
+     */
+    public function getTasks(): Collection
+    {
+        return $this->tasks;
+    }
+
+    public function addTask(Task $task): self
+    {
+        if (!$this->tasks->contains($task)) {
+            $this->tasks[] = $task;
+            $task->setRace($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTask(Task $task): self
+    {
+        if ($this->tasks->contains($task)) {
+            $this->tasks->removeElement($task);
+            // set the owning side to null (unless already changed)
+            if ($task->getRace() === $this) {
+                $task->setRace(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Answer[]
+     */
+    public function getAnswers(): Collection
+    {
+        return $this->answers;
+    }
+
+    public function addAnswer(Answer $answer): self
+    {
+        if (!$this->answers->contains($answer)) {
+            $this->answers[] = $answer;
+            $answer->setRace($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAnswer(Answer $answer): self
+    {
+        if ($this->answers->contains($answer)) {
+            $this->answers->removeElement($answer);
+            // set the owning side to null (unless already changed)
+            if ($answer->getRace() === $this) {
+                $answer->setRace(null);
             }
         }
 
