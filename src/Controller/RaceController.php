@@ -65,6 +65,7 @@ class RaceController extends AbstractController
 
         // setore user info related to selected race into session
         $session->set("race_id",$id);
+        $session->set("race_title",$race->getTitle());
         /*if ($teamWhereLeader != NULL){
             $teamid = $teamWhereLeader['id'];
             $session->set("is_leader", true);
