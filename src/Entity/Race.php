@@ -53,6 +53,11 @@ class Race
      */
     private $answers;
 
+    /**
+     * @ORM\OneToMany(targetEntity=JournalPost::class, mappedBy="race", orphanRemoval=true)
+     */
+    private $journalPosts;
+
     public function __construct()
     {
         $this->signed = new ArrayCollection();
@@ -60,6 +65,7 @@ class Race
         $this->visits = new ArrayCollection();
         $this->tasks = new ArrayCollection();
         $this->answers = new ArrayCollection();
+        $this->journalPosts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -237,6 +243,37 @@ class Race
             // set the owning side to null (unless already changed)
             if ($answer->getRace() === $this) {
                 $answer->setRace(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|JournalPost[]
+     */
+    public function getJournalPosts(): Collection
+    {
+        return $this->journalPosts;
+    }
+
+    public function addJournalPost(JournalPost $journalPost): self
+    {
+        if (!$this->journalPosts->contains($journalPost)) {
+            $this->journalPosts[] = $journalPost;
+            $journalPost->setRace($this);
+        }
+
+        return $this;
+    }
+
+    public function removeJournalPost(JournalPost $journalPost): self
+    {
+        if ($this->journalPosts->contains($journalPost)) {
+            $this->journalPosts->removeElement($journalPost);
+            // set the owning side to null (unless already changed)
+            if ($journalPost->getRace() === $this) {
+                $journalPost->setRace(null);
             }
         }
 

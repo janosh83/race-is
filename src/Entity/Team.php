@@ -49,12 +49,23 @@ class Team
      */
     private $answers;
 
+    /**
+     * @ORM\OneToMany(targetEntity=JournalPost::class, mappedBy="team", orphanRemoval=true)
+     */
+    private $journalPosts;
+
+    /**
+     * @ORM\Column(type="text")
+     */
+    private $about;
+
     public function __construct()
     {
         $this->member = new ArrayCollection();
         $this->signed = new ArrayCollection();
         $this->visited = new ArrayCollection();
         $this->answers = new ArrayCollection();
+        $this->journalPosts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -196,6 +207,49 @@ class Team
                 $answer->setTeam(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|JournalPost[]
+     */
+    public function getJournalPosts(): Collection
+    {
+        return $this->journalPosts;
+    }
+
+    public function addJournalPost(JournalPost $journalPost): self
+    {
+        if (!$this->journalPosts->contains($journalPost)) {
+            $this->journalPosts[] = $journalPost;
+            $journalPost->setTeam($this);
+        }
+
+        return $this;
+    }
+
+    public function removeJournalPost(JournalPost $journalPost): self
+    {
+        if ($this->journalPosts->contains($journalPost)) {
+            $this->journalPosts->removeElement($journalPost);
+            // set the owning side to null (unless already changed)
+            if ($journalPost->getTeam() === $this) {
+                $journalPost->setTeam(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getAbout(): ?string
+    {
+        return $this->about;
+    }
+
+    public function setAbout(string $about): self
+    {
+        $this->about = $about;
 
         return $this;
     }

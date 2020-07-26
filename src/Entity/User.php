@@ -50,10 +50,16 @@ class User implements UserInterface
      */
     private $member;
 
+    /**
+     * @ORM\OneToMany(targetEntity=JournalPost::class, mappedBy="author", orphanRemoval=true)
+     */
+    private $journalPost;
+
     public function __construct()
     {
         $this->leader = new ArrayCollection();
         $this->member = new ArrayCollection();
+        $this->journalPost = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -200,6 +206,37 @@ class User implements UserInterface
         if ($this->member->contains($member)) {
             $this->member->removeElement($member);
             $member->removeMember($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|JournalPost[]
+     */
+    public function getJournalPost(): Collection
+    {
+        return $this->journalPost;
+    }
+
+    public function addJournalPost(JournalPost $journalPost): self
+    {
+        if (!$this->journalPost->contains($journalPost)) {
+            $this->journalPost[] = $journalPost;
+            $journalPost->setAuthor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeJournalPost(JournalPost $journalPost): self
+    {
+        if ($this->journalPost->contains($journalPost)) {
+            $this->journalPost->removeElement($journalPost);
+            // set the owning side to null (unless already changed)
+            if ($journalPost->getAuthor() === $this) {
+                $journalPost->setAuthor(null);
+            }
         }
 
         return $this;

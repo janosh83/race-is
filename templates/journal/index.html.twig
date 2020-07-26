@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Deník - {{race.title}}{% endblock %}
+
+{% block main %}
+
+    <p>Hlavní strana deníku</p>
+
+    {% for post in posts %}
+        <li><a href="{{ path('journal_show', {id:post.id}) }}">{{post.title}}</a></li>
+    {% endfor %}
+
+    <div>
+    {{ form(new_post_form) }}
+</div>
+
+{% endblock %}
