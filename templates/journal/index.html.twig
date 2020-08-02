@@ -4,14 +4,18 @@
 
 {% block main %}
 
-    <p>Hlavní strana deníku</p>
+    <h1>Zápisky - {{race.title}}</h1>
 
     {% for post in posts %}
-        <li><a href="{{ path('journal_show', {id:post.id}) }}">{{post.title}}</a></li>
+        <li><a href="{{ path('journal_show', {id:post.id}) }}">{{post.title}}</a> datum {{post.date|date('d.m.Y')}}, autor: {{post.post_author}}</li>
     {% endfor %}
+
+    <h2>Přidat zápis</h2>
 
     <div>
     {{ form(new_post_form) }}
-</div>
+    </div>
+
+    <p><a href="{{ path('race_show', {id:race.id}) }}">Zpět na závod</a></p>
 
 {% endblock %}

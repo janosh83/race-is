@@ -19,16 +19,18 @@ class JournalPostRepository extends ServiceEntityRepository
         parent::__construct($registry, JournalPost::class);
     }
 
-    public function findByRaceAndTeam($race, $team)
+    public function findByRaceAndTeam($raceid, $teamid)
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.race = :race')
-            ->andWhere('p.team = :team')
-            ->setParameter('race', $race)
-            ->setParameter('team', $team)
-            ->getQuery()
-            ->getResult()
-        ;
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager
+            ->createQuery('SELECT p.id, p.title, p.text, p.date, pa.name as post_author 
+                            FROM App\Entity\JournalPost p LEFT JOIN p.author pa LEFT JOIN p.team pm 
+                            WHERE p.team = :teamid AND p.race = :raceid ORDER BY p.date ASC');
+        $query->setParameter('teamid', $teamid);
+        $query->setParameter('raceid', $raceid);
+
+        return $query->getResult();
     }
 
     // /**
