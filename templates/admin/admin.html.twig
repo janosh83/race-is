@@ -39,4 +39,12 @@
 {% endfor %}
 </ul>
 
+<h2>Tabulka úkolů</h2>
+<p>Zobrazí tabulku všech úkolů, vhodnou pro tisk, kdyby náhodou aplikace zklamala.</p>
+<ul>
+{% for race in races %}
+    <li><a href="{{ path('admin_task_table', {raceid:race.id}) }}">{{race.title}}</a></li>
+{% endfor %}
+</ul>
+
 {% endblock %}

@@ -156,4 +156,33 @@ class TaskController extends AbstractController
                                                      //'image' => $answer->getImageFilename(),
                                                      'answer_form' => $answer_form->createView()]);
     }
+
+
+    /**
+     * @Route("/admin/racetasks/{raceid}", name="admin_task_table")
+     */
+    public function task_table($raceid)
+    {
+        $tasks = $this->getDoctrine()
+            ->getRepository(Task::class)
+            ->findByRace($raceid);
+
+        if (!$tasks) {
+            throw $this->createNotFoundException(
+                'No tasks found for race '.$raceid
+            );
+        }
+
+        $race = $this->getDoctrine()
+            ->getRepository(Race::class)
+            ->find($raceid);
+
+        if (!$race) {
+            throw $this->createNotFoundException(
+                'Race not found '.$raceid
+            );
+        }
+
+        return $this->render('admin/tasks_table.html.twig', ['race' => $race,'tasks' => $tasks]);
+    }
 }
