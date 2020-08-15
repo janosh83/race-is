@@ -10,7 +10,7 @@ use App\Entity\Race;
 use App\Entity\Visit;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -85,7 +85,7 @@ class PeakController extends AbstractController
         }
 
         $builder = $this->createFormBuilder($visit)
-            ->add('note', TextareaType::class, ['required' => false])
+            ->add('note', CKEditorType::class, ['required' => false, 'sanitize_html' => true, 'config' => ['toolbar' => 'standard']])
             ->add('image', FileType::class, ['label' => 'Obrázek' ,'mapped' => false, 'required' => false])
             ->add('save', SubmitType::class, ['label' => $form_label]);
         

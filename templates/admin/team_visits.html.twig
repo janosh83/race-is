@@ -22,7 +22,7 @@ Ostatní členové týmu
     <tr>
         <td><a href="{{ path('admin_peak_detail', {peakid:visit.id}) }}">{{visit.title}}</a></td>
         <td>{{visit.time|date('d.m.Y h:i:s')}}</td>
-        <td>{{visit.note}}</td>
+        <td>{{visit.note|sanitize_html}}</td>
     </tr>
     {% endfor %}
 </table>

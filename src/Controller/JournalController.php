@@ -9,8 +9,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use App\Entity\Race;
 use App\Entity\Team;
 use App\Entity\JournalPost;
@@ -59,8 +59,8 @@ class JournalController extends AbstractController
 
         $post_form = $this->createFormBuilder($post)
             ->add('title', TextType::class)
-            ->add('text', TextareaType::class)
-            ->add('date',DateType::class)
+            ->add('date', DateType::class)
+            ->add('text', CKEditorType::class, ['sanitize_html' => true, 'config' => ['toolbar' => 'standard']])
             ->add('save', SubmitType::class, ['label' => 'Přidat záznam'])
             ->getForm();
 
