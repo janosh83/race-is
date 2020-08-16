@@ -92,7 +92,7 @@
                                     <div class="dropdown-item">{{ app.user.Username }}</div>
                                     {% if app.session %}
                                     <div class="dropdown-item">Tým: {{ app.session.get('team_title') }}</div>
-                                    <a class="dropdown-item" href="{{ path('race_show', {id:app.session.get('race_id')}) }}">Závod: {{ app.session.get('race_title') }}</a>
+                                    {#<a class="dropdown-item" href="{{ path('race_show', {id:app.session.get('race_id')}) }}">Závod: {{ app.session.get('race_title') }}</a>#}
                                     {% endif %}
                                     <div class="dropdown-divider"></div>
                                     {% if is_granted('ROLE_ADMIN') %}
