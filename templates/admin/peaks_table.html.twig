@@ -13,12 +13,13 @@
         <h1>{{race.title}} - vrcholy</h1>
 
         <table>
-            <tr><th></th><th>Vrchol</th><th>GPS</th><th>Detail</th><th>Navštíveno</th></tr>
+            <tr><th></th><th>Vrchol</th><th>GPS</th><th>Po4et bodů</th><th>Detail</th><th>Navštíveno</th></tr>
             {% for peak in peaks %}
             <tr>
                 <td>{{peak.shortid}}</td>
                 <td>{{peak.title}}</td>
                 <td>{{peak.GPS}}</td>
+                <td>{{peak.pointsPerVisit}}</td>
                 <td>{{peak.description}}</td>
                 <td></td>
             </tr>

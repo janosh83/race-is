@@ -95,46 +95,47 @@ class AppFixtures extends Fixture
     private function getPeakData(): array
     {
         return [
-            // $peakData = [$shorrtid, $title, $description, $lat, $lon];
-            ['vrchol_01', 'První vrchol',  $this->getRandomText(), mt_rand(-90, 90), mt_rand(-180, 180) ],
-            ['vrchol_02', 'Druhý vrchol',  $this->getRandomText(), mt_rand(-90, 90), mt_rand(-180, 180) ],
-            ['vrchol_03', 'Třetí vrchol',  $this->getRandomText(), mt_rand(-90, 90), mt_rand(-180, 180) ],
-            ['vrchol_04', 'Čtvrtý vrchol', $this->getRandomText(), mt_rand(-90, 90), mt_rand(-180, 180) ],
-            ['vrchol_05', 'Pátý vrchol',   $this->getRandomText(), mt_rand(-90, 90), mt_rand(-180, 180) ],
-            ['vrchol_06', 'Šestý vrchol',  $this->getRandomText(), mt_rand(-90, 90), mt_rand(-180, 180) ],
+            // $peakData = [$shorrtid, $title, $description, $lat, $lon, $points];
+            ['vrchol_01', 'První vrchol',  $this->getRandomText(), mt_rand(-90, 90), mt_rand(-180, 180), 1 ],
+            ['vrchol_02', 'Druhý vrchol',  $this->getRandomText(), mt_rand(-90, 90), mt_rand(-180, 180), 2 ],
+            ['vrchol_03', 'Třetí vrchol',  $this->getRandomText(), mt_rand(-90, 90), mt_rand(-180, 180), 1 ],
+            ['vrchol_04', 'Čtvrtý vrchol', $this->getRandomText(), mt_rand(-90, 90), mt_rand(-180, 180), 2 ],
+            ['vrchol_05', 'Pátý vrchol',   $this->getRandomText(), mt_rand(-90, 90), mt_rand(-180, 180), 1 ],
+            ['vrchol_06', 'Šestý vrchol',  $this->getRandomText(), mt_rand(-90, 90), mt_rand(-180, 180), 3 ],
 
-            ["short_01", "1_Zámek Vranov nad Dyjí", $this->getRandomText(), 	48.89254, 15.81085],
-            ["short_02", "2_Hardeggská vyhlídka", $this->getRandomText(), 	48.85741, 15.861],
-            ["short_03", "3_Zámek Jaroměřice nad Rokytnou", $this->getRandomText(), 	49.09362,15.8922],
-            ["short_04", "4_Muzeum kol Boskovštejn", $this->getRandomText(), 	48.98371, 15.92602],
-            ["short_05", "5_Starý zámek Jevišovice", $this->getRandomText(), 	48.99094, 15.98843],
-            ["short_06", "6_Pivovarský Hostinec Heřman", $this->getRandomText(), 49.20995, 15.98931],
-            ["short_07", "7_Muzeum motorismu", $this->getRandomText(), 	48.85418, 16.04284],
-            ["short_08", "8_Rotunda Nanebevzetí Panny Marie", $this->getRandomText(), 	48.92967, 16.07977],
-            ["short_09", "9_Pivovar Dalešice", $this->getRandomText(), 	49.131, 16.08055],
-            ["short_10", "10_Wilsonova skála", $this->getRandomText(), 	49.16154, 16.08981],
-            ["short_11", "11_Rozhledna Ocmanice", $this->getRandomText(), 	49.22773, 16.11759],
-            ["short_12", "12_Jaderná elektrárna Dukovany", $this->getRandomText(), 	49.08508, 16.15009],
-            ["short_13", "13_Zámek Náměšť na Oslavou", $this->getRandomText(), 	49.20873, 16.16241],
-            ["short_14", "14_Mohelenská hadcová step", $this->getRandomText(), 	49.10775, 16.1876],
-            ["short_15", "15_Pivovar Krum", $this->getRandomText(), 	49.03902, 16.31241],
-            ["short_16", "16_Zastavení Zvěrokruh", $this->getRandomText(), 	49.07137, 16.34912],
-            ["short_17", "17_Kostel sv. Linharta", $this->getRandomText(), 	48.89595, 16.59998],
-            ["short_18", "18_Moravské zemské muzeum", $this->getRandomText(), 49.19185, 16.60845],
-            ["short_19", "19_Zámek Mikulov", $this->getRandomText(), 48.80667, 16.6365],
-            ["short_20", "20_Rozhledna Akátová věž", $this->getRandomText(),	49.04181, 16.63916]
+            ["short_01", "1_Zámek Vranov nad Dyjí", $this->getRandomText(), 	48.89254, 15.81085, 1],
+            ["short_02", "2_Hardeggská vyhlídka", $this->getRandomText(), 	48.85741, 15.861, 1],
+            ["short_03", "3_Zámek Jaroměřice nad Rokytnou", $this->getRandomText(), 	49.09362,15.8922, 1],
+            ["short_04", "4_Muzeum kol Boskovštejn", $this->getRandomText(), 	48.98371, 15.92602, 1],
+            ["short_05", "5_Starý zámek Jevišovice", $this->getRandomText(), 	48.99094, 15.98843, 1],
+            ["short_06", "6_Pivovarský Hostinec Heřman", $this->getRandomText(), 49.20995, 15.98931, 1],
+            ["short_07", "7_Muzeum motorismu", $this->getRandomText(), 	48.85418, 16.04284, 1],
+            ["short_08", "8_Rotunda Nanebevzetí Panny Marie", $this->getRandomText(), 	48.92967, 16.07977, 1],
+            ["short_09", "9_Pivovar Dalešice", $this->getRandomText(), 	49.131, 16.08055, 1],
+            ["short_10", "10_Wilsonova skála", $this->getRandomText(), 	49.16154, 16.08981, 1],
+            ["short_11", "11_Rozhledna Ocmanice", $this->getRandomText(), 	49.22773, 16.11759, 1],
+            ["short_12", "12_Jaderná elektrárna Dukovany", $this->getRandomText(), 	49.08508, 16.15009, 1],
+            ["short_13", "13_Zámek Náměšť na Oslavou", $this->getRandomText(), 	49.20873, 16.16241, 1],
+            ["short_14", "14_Mohelenská hadcová step", $this->getRandomText(), 	49.10775, 16.1876, 1],
+            ["short_15", "15_Pivovar Krum", $this->getRandomText(), 	49.03902, 16.31241, 1],
+            ["short_16", "16_Zastavení Zvěrokruh", $this->getRandomText(), 	49.07137, 16.34912, 1],
+            ["short_17", "17_Kostel sv. Linharta", $this->getRandomText(), 	48.89595, 16.59998, 1],
+            ["short_18", "18_Moravské zemské muzeum", $this->getRandomText(), 49.19185, 16.60845, 1],
+            ["short_19", "19_Zámek Mikulov", $this->getRandomText(), 48.80667, 16.6365, 1],
+            ["short_20", "20_Rozhledna Akátová věž", $this->getRandomText(),	49.04181, 16.63916, 1]
         ];
     }
 
     private function loadPeaks(ObjectManager $manager)
     {
-        foreach ($this->getPeakData() as [$shortid, $title, $description, $lat, $lon]) {
+        foreach ($this->getPeakData() as [$shortid, $title, $description, $lat, $lon, $points]) {
             $peak = new Peak();
             $peak->setShortId($shortid);
             $peak->setTitle($title);
             $peak->setDescription($description);
             $peak->setLatitude($lat);
             $peak->setLongitude($lon);
+            $peak->setPointsPerVisit($points);
 
             $manager->persist($peak);
             $this->addReference($shortid, $peak);
@@ -200,6 +201,7 @@ class AppFixtures extends Fixture
             $team = new Team();
             $team->setTitle($title);
             $team->setLeader($this->getReference($leader));
+            $team->addMember($this->getReference($leader));
             foreach($members as $member){
                 $team->addMember($this->getReference($member));
             }

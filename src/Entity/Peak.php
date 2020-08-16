@@ -53,6 +53,11 @@ class Peak
      */
     private $visits;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $pointsPerVisit;
+
     public function __construct()
     {
         $this->visits = new ArrayCollection();
@@ -185,6 +190,18 @@ class Peak
         }
 
         return $tmp;
+    }
+
+    public function getPointsPerVisit(): ?int
+    {
+        return $this->pointsPerVisit;
+    }
+
+    public function setPointsPerVisit(int $pointsPerVisit): self
+    {
+        $this->pointsPerVisit = $pointsPerVisit;
+
+        return $this;
     }
 
 }
