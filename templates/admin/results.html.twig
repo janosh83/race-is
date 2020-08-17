@@ -11,12 +11,24 @@
         <th scope="col">Jméno týmu</th>
         <th scope="col">Počet bodů za vrcholy</th>
     </tr>
-    {% for team in results %}
+    {% for team in peak_results %}
     <tr scope="row">
         <td><a href="{{ path('admin_visit_detail', {raceid:race.id,teamid:team.id}) }}">{{team.title}}</a></td>
-        <td>{{team.team_points}}</td>
+        <td>{{team.peak_points}}</td>
     </tr>
     {% endfor %}
 </table>
 
+<table class="table table-striped">
+    <tr>
+        <th scope="col">Jméno týmu</th>
+        <th scope="col">Počet bodů za úkoly</th>
+    </tr>
+    {% for team in task_results %}
+    <tr scope="row">
+        <td><a href="{{ path('admin_answer_detail', {raceid:race.id,teamid:team.id}) }}">{{team.title}}</a></td>
+        <td>{{team.task_points}}</td>
+    </tr>
+    {% endfor %}
+</table>
 {% endblock %}

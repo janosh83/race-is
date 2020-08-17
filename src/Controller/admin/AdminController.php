@@ -15,6 +15,8 @@ use App\Entity\Team;
 use App\Entity\User;
 use App\Entity\Visit;
 use App\Entity\Peak;
+use App\Entity\Answer;
+use App\Entity\Task;
 
 
 class AdminController extends AbstractController
@@ -46,9 +48,12 @@ class AdminController extends AbstractController
             );
         }
 
-        $results = $this->getDoctrine()->getRepository(Team::class)->countByVisistedPeaks($raceid);
+        $peak_results = $this->getDoctrine()->getRepository(Team::class)->countByVisistedPeaks($raceid);
+        $task_results = $this->getDoctrine()->getRepository(Team::class)->countByAnsweredTasks($raceid);
+
         return $this->render('admin/results.html.twig', ['race' => $race,
-                                                         'results' => $results]);
+                                                         'peak_results' => $peak_results,
+                                                         'task_results' => $task_results]);
     }
 
     /**
@@ -77,6 +82,31 @@ class AdminController extends AbstractController
     }
 
     /**
+     * @Route("/admin/answer/{raceid}/{teamid}", name="admin_answer_detail")
+     */
+    public function answer_detail($raceid, $teamid)
+    {
+        $team = $this->getDoctrine()
+            ->getRepository(Team::class)
+            ->find($teamid);
+        
+        if (!$team) {
+            throw $this->createNotFoundException(
+                'Race not found '.$teamid
+            );
+        }
+
+        $answers = $this->getDoctrine()
+            ->getRepository(Answer::class)
+            ->findByRaceAndTeam($raceid, $teamid);
+
+        return $this->render('admin/team_answers.html.twig', ['team' => $team,
+                                                             'leader' => $team->getLeader(),
+                                                             'members' => $team->getMember(),
+                                                             'answers' => $answers]);
+    }
+
+    /**
      * @Route("/admin/peak/{peakid}", name="admin_peak_detail")
      */
     public function peak_detail($peakid)
@@ -92,6 +122,24 @@ class AdminController extends AbstractController
         }
 
         return $this->render('admin/peak.html.twig', ['peak' => $peak]);
+    }
+
+    /**
+     * @Route("/admin/task/{taskid}", name="admin_task_detail")
+     */
+    public function task_detail($taskid)
+    {
+        $task = $this->getDoctrine()
+            ->getRepository(Task::class)
+            ->find($taskid);
+
+        if (!$task) {
+            throw $this->createNotFoundException(
+                'Task not found '.$id
+            );
+        }
+
+        return $this->render('admin/task.html.twig', ['task' => $task]);
     }
 
     private function delete_all_peaks_by_race($race, $entityManager)
@@ -113,6 +161,7 @@ class AdminController extends AbstractController
             $peak->setDescription($p['description']);
             $peak->setLatitude($p['latitude']);
             $peak->setLongitude($p['longitude']);
+            $peak->setPointsPerVisit($p["points"]);
             $peak->setRace($race);
             $entityManager->persist($peak);
         }

@@ -31,6 +31,18 @@ class AnswerRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findByRaceAndTeam($raceid, $teamid)
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager
+            ->createQuery('SELECT t.id, t.title, t.pointsPerAnswer, a.time, a.note FROM App\Entity\Answer a LEFT JOIN a.task t WHERE t.race = :raceid AND a.team = :teamid');
+        $query->setParameter('raceid', $raceid);
+        $query->setParameter('teamid', $teamid);
+
+        return $query->getResult();
+    }
+
     // /**
     //  * @return Answer[] Returns an array of Answer objects
     //  */

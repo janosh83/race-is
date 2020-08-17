@@ -47,7 +47,7 @@ class Team
     /**
      * @ORM\OneToMany(targetEntity=Answer::class, mappedBy="team", orphanRemoval=true)
      */
-    private $answers;
+    private $answered;
 
     /**
      * @ORM\OneToMany(targetEntity=JournalPost::class, mappedBy="team", orphanRemoval=true)
@@ -64,7 +64,7 @@ class Team
         $this->member = new ArrayCollection();
         $this->signed = new ArrayCollection();
         $this->visited = new ArrayCollection();
-        $this->answers = new ArrayCollection();
+        $this->answered = new ArrayCollection();
         $this->journalPosts = new ArrayCollection();
     }
 
@@ -183,15 +183,15 @@ class Team
     /**
      * @return Collection|Answer[]
      */
-    public function getAnswers(): Collection
+    public function getAnswered(): Collection
     {
-        return $this->answers;
+        return $this->answered;
     }
 
     public function addAnswer(Answer $answer): self
     {
-        if (!$this->answers->contains($answer)) {
-            $this->answers[] = $answer;
+        if (!$this->answered->contains($answer)) {
+            $this->answered[] = $answer;
             $answer->setTeam($this);
         }
 
@@ -200,8 +200,8 @@ class Team
 
     public function removeAnswer(Answer $answer): self
     {
-        if ($this->answers->contains($answer)) {
-            $this->answers->removeElement($answer);
+        if ($this->answered->contains($answer)) {
+            $this->answered->removeElement($answer);
             // set the owning side to null (unless already changed)
             if ($answer->getTeam() === $this) {
                 $answer->setTeam(null);

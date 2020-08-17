@@ -14,7 +14,7 @@ Ostatní členové týmu
 {% endfor %}
 </ul>
 
-<h2>Návštěny vrcholů</h2>
+<h2>Plnění úkolů</h2>
 
 <table class="table table-striped">
     <tr>
@@ -23,13 +23,13 @@ Ostatní členové týmu
         <th scope="col">Čas</th>
         <th scope="col">Poznámka</th>
     </tr>
-    {% for visit in visits %}
+    {% for answer in answers %}
     <tr scope="row">
-        <td><a href="{{ path('admin_peak_detail', {peakid:visit.id}) }}">{{visit.title}}</a></td>
-        <td>{{visit.pointsPerVisit}}</td>
-        <td>{{visit.time|date('d.m.Y H:i:s')}}</td>
-        <td>{% if visit.note %}
-                {{visit.note|sanitize_html}}
+        <td><a href="{{ path('admin_task_detail', {taskid:answer.id}) }}">{{answer.title}}</a></td>
+        <td>{{answer.pointsPerAnswer}}</td>
+        <td>{{answer.time|date('d.m.Y H:i:s')}}</td>
+        <td>{% if answer.note %}
+                {{answer.note|sanitize_html}}
             {% endif %}
         </td>
     </tr>

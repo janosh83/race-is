@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{task.title}}{% endblock %}
+
+{% block main %}
+
+<div>
+    <h1>{{task.title}}</h1>
+    <p><strong>Počet bodů: </strong> {{task.pointsPerAnswer}}</p>
+    <div>{{task.description}}</div>
+</div>
+
+{% endblock %}

@@ -39,6 +39,11 @@ class Task
      */
     private $answers;
 
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $pointsPerAnswer;
+
     public function __construct()
     {
         $this->answers = new ArrayCollection();
@@ -112,6 +117,18 @@ class Task
                 $answer->setTask(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPointsPerAnswer(): ?int
+    {
+        return $this->pointsPerAnswer;
+    }
+
+    public function setPointsPerAnswer(int $pointsPerAnswer): self
+    {
+        $this->pointsPerAnswer = $pointsPerAnswer;
 
         return $this;
     }
