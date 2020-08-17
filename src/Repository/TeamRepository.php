@@ -47,7 +47,7 @@ class TeamRepository extends ServiceEntityRepository
     {
         $entityManager = $this->getEntityManager();
         $query = $entityManager->createQuery(
-            'SELECT t.id, t.title, SUM(p.pointsPerVisit) AS num_of_visits FROM App\Entity\Team t LEFT JOIN t.visited v LEFT JOIN v.peak p WHERE v.race = :raceid GROUP BY t.id ORDER BY num_of_visits DESC' );
+            'SELECT t.id, t.title, SUM(p.pointsPerVisit) AS team_points FROM App\Entity\Team t LEFT JOIN t.visited v LEFT JOIN v.peak p WHERE v.race = :raceid GROUP BY t.id ORDER BY team_points DESC' );
         $query->setParameter('raceid', $raceid);
 
         return $query->getResult();

@@ -16,11 +16,17 @@ Ostatní členové týmu
 
 <h2>Průchod hrou</h2>
 
-<table>
-    <tr><th>Vrchol</th><th>Čas</th><th>Poznámka</th></tr>
-    {% for visit in visits %}
+<table class="table table-striped">
     <tr>
+        <th scope="col">Vrchol</th>
+        <th scope="col">Počet bodů</th>
+        <th scope="col">Čas</th>
+        <th scope="col">Poznámka</th>
+    </tr>
+    {% for visit in visits %}
+    <tr scope="row">
         <td><a href="{{ path('admin_peak_detail', {peakid:visit.id}) }}">{{visit.title}}</a></td>
+        <td>{{visit.pointsPerVisit}}</td>
         <td>{{visit.time|date('d.m.Y H:i:s')}}</td>
         <td>{% if visit.note %}
                 {{visit.note|sanitize_html}}
