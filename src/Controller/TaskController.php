@@ -167,12 +167,6 @@ class TaskController extends AbstractController
             ->getRepository(Task::class)
             ->findByRace($raceid);
 
-        if (!$tasks) {
-            throw $this->createNotFoundException(
-                'No tasks found for race '.$raceid
-            );
-        }
-
         $race = $this->getDoctrine()
             ->getRepository(Race::class)
             ->find($raceid);
