@@ -22,10 +22,13 @@
         {% endif %}
     </div>#}
 
-    {% for message in app.flashes('notice') %}
-        <div class="alert alert-primary">
-            {{ message }}
-        </div>
+
+    {% for label, messages in app.flashes(['danger', 'primary']) %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">
+                {{ message }}
+            </div>
+        {% endfor %}
     {% endfor %}
 
     <div>

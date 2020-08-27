@@ -8,10 +8,8 @@ use App\Entity\Peak;
 use App\Entity\Team;
 use App\Entity\Race;
 use App\Entity\Visit;
+use App\Form\VisitForm;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
@@ -83,20 +81,8 @@ class PeakController extends AbstractController
             $form_label = 'Potvrdit návštěvu vrcholu';
             $is_visited = false;
         }
-
-        $builder = $this->createFormBuilder($visit)
-            ->add('note', CKEditorType::class, ['required' => false, 'sanitize_html' => true, 'config' => ['toolbar' => 'standard']])
-            ->add('image', FileType::class, ['label' => 'Obrázek' ,'mapped' => false, 'required' => false])
-            ->add('save', SubmitType::class, ['label' => $form_label]);
         
-        if ($is_visited)
-        {
-            $builder->add('delete', SubmitType::class, [
-                'label' => 'Zrušit návštěvu vrcholu', 
-                'attr' => [ 'class' => 'btn-danger']]);
-        }
-        
-        $visit_form = $builder->getForm();
+        $visit_form = $this->createForm(VisitForm::class, $visit, ['is_visited' => $is_visited, 'form_label' => $form_label]);;
 
         $visit_form->handleRequest($request);
 
@@ -130,19 +116,20 @@ class PeakController extends AbstractController
                         );
                     } catch (FileException $e) {
                         // ... handle exception if something happens during file upload
+                        $this->addFlash('danger', 'Chyba při nahrávání souboru');
                     }
 
                     $visit->setImageFilename($newFilename);
                 }
                 
                 $manager->persist($visit);
-                $this->addFlash('notice', 'Vrchol zalogován');                
+                $this->addFlash('primary', 'Vrchol zalogován');                
             }
 
             elseif ($visit_form->get('delete')->isClicked())
             {
                 $manager->remove($visit);         
-                $this->addFlash('notice', 'Vrchol odlogován');
+                $this->addFlash('primary', 'Vrchol odlogován');
             }
 
             $manager->flush();
