@@ -9,10 +9,10 @@ use App\Entity\Team;
 use App\Entity\Race;
 use App\Entity\Visit;
 use App\Form\VisitForm;
+use App\Service\ImageUploader;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 class PeakController extends AbstractController
 {
@@ -28,7 +28,7 @@ class PeakController extends AbstractController
     /**
      * @Route("/peak/{id}",methods="GET|POST", name="peak_show")
      */
-    public function show($id, SessionInterface $session, Request $request,  SluggerInterface $slugger)
+    public function show($id, SessionInterface $session, Request $request,  ImageUploader $imageUploader)
     {
         $peak = $this->getDoctrine()
             ->getRepository(Peak::class)
@@ -104,20 +104,7 @@ class PeakController extends AbstractController
                 // this condition is needed because the 'brochure' field is not required
                 // so the PDF file must be processed only when a file is uploaded
                 if ($imageFile) {
-                    $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                    // this is needed to safely include the file name as part of the URL
-                    $safeFilename = $slugger->slug($originalFilename);
-                    $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
-
-                    try {
-                        $imageFile->move(
-                            $this->getParameter('images_directory'),
-                            $newFilename
-                        );
-                    } catch (FileException $e) {
-                        // ... handle exception if something happens during file upload
-                        $this->addFlash('danger', 'Chyba při nahrávání souboru');
-                    }
+                    $newFilename = $imageUploader->upload($imageFile);
 
                     $visit->setImageFilename($newFilename);
                 }
