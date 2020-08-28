@@ -34,7 +34,7 @@ class Answer
     private $task;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Team::class, inversedBy="answers")
+     * @ORM\ManyToOne(targetEntity=Team::class, inversedBy="answered")
      * @ORM\JoinColumn(nullable=false)
      */
     private $team;
