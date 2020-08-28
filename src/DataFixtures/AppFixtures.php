@@ -73,19 +73,20 @@ class AppFixtures extends Fixture
     private function getTaskData(): array
     {
         return [
-            // $taskData = [$title, $description]
-            ['Schody na rozhlednu', 'Vystup na rozhlednu a spočítej kolik schodů tam bylo.'],
-            ['Večeře v restauraci', 'Dej si nějakou dobrou večeři někde v kolibě.'],
-            ['Koupačka pod vodopádem', 'Vykoupej se pod horským vodopádem']
+            // $taskData = [$title, $points, $description]
+            ['Schody na rozhlednu', 1, 'Vystup na rozhlednu a spočítej kolik schodů tam bylo.'],
+            ['Večeře v restauraci', 1, 'Dej si nějakou dobrou večeři někde v kolibě.'],
+            ['Koupačka pod vodopádem', 2, 'Vykoupej se pod horským vodopádem']
         ];
     }
 
     private function loadTasks(ObjectManager $manager)
     {
-        foreach ($this->getTaskData() as [$title, $description]) {
+        foreach ($this->getTaskData() as [$title, $points, $description]) {
             $task = new Task();
             $task->setTitle($title);
             $task->setDescription($description);
+            $task->setPointsPerAnswer($points);
             
             $manager->persist($task);
             $this->addReference($title, $task);
@@ -159,7 +160,11 @@ class AppFixtures extends Fixture
             ['Petr Doe', 'petr_user@symfony.com', 'kitten', ['ROLE_USER']],
             ['Marek Doe', 'marek_user@symfony.com', 'kitten', ['ROLE_USER']],
             ['Fero Doe', 'fero_user@symfony.com', 'kitten', ['ROLE_USER']],
-            ['Robo Doe', 'robo_user@symfony.com', 'kitten', ['ROLE_USER']]
+            ['Robo Doe', 'robo_user@symfony.com', 'kitten', ['ROLE_USER']],
+            ['Janosik', 'zdenek.jancik@gmail.com', 'kitten', ['ROLE_USER','ROLE_ADMIN']],
+            ['Radim', 'radim.vecera@gmail.com', 'kitten', ['ROLE_USER','ROLE_ADMIN']],
+            ['Vilda', 'ondrak.vilem@gmail.com', 'kitten', ['ROLE_USER','ROLE_ADMIN']],
+            ['Cuzl', 'cuzl@centrum.cz', 'kitten', ['ROLE_USER','ROLE_ADMIN']]
         ];
     }
 
@@ -185,10 +190,10 @@ class AppFixtures extends Fixture
             // $teamData = [$title, $leader, $members]
             ['Team 1', 'tom_user@symfony.com', ['john_user@symfony.com', 'jack_user@symfony.com']],
             ['Team 2', 'joe_user@symfony.com', ['annie_user@symfony.com', 'fred_user@symfony.com']],
-            ['Team A', 'pepa_user@symfony.com', ['pepa_user@symfony.com']],
-            ['Team B', 'lada_user@symfony.com', ['lada_user@symfony.com']],
-            ['Team C', 'karel_user@symfony.com', ['karel_user@symfony.com']],
-            ['Team D', 'petr_user@symfony.com', ['petr_user@symfony.com']],
+            ['Team A', 'zdenek.jancik@gmail.com', ['zdenek.jancik@gmail.com']],
+            ['Team B', 'radim.vecera@gmail.com ', ['radim.vecera@gmail.com ']],
+            ['Team C', 'ondrak.vilem@gmail.com ', ['ondrak.vilem@gmail.com ']],
+            ['Team D', 'cuzl@centrum.cz ', ['cuzl@centrum.cz ']],
             ['Team E', 'marek_user@symfony.com', ['marek_user@symfony.com']],
             ['Team F', 'fero_user@symfony.com', ['fero_user@symfony.com']],
             ['Team G', 'robo_user@symfony.com', ['robo_user@symfony.com']],
@@ -220,7 +225,7 @@ class AppFixtures extends Fixture
                 'Objevitelský závod, který nejde prohrát.', 
                 ['Team 1', 'Team 2'],
                 ['vrchol_01', 'vrchol_02', 'vrchol_03', 'vrchol_04', 'vrchol_05'],
-                ['Schody na rozhlednu', 'Večeře v restauraci', 'Koupačka pod vodopádem']
+                []
             ],
             [   'Pálavská štreka', 
                 '<p>Pálavská štreka je nevšední amatérský cyklopiknikovací závod. 
@@ -233,7 +238,7 @@ class AppFixtures extends Fixture
                  'short_06', 'short_07', 'short_08', 'short_09', 'short_10',
                  'short_11', 'short_12', 'short_13', 'short_14', 'short_15',
                  'short_16', 'short_17', 'short_18', 'short_19', 'short_20'],
-                []
+                 ['Schody na rozhlednu', 'Večeře v restauraci', 'Koupačka pod vodopádem']
             ]
         ];
     }
