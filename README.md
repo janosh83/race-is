@@ -1,6 +1,6 @@
 Install
 pre-install tasks
-* install symphony, composer
+* install symfony, composer
 * install php, mysql and some web server (XAMPP pack for windows is working fine)
 
 clone git repository
