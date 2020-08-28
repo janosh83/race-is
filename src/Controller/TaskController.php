@@ -8,13 +8,11 @@ use App\Entity\Task;
 use App\Entity\Team;
 use App\Entity\Race;
 use App\Entity\Answer;
+use App\Form\AnswerForm;
+use App\Service\ImageUploader;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 class TaskController extends AbstractController
 {
@@ -30,7 +28,7 @@ class TaskController extends AbstractController
     /**
      * @Route("/task/{id}",methods="GET|POST", name="task_show")
      */
-    public function show($id, SessionInterface $session, Request $request,  SluggerInterface $slugger)
+    public function show($id, SessionInterface $session, Request $request,  ImageUploader $imageUploader)
     {
         $task = $this->getDoctrine()
             ->getRepository(Task::class)
@@ -84,19 +82,7 @@ class TaskController extends AbstractController
             $is_answered = false;
         }
 
-        $builder = $this->createFormBuilder($answer)
-            ->add('note', CKEditorType::class, ['required' => false, 'sanitize_html' => true, 'config' => ['toolbar' => 'standard']])
-            //->add('image', FileType::class, ['label' => 'Obrázek' ,'mapped' => false, 'required' => false])
-            ->add('save', SubmitType::class, ['label' => $form_label]);
-        
-        if ($is_answered)
-        {
-            $builder->add('delete', SubmitType::class, [
-                'label' => 'Zrušit odpověď na úkol', 
-                'attr' => [ 'class' => 'btn-danger']]);
-        }
-        
-        $answer_form = $builder->getForm();
+        $answer_form = $this->createForm(AnswerForm::class, $answer, ['is_answered' => $is_answered, 'form_label' => $form_label]);;
 
         $answer_form->handleRequest($request);
 
@@ -113,27 +99,15 @@ class TaskController extends AbstractController
                 // TODO: convert to service https://symfony.com/doc/current/controller/upload_file.html#creating-an-uploader-service
 
                 /** @var UploadedFile $imageFile */
-/*                $imageFile = $visit_form->get('image')->getData();
+                $imageFile = $answer_form->get('image')->getData();
 
                 // this condition is needed because the 'brochure' field is not required
                 // so the PDF file must be processed only when a file is uploaded
                 if ($imageFile) {
-                    $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                    // this is needed to safely include the file name as part of the URL
-                    $safeFilename = $slugger->slug($originalFilename);
-                    $newFilename = $safeFilename.'-'.uniqid().'.'.$imageFile->guessExtension();
+                    $newFilename = $imageUploader->upload($imageFile);
 
-                    try {
-                        $imageFile->move(
-                            $this->getParameter('images_directory'),
-                            $newFilename
-                        );
-                    } catch (FileException $e) {
-                        // ... handle exception if something happens during file upload
-                    }
-
-                    $visit->setImageFilename($newFilename);
-                }*/
+                    $answer->setImageFilename($newFilename);
+                }
                 
                 $manager->persist($answer);
                 $this->addFlash('notice', 'Odpověď uložena');                
@@ -153,7 +127,7 @@ class TaskController extends AbstractController
         return $this->render('task/show.html.twig', ['task' => $task,
                                                      'race' => $race,
                                                      'team' => $team,
-                                                     //'image' => $answer->getImageFilename(),
+                                                     'image' => $answer->getImageFilename(),
                                                      'answer_form' => $answer_form->createView()]);
     }
 

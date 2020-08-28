@@ -50,6 +50,11 @@ class JournalPost
      */
     private $team;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $imageFilename;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -123,6 +128,18 @@ class JournalPost
     public function setTeam(?Team $team): self
     {
         $this->team = $team;
+
+        return $this;
+    }
+
+    public function getImageFilename(): ?string
+    {
+        return $this->imageFilename;
+    }
+
+    public function setImageFilename(string $imageFilename): self
+    {
+        $this->imageFilename = $imageFilename;
 
         return $this;
     }

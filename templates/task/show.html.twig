@@ -8,7 +8,19 @@
     <h1>{{race.title}} - {{task.title}}</h1>
      <div>{{task.description}}</div>
 
+    {% if image %}
+        <img src="{{ asset('uploads/images/' ~ image) }}" width="600px">
+    {% endif %}
+
     {{ form(answer_form) }}
+
+    <script>
+    // Add the following code if you want the name of the file appear on select
+    $(".custom-file-input").on("change", function() {
+    var fileName = $(this).val().split("\\").pop();
+    $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+</script>
 </div>
 
 <p><a href="{{ path('race_show', {id:race.id}) }}">Zpět na závod</a></p>

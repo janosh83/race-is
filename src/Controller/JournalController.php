@@ -7,13 +7,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use App\Entity\Race;
 use App\Entity\Team;
 use App\Entity\JournalPost;
+use App\Form\JournalForm;
+use App\Service\ImageUploader;
 
 class JournalController extends AbstractController
 {
@@ -29,7 +27,7 @@ class JournalController extends AbstractController
     /**
      * @Route("/journal/race/{raceid}",methods="GET|POST", name="journal_index")
      */
-    public function index($raceid, Request $request, SessionInterface $session)
+    public function index($raceid, Request $request, SessionInterface $session, ImageUploader $imageUploader)
     {
         $race = $this->getDoctrine()
             ->getRepository(Race::class)
@@ -57,13 +55,8 @@ class JournalController extends AbstractController
         $post->setTeam($team);
         $post->setAuthor($user);
 
-        $post_form = $this->createFormBuilder($post)
-            ->add('title', TextType::class)
-            ->add('date', DateType::class)
-            ->add('text', CKEditorType::class, ['sanitize_html' => true, 'config' => ['toolbar' => 'standard']])
-            ->add('save', SubmitType::class, ['label' => 'Přidat záznam'])
-            ->getForm();
-
+        $post_form = $this->createForm(JournalForm::class, $post);
+            
         $post_form->handleRequest($request);
 
         if ($post_form->isSubmitted())
@@ -71,8 +64,22 @@ class JournalController extends AbstractController
             $post = $post_form->getData();
             
             $manager = $this->getDoctrine()->getManager();
-            $manager->persist($post);
-            $manager->flush();
+
+            if ($post_form->get('save')->isClicked())
+            {
+                /** @var UploadedFile $imageFile */
+                $imageFile = $post_form->get('image')->getData();
+
+                // this condition is needed because the 'brochure' field is not required
+                // so the PDF file must be processed only when a file is uploaded
+                if ($imageFile) {
+                    $newFilename = $imageUploader->upload($imageFile);
+
+                    $post->setImageFilename($newFilename);
+                }
+                $manager->persist($post);
+                $manager->flush();
+            }
 
             return $this->redirectToRoute('journal_index',array('raceid' => $raceid));
 

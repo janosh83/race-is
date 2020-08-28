@@ -8,4 +8,8 @@
 
     <div>{{post.text|sanitize_html }}</div>
 
+    {% if post.imageFilename %}
+        <img src="{{ asset('uploads/images/' ~ post.imageFilename) }}" width="600px">
+    {% endif %}
+
 {% endblock %}
