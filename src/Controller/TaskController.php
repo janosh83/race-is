@@ -69,7 +69,7 @@ class TaskController extends AbstractController
 
         if ($answer)
         {
-            $form_label = 'Upravit odpověď na úkol';
+            $form_label = 'Upravit splnění úkolu';
             $is_answered = true;
         }
         else
@@ -78,7 +78,7 @@ class TaskController extends AbstractController
             $answer->setTask($task);
             $answer->setTeam($team);
             $answer->setRace($race);
-            $form_label = 'Potvrdit odpověď na úkol';
+            $form_label = 'Potvrdit splnění úkolu';
             $is_answered = false;
         }
 

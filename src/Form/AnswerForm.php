@@ -60,7 +60,7 @@ class AnswerForm extends AbstractType
         ]);
 
         $resolver->setDefaults(['is_answered' => false]);
-        $resolver->setDefaults(['form_label' => 'Potvrdit návštěvu vrcholu']);
+        $resolver->setDefaults(['form_label' => 'Potvrdit splnění úkolu']);
 
         // you can also define the allowed types, allowed values and
         // any other feature supported by the OptionsResolver component
