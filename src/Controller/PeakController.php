@@ -180,10 +180,7 @@ class PeakController extends AbstractController
 
     }
 
-    /**
-     * @Route("/admin/racepeaks/{raceid}", name="admin_peak_table")
-     */
-    public function peak_table($raceid)
+    private function get_race_peaks_data($raceid)
     {
         $peaks = $this->getDoctrine()
             ->getRepository(Peak::class)
@@ -205,6 +202,22 @@ class PeakController extends AbstractController
             );
         }
 
-        return $this->render('admin/peaks_table.html.twig', ['race' => $race,'peaks' => $peaks]);
+        return ['race' => $race,'peaks' => $peaks];
+    }
+
+    /**
+     * @Route("/admin/racepeaks/{raceid}", name="admin_peak_table")
+     */
+    public function peak_table($raceid)
+    {
+        return $this->render('admin/peaks_table.html.twig', $this->get_race_peaks_data($raceid));
+    }
+
+    /**
+     * @Route("/admin/roadbook/{raceid}", name="admin_roadbook")
+     */
+    public function roadbook($raceid)
+    {
+        return $this->render('admin/roadbook.html.twig', $this->get_race_peaks_data($raceid));
     }
 }

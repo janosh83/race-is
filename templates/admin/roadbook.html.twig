@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{{race.title}} - roadbook</title>
+        <style>
+            table {border-collapse: collapse;}
+            table, th, td {border: 1px solid black;}
+        </style>
+    </head>
+
+    <body>
+        <h1>{{race.title}}</h1>
+
+                  
+        {% for peak in peaks %}
+        <div>
+            <h2>{{peak.title}}</h2>
+            <p><strong>GPS:</strong> {{peak.GPS}}</td>
+            <p><strong>Počet bodů za vrchol:</strong> {{peak.pointsPerVisit}}</td>
+            <p><strong>Popisek:</strong> {{peak.description}}</p>
+        </div>
+        {% endfor %}
+        
+
+    </body>
+</html>

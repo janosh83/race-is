@@ -47,4 +47,12 @@
 {% endfor %}
 </ul>
 
+<h2>Roadbook</h2>
+<p>Vygeneruje popisek všech vrcholů, vhodný pro vložení do roadbooku</p>
+<ul>
+{% for race in races %}
+    <li><a href="{{ path('admin_roadbook', {raceid:race.id}) }}">{{race.title}}</a></li>
+{% endfor %}
+</ul>
+
 {% endblock %}
