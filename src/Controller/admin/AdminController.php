@@ -214,14 +214,14 @@ class AdminController extends AbstractController
             $user->setPassword($passwordEncoder->encodePassword($user, $password));
             // TODO: generate random password and send email to user
 
-            $team = new Team();
-            $team->setTitle($t["name"]);
-            $team->setLeader($user);
-            $team->addMember($user);
-            $team->addSigned($race);
+            //$team = new Team();
+            //$team->setTitle($t["name"]);
+            //$team->setLeader($user);
+            //$team->addMember($user);
+            //$team->addSigned($race);
 
             $entityManager->persist($user);
-            $entityManager->persist($team);
+            //$entityManager->persist($team);
 
             $email = (new TemplatedEmail())
             ->from(new Address('mailer@picnicadventures.com', 'Picnic Adventures Mailbot'))
