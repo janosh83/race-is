@@ -58,6 +58,16 @@ class Race
      */
     private $journalPosts;
 
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $startShowingPeaks;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $startLoggingPeaks;
+
     public function __construct()
     {
         $this->signed = new ArrayCollection();
@@ -276,6 +286,30 @@ class Race
                 $journalPost->setRace(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getStartShowingPeaks(): ?\DateTimeInterface
+    {
+        return $this->startShowingPeaks;
+    }
+
+    public function setStartShowingPeaks(\DateTimeInterface $startShowingPeaks): self
+    {
+        $this->startShowingPeaks = $startShowingPeaks;
+
+        return $this;
+    }
+
+    public function getStartLoggingPeaks(): ?\DateTimeInterface
+    {
+        return $this->startLoggingPeaks;
+    }
+
+    public function setStartLoggingPeaks(\DateTimeInterface $startLoggingPeaks): self
+    {
+        $this->startLoggingPeaks = $startLoggingPeaks;
 
         return $this;
     }

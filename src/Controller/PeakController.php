@@ -8,6 +8,7 @@ use App\Entity\Peak;
 use App\Entity\Team;
 use App\Entity\Race;
 use App\Entity\Visit;
+use App\Entity\Image;
 use App\Form\VisitForm;
 use App\Service\ImageUploader;
 use Symfony\Component\HttpFoundation\Request;
@@ -62,6 +63,14 @@ class PeakController extends AbstractController
             );
         }
 
+        if ($race->getStartShowingPeaks() > new \DateTime('NOW')){
+            return $this->render('race/not_started.html.twig', ['race' => $race]);
+        }
+
+        if ($race->getStartLoggingPeaks() > new \DateTime('NOW')){
+            return $this->render('peak/not_allowed.html.twig', ['race' => $race]);
+        }
+
         // TODO: see https://symfony.com/doc/current/doctrine/associations.html#fetching-related-objects for performance optimization
         $visit = $this->getDoctrine()
             ->getRepository(Visit::class)
@@ -96,7 +105,6 @@ class PeakController extends AbstractController
                 // FIXME: delete old image file when new one is uploaded
                 // FIXME: validate that uploaded file is image
                 // TODO: resize image to reasonable size
-                // TODO: convert to service https://symfony.com/doc/current/controller/upload_file.html#creating-an-uploader-service
 
                 /** @var UploadedFile $imageFile */
                 $imageFile = $visit_form->get('image')->getData();
@@ -105,8 +113,11 @@ class PeakController extends AbstractController
                 // so the PDF file must be processed only when a file is uploaded
                 if ($imageFile) {
                     $newFilename = $imageUploader->upload($imageFile);
+                    $image = new Image();
+                    $image->setFilename($newFilename);
+                    $manager->persist($image);
 
-                    $visit->setImageFilename($newFilename);
+                    $visit->addImage($image);
                 }
                 
                 $manager->persist($visit);
@@ -127,7 +138,7 @@ class PeakController extends AbstractController
         return $this->render('peak/show.html.twig', ['peak' => $peak,
                                                      'race' => $race,
                                                      'team' => $team,
-                                                     'image' => $visit->getImageFilename(),
+                                                     'images' => $visit->getImages(),
                                                      'visit_form' => $visit_form->createView()]);
     }
 
@@ -144,6 +155,10 @@ class PeakController extends AbstractController
             throw $this->createNotFoundException(
                 'Race not found '.$raceid
             );
+        }
+
+        if ($race->getStartShowingPeaks() > new \DateTime('NOW')){
+            return $this->render('race/not_started.html.twig', ['race' => $race]);
         }
 
         $user = $this->security->getUser();
@@ -201,6 +216,9 @@ class PeakController extends AbstractController
                 'Race not found '.$raceid
             );
         }
+
+        /* NOTE: it is safe hre to skip check if it is allowed to show peaks 
+                 as this code is called only for admin tasks. */
 
         return ['race' => $race,'peaks' => $peaks];
     }

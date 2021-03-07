@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -45,13 +47,14 @@ class Visit
     private $race;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\OneToMany(targetEntity=Image::class, mappedBy="visit")
      */
-    private $imageFilename;
+    private $images;
 
     public function __construct()
     {
         $this->time = new \DateTime();
+        $this->images = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -119,14 +122,33 @@ class Visit
         return $this;
     }
 
-    public function getImageFilename()
+    /**
+     * @return Collection|Image[]
+     */
+    public function getImages(): Collection
     {
-        return $this->imageFilename;
+        return $this->images;
     }
 
-    public function setImageFilename($imageFilename)
+    public function addImage(Image $image): self
     {
-        $this->imageFilename = $imageFilename;
+        if (!$this->images->contains($image)) {
+            $this->images[] = $image;
+            $image->setVisit($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(Image $image): self
+    {
+        if ($this->images->contains($image)) {
+            $this->images->removeElement($image);
+            // set the owning side to null (unless already changed)
+            if ($image->getVisit() === $this) {
+                $image->setVisit(null);
+            }
+        }
 
         return $this;
     }

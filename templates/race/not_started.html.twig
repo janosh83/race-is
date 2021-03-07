@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{race.title}}{% endblock %}
+
+{% block main %}
+
+<h1>{{race.title}}</h1>
+<p>Zobrazení vrcholů pro tento závod ještě není spuštěno vyčkejte 
+prosím do {{race.startShowingPeaks|date('d.m.Y H:i:s')}}</p>
+
+<p>Aktuální čas: {{"now"|date('d.m.Y H:i:s')}}</p>
+
+{% endblock %}

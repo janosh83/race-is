@@ -51,6 +51,10 @@ class RaceController extends AbstractController
             );
         }
 
+        if ($race->getStartShowingPeaks() > new \DateTime('NOW')){
+            return $this->render('race/not_started.html.twig', ['race' => $race]);
+        }
+
         $user = $this->security->getUser();
 
         /*$teamWhereLeader = $this->getDoctrine()

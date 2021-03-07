@@ -223,6 +223,8 @@ class AppFixtures extends Fixture
             // $raceData = [$title, $description, $teams, $peaks, $tasks]
             [   'Hill Bill Rally 2020', 
                 'Objevitelský závod, který nejde prohrát.', 
+                '2021-03-02 19:01:58',
+                '2021-03-02 19:01:58',
                 ['Team 1', 'Team 2'],
                 ['vrchol_01', 'vrchol_02', 'vrchol_03', 'vrchol_04', 'vrchol_05'],
                 []
@@ -233,6 +235,8 @@ class AppFixtures extends Fixture
                 je navštívit cestou na Pálavu co nejvíce zajímavých míst – bodů 
                 vyznačených v připravené mapě. Závodníci, kteří posbírají nejvíce 
                 těchto bodů stanou v cíli na stupních vítězů.</p>', 
+                '2021-03-02 19:01:58',
+                '2021-03-02 19:01:58',
                 ['Team A', 'Team B', 'Team C', 'Team D', 'Team E', 'Team F', 'Team G'],
                 ['short_01', 'short_02', 'short_03', 'short_04', 'short_05',
                  'short_06', 'short_07', 'short_08', 'short_09', 'short_10',
@@ -245,10 +249,12 @@ class AppFixtures extends Fixture
 
     private function loadRaces(ObjectManager $manager): void
     {
-        foreach ($this->getRaceData() as [$title, $description, $teams, $peaks, $tasks]) {
+        foreach ($this->getRaceData() as [$title, $description, $start_showing_peaks, $start_logging, $teams, $peaks, $tasks]) {
             $race = new Race();
             $race->setTitle($title);
             $race->setDescription($description);
+            $race->setStartShowingPeaks(new \DateTime($start_showing_peaks));
+            $race->setStartLoggingPeaks(new \DateTime($start_logging));
 
             foreach($teams as $teamTitle)
             {
