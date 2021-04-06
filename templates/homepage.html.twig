@@ -10,8 +10,10 @@
     </div>
     {% endfor %}
 
+    <p>Vítejte v aplikaci pro zaznamenání postupu závodem pořádaným spolkem dobrodruhů Picnic Adventures.</p>
+
     {% if app.user %}
-        <p><a href="{{ path('all_races')}}">Seznam závodů</a></p>
+        <p>Prosím pokračujte na <a href="{{ path('all_races')}}">seznam závodů</a>.</p>
     {% endif %}
 
 {% endblock %}

@@ -96,10 +96,16 @@
    */
   .blog-footer {
     padding: 2.5rem 0;
-    color: #999;
+    color: #ccc;
     text-align: center;
-    background-color: #f9f9f9;
+    background-color: #404040;
     border-top: .05rem solid #e5e5e5;
+  }
+  .blog-footer a{
+    color: #999
+  }
+  .footer-title {
+    font-size: 2.5rem;
   }
   .blog-footer p:last-child {
     margin-bottom: 0;
