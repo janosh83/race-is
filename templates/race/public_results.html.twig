@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{race.title}} - výsledky{% endblock %}
+
+{% block main %}
+
+<h1>Aktuální výsledky: {{race.title}}</h1>
+
+<table class="table table-striped">
+    <tr>
+        <th scope="col">Pořadí</th>
+        <th scope="col">Jméno týmu</th>
+    </tr>
+    {% set i = 1 %}
+    {% for team in peak_results %}
+    <tr scope="row">
+        <td>{{i}}</td>
+        <td>{{team.title}}</td>
+    </tr>
+    {% set i = i + 1 %}
+    {% endfor %}
+</table>
+
+{% if race.tasksEnabled %}
+    <table class="table table-striped">
+        <tr>
+            <th scope="col">Jméno týmu</th>
+        </tr>
+        {% for team in task_results %}
+        <tr scope="row">
+            <td>{{team.title}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+
+<p><a href="{{ path('race_show', {id:race.id}) }}">Zpět na závod</a></p>
+
+{% endblock %}

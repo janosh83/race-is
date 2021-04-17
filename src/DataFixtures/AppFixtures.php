@@ -242,7 +242,8 @@ class AppFixtures extends Fixture
                 false,
                 'jizda_logo_256.png',
                 ['Team 1', 'Team 2'],
-                ['vrchol_01', 'vrchol_02', 'vrchol_03', 'vrchol_04', 'vrchol_05'],
+                ['short_11', 'short_12', 'short_13', 'short_14', 'short_15',
+                'short_16', 'short_17', 'short_18', 'short_19', 'short_20'],
                 []
             ],
             [   'Pálavská štreka', 
@@ -259,9 +260,7 @@ class AppFixtures extends Fixture
                 'streka_logo_256.png',
                 ['Team A', 'Team B', 'Team C', 'Team D', 'Team E', 'Team F', 'Team G'],
                 ['short_01', 'short_02', 'short_03', 'short_04', 'short_05',
-                 'short_06', 'short_07', 'short_08', 'short_09', 'short_10',
-                 'short_11', 'short_12', 'short_13', 'short_14', 'short_15',
-                 'short_16', 'short_17', 'short_18', 'short_19', 'short_20'],
+                 'short_06', 'short_07', 'short_08', 'short_09', 'short_10'],
                  ['Schody na rozhlednu', 'Večeře v restauraci', 'Koupačka pod vodopádem']
             ]
         ];

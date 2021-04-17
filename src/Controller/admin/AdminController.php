@@ -34,29 +34,6 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/admin/raceresults/{raceid}", name="admin_race_results")
-     */
-    public function race_results($raceid)
-    {
-        $race = $this->getDoctrine()
-            ->getRepository(Race::class)
-            ->find($raceid);
-
-        if (!$race) {
-            throw $this->createNotFoundException(
-                'Race not found '.$raceid
-            );
-        }
-
-        $peak_results = $this->getDoctrine()->getRepository(Team::class)->countByVisistedPeaks($raceid);
-        $task_results = $this->getDoctrine()->getRepository(Team::class)->countByAnsweredTasks($raceid);
-
-        return $this->render('admin/results.html.twig', ['race' => $race,
-                                                         'peak_results' => $peak_results,
-                                                         'task_results' => $task_results]);
-    }
-
-    /**
      * @Route("/admin/visit/{raceid}/{teamid}", name="admin_visit_detail")
      */
     public function visit_detail($raceid, $teamid)
