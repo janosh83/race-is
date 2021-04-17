@@ -68,6 +68,11 @@ class Race
      */
     private $startLoggingPeaks;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $logoPath;
+
     public function __construct()
     {
         $this->signed = new ArrayCollection();
@@ -310,6 +315,18 @@ class Race
     public function setStartLoggingPeaks(\DateTimeInterface $startLoggingPeaks): self
     {
         $this->startLoggingPeaks = $startLoggingPeaks;
+
+        return $this;
+    }
+
+    public function getLogoPath(): ?string
+    {
+        return $this->logoPath;
+    }
+
+    public function setLogoPath(?string $logoPath): self
+    {
+        $this->logoPath = $logoPath;
 
         return $this;
     }

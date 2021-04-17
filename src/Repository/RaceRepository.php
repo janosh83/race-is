@@ -24,7 +24,7 @@ class RaceRepository extends ServiceEntityRepository
         $entityManager = $this->getEntityManager();
 
         $query = $entityManager
-            ->createQuery('SELECT r.id, r.title FROM App\Entity\Race r LEFT JOIN r.signed rs WHERE r.id = :raceid AND rs.id = :teamid');
+            ->createQuery('SELECT r.id, r.title, r.description, r.logoPath FROM App\Entity\Race r LEFT JOIN r.signed rs WHERE r.id = :raceid AND rs.id = :teamid');
         $query->setParameter('teamid', $teamid);
         $query->setParameter('raceid', $raceid);
 
@@ -36,7 +36,7 @@ class RaceRepository extends ServiceEntityRepository
         $entityManager = $this->getEntityManager();
 
         $query = $entityManager
-            ->createQuery('SELECT r.id, r.title FROM App\Entity\Race r LEFT JOIN r.signed rs LEFT JOIN rs.leader sl WHERE sl.id = :userid');
+            ->createQuery('SELECT r.id, r.title, r.description, r.logoPath FROM App\Entity\Race r LEFT JOIN r.signed rs LEFT JOIN rs.leader sl WHERE sl.id = :userid');
         $query->setParameter('userid', $userid);
         
         return $query->getResult();
@@ -47,7 +47,7 @@ class RaceRepository extends ServiceEntityRepository
         $entityManager = $this->getEntityManager();
 
         $query = $entityManager
-            ->createQuery('SELECT r.id, r.title FROM App\Entity\Race r LEFT JOIN r.signed rs LEFT JOIN rs.member sl WHERE sl.id = :userid');
+            ->createQuery('SELECT r.id, r.title, r.description, r.logoPath FROM App\Entity\Race r LEFT JOIN r.signed rs LEFT JOIN rs.member sl WHERE sl.id = :userid');
         $query->setParameter('userid', $userid);
         
         return $query->getResult();

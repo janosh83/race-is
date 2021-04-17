@@ -5,13 +5,30 @@
 
 {% block main %}
 
-    <ul>
     {#{% for race in races_leader %}
         <li><a href="{{ path('race_show', {id:race.id}) }}">{{race.title}}</a></li>
     {% endfor %}#}
+
+    
+    <div class="py-5 row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
     {% for race in races_member %}
-        <li><a href="{{ path('race_show', {id:race.id}) }}">{{race.title}}</a></li>
+
+        <div class="col">
+            <div class="card shadow-sm">
+                <img class="card-img-top" src="img/race/logo/{{race.logoPath}}" alt="{{race.title}}">        
+                <div class="card-body">
+                    <div class="card-title"><h2>{{race.title}}</h2></div>
+                    <p class="card-text">{{race.description}}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-sm btn-outline-secondary"><a href="{{ path('race_show', {id:race.id}) }}">Detaily</a></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
     {% endfor %}
-    </ul>
+    </div>
 
 {% endblock %}
