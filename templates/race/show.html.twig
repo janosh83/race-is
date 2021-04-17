@@ -53,6 +53,7 @@
         </ul>
     </div>
 
+    {% if race.tasksEnabled == true %}
     <div>
         <h2>Úkoly</h2>
         <h3>Splněné</h3>
@@ -69,13 +70,16 @@
             {% endfor %}
         </ul>
     </div>
+    {% endif %}
 
+    {% if race.journalEnabled == true %}
     <div>
         <h2>Deník</h2>
         <p>
             <a href="{{ path('journal_index', {raceid:race.id}) }}">Deník závodu</a>
         </p>
     </div>
+    {% endif %}
 
 </div>
 

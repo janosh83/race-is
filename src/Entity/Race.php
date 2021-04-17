@@ -73,6 +73,21 @@ class Race
      */
     private $logoPath;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $journalEnabled;
+
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $tasksEnabled;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $stopLoggingPeaks;
+
     public function __construct()
     {
         $this->signed = new ArrayCollection();
@@ -327,6 +342,42 @@ class Race
     public function setLogoPath(?string $logoPath): self
     {
         $this->logoPath = $logoPath;
+
+        return $this;
+    }
+
+    public function getJournalEnabled(): ?bool
+    {
+        return $this->journalEnabled;
+    }
+
+    public function setJournalEnabled(bool $journalEnabled): self
+    {
+        $this->journalEnabled = $journalEnabled;
+
+        return $this;
+    }
+
+    public function getTasksEnabled(): ?bool
+    {
+        return $this->tasksEnabled;
+    }
+
+    public function setTasksEnabled(bool $tasksEnabled): self
+    {
+        $this->tasksEnabled = $tasksEnabled;
+
+        return $this;
+    }
+
+    public function getStopLoggingPeaks(): ?\DateTimeInterface
+    {
+        return $this->stopLoggingPeaks;
+    }
+
+    public function setStopLoggingPeaks(?\DateTimeInterface $stopLoggingPeaks): self
+    {
+        $this->stopLoggingPeaks = $stopLoggingPeaks;
 
         return $this;
     }

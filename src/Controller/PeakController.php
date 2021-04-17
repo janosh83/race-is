@@ -100,7 +100,13 @@ class PeakController extends AbstractController
             $visit = $visit_form->getData();
             $manager = $this->getDoctrine()->getManager();
 
-            if ($visit_form->get('save')->isClicked())
+            if (new \DateTime('NOW') > $race->getStopLoggingPeaks())
+            {
+                // Peaks looging is not enabled
+                $this->addFlash('danger', 'Vrcholy již nejde logovat!');
+            }
+
+            elseif ($visit_form->get('save')->isClicked())
             {
                 // FIXME: delete old image file when new one is uploaded
                 // FIXME: validate that uploaded file is image
