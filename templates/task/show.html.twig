@@ -8,8 +8,10 @@
     <h1>{{race.title}} - {{task.title}}</h1>
      <div>{{task.description}}</div>
 
-    {% if image %}
+    {% if images %}
+        {% for image in images %}
         <img src="{{ asset('uploads/images/' ~ image) }}" width="600px">
+        {% endfor %}
     {% endif %}
 
     {{ form(answer_form) }}
