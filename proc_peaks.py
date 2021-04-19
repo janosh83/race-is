@@ -20,7 +20,7 @@ with open(inputfile, 'r', encoding="utf8") as f:
        print(urls)
 
        for url in urls:
-         atag = "<a href=\"{}\">{}</a>".format(url,url)
+         atag = "<a href=\"{}\" target=\"_blank\">{}</a>".format(url,url)
          print(atag)
          desc = desc.replace(url,atag)
 
