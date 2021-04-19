@@ -47,7 +47,7 @@ class RaceRepository extends ServiceEntityRepository
         $entityManager = $this->getEntityManager();
 
         $query = $entityManager
-            ->createQuery('SELECT r.id, r.title, r.description, r.logoPath FROM App\Entity\Race r LEFT JOIN r.signed rs LEFT JOIN rs.member sl WHERE sl.id = :userid');
+            ->createQuery('SELECT r.id, r.title, r.description, r.logoPath FROM App\Entity\Race r LEFT JOIN r.signed rs LEFT JOIN rs.member sl WHERE sl.id = :userid ORDER BY r.startShowingPeaks DESC');
         $query->setParameter('userid', $userid);
         
         return $query->getResult();
