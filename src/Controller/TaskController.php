@@ -127,7 +127,7 @@ class TaskController extends AbstractController
         return $this->render('task/show.html.twig', ['task' => $task,
                                                      'race' => $race,
                                                      'team' => $team,
-                                                     'image' => $answer->getImageFilename(),
+                                                     'image' => $answer->getImages(),
                                                      'answer_form' => $answer_form->createView()]);
     }
 
