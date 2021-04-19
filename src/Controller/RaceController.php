@@ -28,12 +28,19 @@ class RaceController extends AbstractController
     public function index()
     {
         $user = $this->security->getUser();
-        $raceswhereMember = $this->getDoctrine()
-            ->getRepository(Race::class)
-            ->findAllWhereMember($user->getId());
+        if($user)
+        {
+            $raceswhereMember = $this->getDoctrine()
+                ->getRepository(Race::class)
+                ->findAllWhereMember($user->getId());
 
-        return $this->render('race/index.html.twig', [/*'races_leader' => $raceshereLeader,*/
-                                                      'races_member' => $raceswhereMember]);
+            return $this->render('race/index.html.twig', [/*'races_leader' => $raceshereLeader,*/
+                                                          'races_member' => $raceswhereMember]);
+        }
+        else
+        {
+            return $this->redirectToRoute('app_login');
+        }
     }
 
      /**
