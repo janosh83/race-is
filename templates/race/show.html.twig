@@ -43,14 +43,14 @@
         <h3>Navštívené</h3>
         <ul>
             {% for vp in visitedPeaks %}
-                <li><a href="{{ path('peak_show', {id:vp.id}) }}">{{vp.title}}</a></li>
+                <li><a href="{{ path('peak_show', {id:vp.id}) }}">({{vp.short_id}}) {{vp.title}}</a></li>
             {% endfor %}
         </ul>
 
         <h3>Nenavštívené</h3>
         <ul>
             {% for nvp in notVisitedPeaks %}
-                <li><a href="{{ path('peak_show', {id:nvp.id}) }}">{{nvp.title}}</a></li>
+                <li><a href="{{ path('peak_show', {id:nvp.id}) }}">({{nvp.short_id}}) {{nvp.title}}</a></li>
             {% endfor %}
         </ul>
     </div>

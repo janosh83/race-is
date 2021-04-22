@@ -16,7 +16,7 @@ class VisitForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('note', CKEditorType::class, ['required' => false, 'sanitize_html' => true, 'config' => ['toolbar' => 'standard']])
+            ->add('note', CKEditorType::class, ['required' => false, 'label' => 'Poznámka k návštěvě vrcholu', 'sanitize_html' => true, 'config' => ['toolbar' => 'standard']])
             ->add('image', FileType::class, [
                 'label' => 'Obrázek',
 

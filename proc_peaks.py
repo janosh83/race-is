@@ -1,28 +1,32 @@
 import json
+import re
 from bs4 import BeautifulSoup
-from urlextract import URLExtract
+#from urlextract import URLExtract
 
 js = []
-extractor = URLExtract()
+#extractor = URLExtract()
+
+link_regex = re.compile('((https?):((//)|(\\\\))+([\w\d:#@%/;$()~_?\+-=\\\.&](#!)?)*)', re.DOTALL)
 
 inputfile = "jizda_vrcholy.kml"
 with open(inputfile, 'r', encoding="utf8") as f:
   soup = BeautifulSoup(f, "xml")
 
-  i = 0
+  i = 1
   for node in soup.find_all('Placemark'):
        
        name = node.contents[1].string
        coords = node.Point.coordinates.string
        desc = node.contents[3].string
 
-       urls = extractor.find_urls(desc)
+       #urls = extractor.find_urls(desc)
+       urls = re.findall(link_regex, desc)
        print(urls)
 
        for url in urls:
-         atag = "<a href=\"{}\" target=\"_blank\">{}</a>".format(url,url)
+         atag = "<a href=\"{}\" target=\"_blank\">{}</a>".format(url[0],url[0])
          print(atag)
-         desc = desc.replace(url,atag)
+         desc = desc.replace(url[0],atag)
 
        #print("desc:",desc)
 
@@ -31,7 +35,7 @@ with open(inputfile, 'r', encoding="utf8") as f:
        lon = clist[0].strip()
 
        peak = {}
-       peak["short_id"] = "peak_{}".format(i)
+       peak["short_id"] = "jizda_{}".format(i)
        peak["title"] = name
        peak["description"] = desc
        peak["latitude"] = float(lat)
@@ -42,7 +46,7 @@ with open(inputfile, 'r', encoding="utf8") as f:
 
        #if i == 20:
        #  break
-       #i = i + 1
+       i = i + 1
 
 with open("jizda_vrcholy.json","w", encoding="utf-8") as f:
   json.dump(js, f, ensure_ascii=False)

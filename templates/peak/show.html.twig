@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{peak.title}}{% endblock %}
+{% block title %}{{race.title}}{% endblock %}
 
 {% block script %}
     <!-- base leaflet -->
@@ -22,7 +22,7 @@
 
 {% block main %}
 <div>
-    <h1>{#{{peak.shortid}}: #}{{race.title}} - {{peak.title}}</h1>
+    <h1>({{peak.shortid}}) {{peak.title}}</h1>
     <p><strong>GPS: </strong> {{peak.GPS}}</p>
     <p><strong>počet bodů: </strong> {{peak.pointsPerVisit}}</p>
     <div>{{peak.description|raw}}</div>
@@ -35,11 +35,11 @@
 {% endif %}
 
 {% if date(race.stopLoggingPeaks) > date() %}
-<div>
+<div class="py-3">
     {{ form(visit_form) }}
 </div>
 {% else %}
-<p>Návštěvu vrcholu již nejde logovat ani jinak změnit. Logování skončilo: {{race.stopLoggingPeaks|date('d.m.Y H:i:s')}}</p>
+<p class="py-3">Návštěvu vrcholu již nejde logovat ani jinak změnit. Logování skončilo: {{race.stopLoggingPeaks|date('d.m.Y H:i:s')}}</p>
 {% endif %}
 
 <script>
