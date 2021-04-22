@@ -87,11 +87,11 @@
         shadowSize: [41, 41]
     });
 
-	var map = L.map('map').setView([49.34872, 16.42438], 10);
+	var map = L.map('map').setView([49.34872, 16.42438], 9);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
-            minZoom: 10,
+            minZoom: 8,
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
