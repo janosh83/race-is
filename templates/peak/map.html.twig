@@ -62,10 +62,10 @@
 
     var peaks = [
         {% for peak in visited_peaks %}
-        [ "<a href=\"{{ path('peak_show', {id:peak.id}) }}\">{{ peak.title }}</a>", {{ peak.latitude}}, {{ peak.longitude }}, true],
+        [ "<a href=\"{{ path('peak_show', {id:peak.id}) }}\">({{peak.short_id}}) {{ peak.title }}</a>", {{ peak.latitude}}, {{ peak.longitude }}, true],
         {% endfor %}
         {% for peak in nonvisited_peaks %}
-        ["<a href=\"{{ path('peak_show', {id:peak.id}) }}\">{{ peak.title }}</a>", {{ peak.latitude}}, {{ peak.longitude }}, false],
+        ["<a href=\"{{ path('peak_show', {id:peak.id}) }}\">({{peak.short_id}}) {{ peak.title }}</a>", {{ peak.latitude}}, {{ peak.longitude }}, false],
         {% endfor %}
     ];
 
@@ -91,7 +91,7 @@
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
-            minZoom: 8,
+            minZoom: 6,
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 

@@ -201,7 +201,7 @@ class AdminController extends AbstractController
             //$entityManager->persist($team);
 
             $email = (new TemplatedEmail())
-            ->from(new Address('mailer@picnicadventures.com', 'Picnic Adventures Mailbot'))
+            ->from(new Address('crew@picnicadventures.com', 'Picnic Adventures Mailbot'))
             ->to($t["email"])
             ->subject('['.$race->getTitle().']: Registrace nového uživatele')
             ->htmlTemplate('admin/new_user_email.html.twig')
