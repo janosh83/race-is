@@ -32,4 +32,5 @@ services:
     Symfony\Bridge\Doctrine\Security\RememberMe\DoctrineTokenProvider: ~
 
 parameters:
+    app.supported_locales: ['en', 'cz']
     images_directory: '%kernel.project_dir%/public/uploads/images'

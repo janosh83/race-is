@@ -10,12 +10,11 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class SecurityController extends AbstractController
 {
-    /**
-     * @Route("/login", name="app_login")
-     */
+
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         // if ($this->getUser()) {
@@ -38,17 +37,14 @@ class SecurityController extends AbstractController
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 
-    /**
-     * @Route("/change_password", name="app_change_password")
-     */
-    public function change_password(Request $request, UserPasswordEncoderInterface $passwordEncoder)
+    public function change_password(Request $request, UserPasswordEncoderInterface $passwordEncoder, TranslatorInterface $translator)
     {
 
         $form = $this->createFormBuilder()
-            ->add('old_password', PasswordType::class, ['label'=>'Staré heslo'])
-            ->add('new_password', PasswordType::class, ['label'=>'Nové heslo'])
-            ->add('confirm_password', PasswordType::class, ['label'=>'Nové heslo znovu'])
-            ->add('change_password', SubmitType::class, ['label'=>'Změnit heslo'])
+            ->add('old_password', PasswordType::class, ['label'=>$translator->trans('Old_password')])
+            ->add('new_password', PasswordType::class, ['label'=>$translator->trans('New_password')])
+            ->add('confirm_password', PasswordType::class, ['label'=>$translator->trans('New_password_again')])
+            ->add('change_password', SubmitType::class, ['label'=>$translator->trans('Change_password')])
             ->getForm();
 
         $form->handleRequest($request);
@@ -71,13 +67,13 @@ class SecurityController extends AbstractController
                     $entityManager = $this->getDoctrine()->getManager();
                     $entityManager->persist($user);
                     $entityManager->flush();
-                    $this->addFlash('success','Heslo změněno.');
+                    $this->addFlash('success',$translator->trans('Password_changed'));
 
                     return $this->redirectToRoute('app_home');
                 }
             }
             else {
-                $this->addFlash('danger','Neplatné heslo');
+                $this->addFlash('danger',$translator->trans('Invalid_password'));
             }
         }
 
