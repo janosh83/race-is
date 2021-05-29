@@ -29,5 +29,7 @@ services:
         arguments:
             $targetDirectory: '%images_directory%'
 
+    Symfony\Bridge\Doctrine\Security\RememberMe\DoctrineTokenProvider: ~
+
 parameters:
     images_directory: '%kernel.project_dir%/public/uploads/images'
