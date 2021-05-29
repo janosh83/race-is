@@ -9,7 +9,7 @@ use App\Entity\Team;
 use App\Entity\Task;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use function Symfony\Component\String\u;
 
 class AppFixtures extends Fixture
