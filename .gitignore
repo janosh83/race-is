@@ -17,3 +17,8 @@
 
 # image upload directory
 /public/uploads/images
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###
