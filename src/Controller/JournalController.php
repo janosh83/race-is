@@ -12,7 +12,7 @@ use App\Entity\Team;
 use App\Entity\JournalPost;
 use App\Form\JournalForm;
 use App\Service\ImageUploader;
-
+use Symfony\Contracts\Translation\TranslatorInterface;
 class JournalController extends AbstractController
 {
     private $security;
@@ -25,9 +25,9 @@ class JournalController extends AbstractController
     }
 
     /**
-     * @Route("/journal/race/{raceid}",methods="GET|POST", name="journal_index")
+     * @Route("/{_locale}/journal/race/{raceid}",methods="GET|POST", name="journal_index", requirements={"_locale":"cz|en"})
      */
-    public function index($raceid, Request $request, SessionInterface $session, ImageUploader $imageUploader)
+    public function index($raceid, Request $request, SessionInterface $session, ImageUploader $imageUploader, TranslatorInterface $translator)
     {
         $race = $this->getDoctrine()
             ->getRepository(Race::class)
@@ -35,7 +35,7 @@ class JournalController extends AbstractController
 
         if (!$race) {
             throw $this->createNotFoundException(
-                'Race not found '.$raceid
+                $translator->trans('Race_not_found '.$raceid)
             );
         }
 
@@ -93,7 +93,7 @@ class JournalController extends AbstractController
     }
 
     /**
-     * @Route("/journal/show/{id}", name="journal_show")
+     * @Route("/{_locale}/journal/show/{id}", name="journal_show", requirements={"_locale":"cz|en"})
      */
     public function show($id)
     {

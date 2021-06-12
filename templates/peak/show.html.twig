@@ -37,6 +37,7 @@
 {% if date(race.stopLoggingPeaks) > date() %}
 <div class="py-3">
     {{ form(visit_form) }}
+    <p>Poznámka: nahráním obrázku do aplikace souhlasíte s jeho použitím Picnic Adventures pro další propagaci.</p>
 </div>
 {% else %}
 <p class="py-3">Návštěvu vrcholu již nejde logovat ani jinak změnit. Logování skončilo: {{race.stopLoggingPeaks|date('d.m.Y H:i:s')}}</p>

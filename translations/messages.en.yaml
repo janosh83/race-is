@@ -7,5 +7,24 @@ Old_password: Old password
 New_password: New password
 New_password_again: New password again
 Change_password: Change password
-Invalid_password: Neplatné heslo
-Password_changed: Heslo změněno
+Invalid_password: Invalid password
+Password_changed: Password changed
+Race_not_found: Race not found
+Peak_not_found: Peak not found
+Team_not_found: Team not found
+Edit_visit: Upravit návštěvu vrcholu
+Cancel_visit: Zrušit návštěvu vrcholu
+Confirm_visit: Potvrdit návštěvu vrcholu
+Visit_logging_disallowed: Vrcholy již nejde logovat!
+Visit_logged: Vrchol zalogován
+Visit_unlogged: Vrchol odlogován
+No_peaks_found_for_race: No peaks found for race
+Not_enough_permissions: Not enough permission to see
+Not_loggend_into_race: probably not signed to the race.
+Picture: Obrázek
+Note: Poznámka
+Please_upload_valid_picture: 'Please upload a valid image file'
+Cancel_answer: 'Zrušit odpověď na úkol'
+Confirm_answer: 'Potvrdit splnění úkolu'
+Note_to_visit: 'Poznámka k návštěvě vrcholu'
+Invalid_image: 'Please upload a valid image file'

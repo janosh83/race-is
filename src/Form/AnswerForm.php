@@ -10,15 +10,16 @@ use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Translation\TranslatableMessage;
 
 class AnswerForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('note', CKEditorType::class, ['required' => false, 'sanitize_html' => true, 'config' => ['toolbar' => 'standard']])
+            ->add('note', CKEditorType::class, ['required' => false, 'label' => new TranslatableMessage('Note'), 'sanitize_html' => true, 'config' => ['toolbar' => 'standard']])
             ->add('image', FileType::class, [
-                'label' => 'Obrázek',
+                'label' => new TranslatableMessage('Picture'),
 
                 // unmapped means that this field is not associated to any entity property
                 'mapped' => false,
@@ -37,7 +38,7 @@ class AnswerForm extends AbstractType
                             'application/jpeg',
                             'application/heic'
                         ],
-                        'mimeTypesMessage' => 'Please upload a valid image file',
+                        'mimeTypesMessage' => new TranslatableMessage('Please_upload_valid_picture'),
                     ])
                 ],
             ])
@@ -48,7 +49,7 @@ class AnswerForm extends AbstractType
         if ($options['is_answered'])
         {
             $builder->add('delete', SubmitType::class, [
-                'label' => 'Zrušit odpověď na úkol', 
+                'label' => new TranslatableMessage('Cancel_answer'), 
                 'attr' => [ 'class' => 'btn-danger']]);
         }
     }
@@ -60,7 +61,7 @@ class AnswerForm extends AbstractType
         ]);
 
         $resolver->setDefaults(['is_answered' => false]);
-        $resolver->setDefaults(['form_label' => 'Potvrdit splnění úkolu']);
+        $resolver->setDefaults(['form_label' => new TranslatableMessage('Canfirm_answer')]);
 
         // you can also define the allowed types, allowed values and
         // any other feature supported by the OptionsResolver component

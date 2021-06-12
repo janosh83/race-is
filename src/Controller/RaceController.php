@@ -10,6 +10,7 @@ use App\Entity\Peak;
 use App\Entity\Team;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RaceController extends AbstractController
 {
@@ -23,7 +24,7 @@ class RaceController extends AbstractController
     }
 
     /**
-     * @Route("/all_races", name="all_races")
+     * @Route("/{_locale}/all_races", name="all_races", requirements={"_locale":"cz|en"})
      */
     public function index()
     {
@@ -44,9 +45,9 @@ class RaceController extends AbstractController
     }
 
      /**
-     * @Route("/race/{id}", name="race_show")
+     * @Route("/{_locale}/race/{id}", name="race_show", requirements={"_locale":"cz|en"})
      */
-    public function show($id, SessionInterface $session)
+    public function show($id, SessionInterface $session, TranslatorInterface $translator)
     {
         $race = $this->getDoctrine()
             ->getRepository(Race::class)
@@ -54,7 +55,7 @@ class RaceController extends AbstractController
 
         if (!$race) {
             throw $this->createNotFoundException(
-                'Race not found '.$id
+                $translator->trans('Race_not_found'.$id)
             );
         }
 
@@ -95,7 +96,7 @@ class RaceController extends AbstractController
 
         if($teamid == -1){
             throw $this->createNotFoundException(
-                'Race '.$id.' not found, you are probably not signed.'
+                $translator->trans('Race_not_found'.$raceid)
             );
         }
 
@@ -125,9 +126,9 @@ class RaceController extends AbstractController
     }
 
     /**
-     * @Route("/admin/raceresults/{raceid}", name="admin_race_results")
+     * @Route("/{_locale}/admin/raceresults/{raceid}", name="admin_race_results", requirements={"_locale":"cz|en"})
      */
-    public function admin_race_results($raceid)
+    public function admin_race_results($raceid, TranslatorInterface $translator)
     {
         $race = $this->getDoctrine()
             ->getRepository(Race::class)
@@ -135,7 +136,7 @@ class RaceController extends AbstractController
 
         if (!$race) {
             throw $this->createNotFoundException(
-                'Race not found '.$raceid
+                $translator->trans('Race_not_found'.$raceid)
             );
         }
 
@@ -148,9 +149,9 @@ class RaceController extends AbstractController
     }
 
     /**
-     * @Route("/race/results/{raceid}", name="public_race_results")
+     * @Route("/{_locale}/race/results/{raceid}", name="public_race_results", requirements={"_locale":"cz|en"})
      */
-    public function public_race_results($raceid)
+    public function public_race_results($raceid, TranslatorInterface $translator)
     {
         $race = $this->getDoctrine()
             ->getRepository(Race::class)
@@ -158,7 +159,7 @@ class RaceController extends AbstractController
 
         if (!$race) {
             throw $this->createNotFoundException(
-                'Race not found '.$raceid
+                $translator->trans('Race_not_found'.$raceid)
             );
         }
 

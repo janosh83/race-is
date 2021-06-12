@@ -14,6 +14,7 @@ use App\Service\ImageUploader;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class PeakController extends AbstractController
 {
@@ -27,9 +28,9 @@ class PeakController extends AbstractController
     }
 
     /**
-     * @Route("/peak/{id}",methods="GET|POST", name="peak_show")
+     * @Route("/{_locale}/peak/{id}",methods="GET|POST", name="peak_show", requirements={"_locale":"cz|en"})
      */
-    public function show($id, SessionInterface $session, Request $request,  ImageUploader $imageUploader)
+    public function show($id, SessionInterface $session, Request $request,  ImageUploader $imageUploader, TranslatorInterface $translator)
     {
         $peak = $this->getDoctrine()
             ->getRepository(Peak::class)
@@ -37,7 +38,7 @@ class PeakController extends AbstractController
 
         if (!$peak) {
             throw $this->createNotFoundException(
-                'Peak not found '.$id
+                $translator->trans('Peak_not_found'.$id)
             );
         }
 
@@ -48,7 +49,7 @@ class PeakController extends AbstractController
 
         if (!$team) {
             throw $this->createNotFoundException(
-                'Team not found '.$teamid
+                $translator->trans('Team_not_found'.$teamid)
             );
         }
 
@@ -59,7 +60,7 @@ class PeakController extends AbstractController
 
         if (!$race) {
             throw $this->createNotFoundException(
-                'Race not found '.$raceid
+                $translator->trans('Race_not_found'.$raceid)
             );
         }
 
@@ -78,7 +79,7 @@ class PeakController extends AbstractController
 
         if ($visit)
         {
-            $form_label = 'Upravit návštěvu vrcholu';
+            $form_label =  $translator->trans('Edit_visit');
             $is_visited = true;
         }
         else
@@ -87,7 +88,7 @@ class PeakController extends AbstractController
             $visit->setPeak($peak);
             $visit->setTeam($team);
             $visit->setRace($race);
-            $form_label = 'Potvrdit návštěvu vrcholu';
+            $form_label = $translator->trans('Confirm_visit');
             $is_visited = false;
         }
         
@@ -103,7 +104,7 @@ class PeakController extends AbstractController
             if (new \DateTime('NOW') > $race->getStopLoggingPeaks())
             {
                 // Peaks looging is not enabled
-                $this->addFlash('danger', 'Vrcholy již nejde logovat!');
+                $this->addFlash('danger', $translator->trans('Visit_logging_disallowed'));
             }
 
             elseif ($visit_form->get('save')->isClicked())
@@ -127,13 +128,13 @@ class PeakController extends AbstractController
                 }
                 
                 $manager->persist($visit);
-                $this->addFlash('primary', 'Vrchol zalogován');                
+                $this->addFlash('primary', $translator->trans('Visit_logged'));                
             }
 
             elseif ($visit_form->get('delete')->isClicked())
             {
                 $manager->remove($visit);         
-                $this->addFlash('primary', 'Vrchol odlogován');
+                $this->addFlash('primary', $translator->trans('Visit_unlogged'));
             }
 
             $manager->flush();
@@ -149,9 +150,9 @@ class PeakController extends AbstractController
     }
 
     /**
-     * @Route("/peak_map/{raceid}", name="peak_map")
+     * @Route("/{_locale}/peak_map/{raceid}", name="peak_map", requirements={"_locale":"cz|en"})
      */
-    public function peak_map($raceid)
+    public function peak_map($raceid, TranslatorInterface $translator)
     {
         $race = $this->getDoctrine()
             ->getRepository(Race::class)
@@ -159,7 +160,7 @@ class PeakController extends AbstractController
 
         if (!$race) {
             throw $this->createNotFoundException(
-                'Race not found '.$raceid
+                $translator->trans('Race_not_found'.$raceid)
             );
         }
 
@@ -184,7 +185,7 @@ class PeakController extends AbstractController
         }
 
         if($teamid == -1){
-            throw $this->createAccessDeniedException('Not enough permission to see '.$raceid. 'probably not signed to the race.');
+            throw $this->createAccessDeniedException($translator->trans('Not_enough_permissions').$raceid.$translator->trans('Not_loggend_into_race'));
         }
 
         $visited_peaks = $this->getDoctrine()
@@ -201,7 +202,7 @@ class PeakController extends AbstractController
 
     }
 
-    private function get_race_peaks_data($raceid)
+    private function get_race_peaks_data($raceid, TranslatorInterface $translator)
     {
         $peaks = $this->getDoctrine()
             ->getRepository(Peak::class)
@@ -209,7 +210,7 @@ class PeakController extends AbstractController
 
         if (!$peaks) {
             throw $this->createNotFoundException(
-                'No peaks found for race '.$raceid
+                $translator->trans('No_peaks_found_for_race'.$raceid)
             );
         }
 
@@ -219,7 +220,7 @@ class PeakController extends AbstractController
 
         if (!$race) {
             throw $this->createNotFoundException(
-                'Race not found '.$raceid
+                $translator->trans('Race_not_found'.$raceid)
             );
         }
 
@@ -230,7 +231,7 @@ class PeakController extends AbstractController
     }
 
     /**
-     * @Route("/admin/racepeaks/{raceid}", name="admin_peak_table")
+     * @Route("/{_locale}/admin/racepeaks/{raceid}", name="admin_peak_table", requirements={"_locale":"cz|en"})
      */
     public function peak_table($raceid)
     {
@@ -238,7 +239,7 @@ class PeakController extends AbstractController
     }
 
     /**
-     * @Route("/admin/roadbook/{raceid}", name="admin_roadbook")
+     * @Route("/{_locale}/admin/roadbook/{raceid}", name="admin_roadbook", requirements={"_locale":"cz|en"})
      */
     public function roadbook($raceid)
     {
