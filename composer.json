@@ -5,7 +5,7 @@
         "php": "^7.2.5",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "friendsofsymfony/ckeditor-bundle": "^2.2",
+        "friendsofsymfony/ckeditor-bundle": "^2.3",
         "sensio/framework-extra-bundle": "^5.2",
         "symfony/apache-pack": "^1.0",
         "symfony/asset": "5.2.*",
