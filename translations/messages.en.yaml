@@ -12,9 +12,9 @@ Password_changed: Password changed
 Race_not_found: Race not found
 Peak_not_found: Peak not found
 Team_not_found: Team not found
-Edit_visit: Upravit návštěvu vrcholu
-Cancel_visit: Zrušit návštěvu vrcholu
-Confirm_visit: Potvrdit návštěvu vrcholu
+Edit_visit: Edit checkpoint visit
+Cancel_visit: Cancel visit
+Confirm_visit: Confirm visit
 Visit_logging_disallowed: Vrcholy již nejde logovat!
 Visit_logged: Vrchol zalogován
 Visit_unlogged: Vrchol odlogován
