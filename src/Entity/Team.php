@@ -24,20 +24,9 @@ class Team
     private $title;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="leader")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $leader;
-
-    /**
      * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="member")
      */
     private $member;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Race", inversedBy="signed")
-     */
-    private $signed;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Visit", mappedBy="team", orphanRemoval=true)
@@ -55,17 +44,18 @@ class Team
     private $journalPosts;
 
     /**
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\OneToMany(targetEntity=Registration::class, mappedBy="team", orphanRemoval=true)
      */
-    private $about;
+    private $registration;
+
 
     public function __construct()
     {
         $this->member = new ArrayCollection();
-        $this->signed = new ArrayCollection();
         $this->visited = new ArrayCollection();
         $this->answered = new ArrayCollection();
         $this->journalPosts = new ArrayCollection();
+        $this->registration = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -81,18 +71,6 @@ class Team
     public function setTitle(string $title): self
     {
         $this->title = $title;
-
-        return $this;
-    }
-
-    public function getLeader(): ?User
-    {
-        return $this->leader;
-    }
-
-    public function setLeader(?User $leader): self
-    {
-        $this->leader = $leader;
 
         return $this;
     }
@@ -118,32 +96,6 @@ class Team
     {
         if ($this->member->contains($member)) {
             $this->member->removeElement($member);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Race[]
-     */
-    public function getSigned(): Collection
-    {
-        return $this->signed;
-    }
-
-    public function addSigned(Race $signed): self
-    {
-        if (!$this->signed->contains($signed)) {
-            $this->signed[] = $signed;
-        }
-
-        return $this;
-    }
-
-    public function removeSigned(Race $signed): self
-    {
-        if ($this->signed->contains($signed)) {
-            $this->signed->removeElement($signed);
         }
 
         return $this;
@@ -242,15 +194,34 @@ class Team
         return $this;
     }
 
-    public function getAbout(): ?string
+    /**
+     * @return Collection|Registration[]
+     */
+    public function getRegistration(): Collection
     {
-        return $this->about;
+        return $this->registration;
     }
 
-    public function setAbout(string $about): self
+    public function addRegistration(Registration $registration): self
     {
-        $this->about = $about;
+        if (!$this->registration->contains($registration)) {
+            $this->registration[] = $registration;
+            $registration->setTeam($this);
+        }
 
         return $this;
     }
+
+    public function removeRegistration(Registration $registration): self
+    {
+        if ($this->registration->removeElement($registration)) {
+            // set the owning side to null (unless already changed)
+            if ($registration->getTeam() === $this) {
+                $registration->setTeam(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

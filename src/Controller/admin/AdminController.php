@@ -53,7 +53,7 @@ class AdminController extends AbstractController
             ->findByRaceAndTeam($raceid, $teamid);
 
         return $this->render('admin/team_visits.html.twig', ['team' => $team,
-                                                             'leader' => $team->getLeader(),
+                                                             /*'leader' => $team->getLeader(),*/
                                                              'members' => $team->getMember(),
                                                              'visits' => $visits]);
     }
@@ -78,7 +78,7 @@ class AdminController extends AbstractController
             ->findByRaceAndTeam($raceid, $teamid);
 
         return $this->render('admin/team_answers.html.twig', ['team' => $team,
-                                                             'leader' => $team->getLeader(),
+                                                             /*'leader' => $team->getLeader(),*/
                                                              'members' => $team->getMember(),
                                                              'answers' => $answers]);
     }

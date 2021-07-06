@@ -19,7 +19,7 @@ class TeamRepository extends ServiceEntityRepository
         parent::__construct($registry, Team::class);
     }
 
-    public function findLeaderByUserAndRace($userid, $raceid)
+    /*public function findLeaderByUserAndRace($userid, $raceid)
     {
         $entityManager = $this->getEntityManager();
 
@@ -29,14 +29,14 @@ class TeamRepository extends ServiceEntityRepository
         $query->setParameter('raceid', $raceid);
 
         return $query->getOneOrNullResult();
-    }
+    }*/
 
     public function findMemberByUserAndRace($userid, $raceid)
     {
         $entityManager = $this->getEntityManager();
 
         $query = $entityManager
-            ->createQuery('SELECT t.id, t.title FROM App\Entity\Team t LEFT JOIN t.member ul LEFT JOIN t.signed us WHERE ul.id = :userid AND us.id = :raceid');
+            ->createQuery('SELECT t.id, t.title FROM App\Entity\Team t LEFT JOIN t.member ul LEFT JOIN t.registration reg WHERE ul.id = :userid AND reg.race = :raceid');
         $query->setParameter('userid', $userid);
         $query->setParameter('raceid', $raceid);
 

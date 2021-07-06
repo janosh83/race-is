@@ -41,11 +41,6 @@ class User implements UserInterface
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Team", mappedBy="leader")
-     */
-    private $leader;
-
-    /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Team", mappedBy="member")
      */
     private $member;
@@ -57,7 +52,6 @@ class User implements UserInterface
 
     public function __construct()
     {
-        $this->leader = new ArrayCollection();
         $this->member = new ArrayCollection();
         $this->journalPost = new ArrayCollection();
     }
@@ -148,37 +142,6 @@ class User implements UserInterface
     public function setName(string $name): self
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Team[]
-     */
-    public function getLeader(): Collection
-    {
-        return $this->leader;
-    }
-
-    public function addLeader(Team $leader): self
-    {
-        if (!$this->leader->contains($leader)) {
-            $this->leader[] = $leader;
-            $leader->setLeader($this);
-        }
-
-        return $this;
-    }
-
-    public function removeLeader(Team $leader): self
-    {
-        if ($this->leader->contains($leader)) {
-            $this->leader->removeElement($leader);
-            // set the owning side to null (unless already changed)
-            if ($leader->getLeader() === $this) {
-                $leader->setLeader(null);
-            }
-        }
 
         return $this;
     }

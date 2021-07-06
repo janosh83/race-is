@@ -24,14 +24,14 @@ class RaceRepository extends ServiceEntityRepository
         $entityManager = $this->getEntityManager();
 
         $query = $entityManager
-            ->createQuery('SELECT r.id, r.title, r.description, r.logoPath FROM App\Entity\Race r LEFT JOIN r.signed rs WHERE r.id = :raceid AND rs.id = :teamid');
+            ->createQuery('SELECT r.id, r.title, r.description, r.logoPath FROM App\Entity\Race r LEFT JOIN r.registration rs WHERE r.id = :raceid AND rs.team = :teamid');
         $query->setParameter('teamid', $teamid);
         $query->setParameter('raceid', $raceid);
 
         return $query->getOneOrNullResult();
     }
 
-    public function findAllWhereLeader($userid)
+    /*public function findAllWhereLeader($userid)
     {
         $entityManager = $this->getEntityManager();
 
@@ -40,14 +40,14 @@ class RaceRepository extends ServiceEntityRepository
         $query->setParameter('userid', $userid);
         
         return $query->getResult();
-    }
+    }*/
 
     public function findAllWhereMember($userid)
     {
         $entityManager = $this->getEntityManager();
 
         $query = $entityManager
-            ->createQuery('SELECT r.id, r.title, r.description, r.logoPath FROM App\Entity\Race r LEFT JOIN r.signed rs LEFT JOIN rs.member sl WHERE sl.id = :userid ORDER BY r.startShowingPeaks DESC');
+            ->createQuery('SELECT r.id, r.title, r.description, r.logoPath FROM App\Entity\Race r LEFT JOIN r.registration rs LEFT JOIN rs.team rt LEFT JOIN rt.member sl WHERE sl.id = :userid ORDER BY r.startShowingPeaks DESC');
         $query->setParameter('userid', $userid);
         
         return $query->getResult();

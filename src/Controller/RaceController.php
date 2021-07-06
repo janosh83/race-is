@@ -87,7 +87,7 @@ class RaceController extends AbstractController
         }*/
         if ($teamWhereMember != NULL){
             $teamid = $teamWhereMember['id'];
-            $session->set("is_leader", false);
+            //$session->set("is_leader", false);
             $session->set("is_member", true);
             $session->set("team_id",$teamWhereMember['id']);
             $session->set("team_title", $teamWhereMember["title"]);
