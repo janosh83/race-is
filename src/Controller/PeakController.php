@@ -42,6 +42,10 @@ class PeakController extends AbstractController
             );
         }
 
+        if(!$session->has("team_id")){
+            return $this->redirectToRoute('app_home');
+        }
+        
         $teamid = $session->get("team_id");
         $team = $this->getDoctrine()
             ->getRepository(Team::class)
@@ -62,6 +66,10 @@ class PeakController extends AbstractController
             throw $this->createNotFoundException(
                 $translator->trans('Race_not_found'.$raceid)
             );
+        }
+
+        if($peak->getRace() != $race){
+            return $this->render('peak/not_in_race.html.twig', ['race' => $race]);
         }
 
         if ($race->getStartShowingPeaks() > new \DateTime('NOW')){

@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{race.title}}{% endblock %}
+
+{% block main %}
+
+<h1>Checkpoint pro jiný závod</h1>
+<p>Tento checkpoint není přiřazen tomuto závodu.</p>
+<p><a href="{{ path('race_show', {id:race.id}) }}">Zpět na závod</a></p>
+
+
+{% endblock %}
