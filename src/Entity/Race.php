@@ -29,11 +29,6 @@ class Race
     private $description;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Team", mappedBy="signed")
-     */
-    private $signed;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\Entity\Peak", mappedBy="race")
      */
     private $peaks;
@@ -88,14 +83,25 @@ class Race
      */
     private $stopLoggingPeaks;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Category::class)
+     */
+    private $categories;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Registration::class, mappedBy="race")
+     */
+    private $registration;
+
     public function __construct()
     {
-        $this->signed = new ArrayCollection();
         $this->peaks = new ArrayCollection();
         $this->visits = new ArrayCollection();
         $this->tasks = new ArrayCollection();
         $this->answers = new ArrayCollection();
         $this->journalPosts = new ArrayCollection();
+        $this->categories = new ArrayCollection();
+        $this->registration = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -123,34 +129,6 @@ class Race
     public function setDescription(?string $description): self
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Team[]
-     */
-    public function getSigned(): Collection
-    {
-        return $this->signed;
-    }
-
-    public function addSigned(Team $signed): self
-    {
-        if (!$this->signed->contains($signed)) {
-            $this->signed[] = $signed;
-            $signed->addSigned($this);
-        }
-
-        return $this;
-    }
-
-    public function removeSigned(Team $signed): self
-    {
-        if ($this->signed->contains($signed)) {
-            $this->signed->removeElement($signed);
-            $signed->removeSigned($this);
-        }
 
         return $this;
     }
@@ -378,6 +356,69 @@ class Race
     public function setStopLoggingPeaks(?\DateTimeInterface $stopLoggingPeaks): self
     {
         $this->stopLoggingPeaks = $stopLoggingPeaks;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Category[]
+     */
+    public function getCategories(): Collection
+    {
+        return $this->categories;
+    }
+
+    public function addCategory(Category $category): self
+    {
+        if (!$this->categories->contains($category)) {
+            $this->categories[] = $category;
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(Category $category): self
+    {
+        $this->categories->removeElement($category);
+
+        return $this;
+    }
+
+    public function getRegistration(): ?Registration
+    {
+        return $this->registration;
+    }
+
+    public function setRegistration(Registration $registration): self
+    {
+        // set the owning side of the relation if necessary
+        if ($registration->getRace() !== $this) {
+            $registration->setRace($this);
+        }
+
+        $this->registration = $registration;
+
+        return $this;
+    }
+
+    public function addRegistration(Registration $registration): self
+    {
+        if (!$this->registration->contains($registration)) {
+            $this->registration[] = $registration;
+            $registration->setRace($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRegistration(Registration $registration): self
+    {
+        if ($this->registration->removeElement($registration)) {
+            // set the owning side to null (unless already changed)
+            if ($registration->getRace() === $this) {
+                $registration->setRace(null);
+            }
+        }
 
         return $this;
     }

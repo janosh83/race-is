@@ -7,6 +7,8 @@ use App\Entity\User;
 use App\Entity\Race;
 use App\Entity\Team;
 use App\Entity\Task;
+use App\Entity\Category;
+use App\Entity\Registration;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -188,25 +190,23 @@ class AppFixtures extends Fixture
     {
         return [
             // $teamData = [$title, $leader, $members]
-            ['Team 1', 'tom_user@symfony.com', ['john_user@symfony.com', 'jack_user@symfony.com']],
-            ['Team 2', 'joe_user@symfony.com', ['annie_user@symfony.com', 'fred_user@symfony.com']],
-            ['Team A', 'zdenek.jancik@gmail.com', ['zdenek.jancik@gmail.com']],
-            ['Team B', 'radim.vecera@gmail.com', ['radim.vecera@gmail.com']],
-            ['Team C', 'ondrak.vilem@gmail.com', ['ondrak.vilem@gmail.com']],
-            ['Team D', 'cuzl@centrum.cz', ['cuzl@centrum.cz']],
-            ['Team E', 'marek_user@symfony.com', ['marek_user@symfony.com']],
-            ['Team F', 'fero_user@symfony.com', ['fero_user@symfony.com']],
-            ['Team G', 'robo_user@symfony.com', ['robo_user@symfony.com']],
+            ['Team 1', ['john_user@symfony.com', 'jack_user@symfony.com']],
+            ['Team 2', ['annie_user@symfony.com', 'fred_user@symfony.com']],
+            ['Team A', ['zdenek.jancik@gmail.com']],
+            ['Team B', ['radim.vecera@gmail.com']],
+            ['Team C', ['ondrak.vilem@gmail.com']],
+            ['Team D', ['cuzl@centrum.cz']],
+            ['Team E', ['marek_user@symfony.com']],
+            ['Team F', ['fero_user@symfony.com']],
+            ['Team G', ['robo_user@symfony.com']],
         ];
     }
 
     private function loadTeams(ObjectManager $manager): void
     {
-        foreach ($this->getTeamData() as [$title, $leader, $members]) {
+        foreach ($this->getTeamData() as [$title, $members]) {
             $team = new Team();
             $team->setTitle($title);
-            $team->setLeader($this->getReference($leader));
-            $team->addMember($this->getReference($leader));
             foreach($members as $member){
                 $team->addMember($this->getReference($member));
             }
@@ -214,6 +214,27 @@ class AppFixtures extends Fixture
             $this->addReference($title, $team);
         }
 
+        $manager->flush();
+    }
+
+    private function getCategoryData():array
+    {
+        return [
+            "Kola",
+            "Koloběžky",
+            "Auta",
+            "Motorky"
+        ];
+    }
+
+    private function loadCategories(ObjectManager $manager): void
+    {
+        foreach($this->getCategoryData() as $title){
+            $category = new Category();
+            $category->setTitle($title);
+            $manager->persist($category);
+            $this->addReference($title, $category);
+        }
         $manager->flush();
     }
 
@@ -229,7 +250,7 @@ class AppFixtures extends Fixture
                 true,
                 true,
                 'hbr_logo_256.png',
-                ['Team 1', 'Team 2'],
+                ["Auta", "Motorky"],
                 ['vrchol_01', 'vrchol_02', 'vrchol_03', 'vrchol_04', 'vrchol_05'],
                 []
             ],
@@ -241,7 +262,7 @@ class AppFixtures extends Fixture
                 false,
                 false,
                 'jizda_logo_256.png',
-                ['Team 1', 'Team 2'],
+                ["Auta"],
                 ['short_11', 'short_12', 'short_13', 'short_14', 'short_15',
                 'short_16', 'short_17', 'short_18', 'short_19', 'short_20'],
                 []
@@ -258,7 +279,7 @@ class AppFixtures extends Fixture
                 true,
                 false,
                 'streka_logo_256.png',
-                ['Team A', 'Team B', 'Team C', 'Team D', 'Team E', 'Team F', 'Team G'],
+                ["Kola", "Koloběžky"],
                 ['short_01', 'short_02', 'short_03', 'short_04', 'short_05',
                  'short_06', 'short_07', 'short_08', 'short_09', 'short_10'],
                  ['Schody na rozhlednu', 'Večeře v restauraci', 'Koupačka pod vodopádem']
@@ -271,7 +292,7 @@ class AppFixtures extends Fixture
         foreach ($this->getRaceData() as [$title, $description, 
                                           $start_showing_peaks, $start_logging, $stop_logging, 
                                           $task_enabled, $journal_enabled, 
-                                          $logo_path, $teams, $peaks, $tasks]) {
+                                          $logo_path, $categories, $peaks, $tasks]) {
             $race = new Race();
             $race->setTitle($title);
             $race->setDescription($description);
@@ -282,9 +303,9 @@ class AppFixtures extends Fixture
             $race->setJournalEnabled($journal_enabled);
             $race->setLogoPath($logo_path);
 
-            foreach($teams as $teamTitle)
+            foreach($categories as $catid)
             {
-                $race->addSigned($this->getReference($teamTitle));
+                $race->addCategory($this->getReference($catid));
             }
 
             foreach($peaks as $peakId)
@@ -305,6 +326,35 @@ class AppFixtures extends Fixture
         $manager->flush();
     }
 
+    private function getRegistrationData():array
+    {
+        return [
+            ['Hill Bill Rally 2020', 'Team 1', "Auta"],
+            ['Hill Bill Rally 2020', 'Team 2', "Motorky"],
+            ['Jarni Jízda', 'Team 1', "Auta"],
+            ['Jarni Jízda', 'Team 2', "Auta"],
+            ['Pálavská štreka', 'Team A', "Kola"],
+            ['Pálavská štreka', 'Team B', "Kola"],
+            ['Pálavská štreka', 'Team C', "Kola"],
+            ['Pálavská štreka', 'Team D', "Kola"],
+            ['Pálavská štreka', 'Team E', "Koloběžky"],
+            ['Pálavská štreka', 'Team F', "Koloběžky"],
+            ['Pálavská štreka', 'Team G', "Koloběžky"]
+        ];
+    }
+    
+    private function loadRegistrations(ObjectManager $manager): void
+    {
+        foreach($this->getRegistrationData() as [$race, $team, $category]){
+            $registration = new Registration();
+            $registration->setRace($this->getReference($race));
+            $registration->setTeam($this->getReference($team));
+            $registration->setCategory($this->getReference($category));
+            $manager->persist($registration);
+        }
+        $manager->flush();
+    }
+
     /* load fictures by command:
          php bin/console doctrine:fixtures:load 
     */
@@ -314,7 +364,9 @@ class AppFixtures extends Fixture
         $this->loadTasks($manager);
         $this->loadUsers($manager);
         $this->loadTeams($manager);
+        $this->loadCategories($manager);
         $this->loadRaces($manager);
+        $this->loadRegistrations($manager);
         $manager->flush();
     }
 }

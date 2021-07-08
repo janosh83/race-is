@@ -10,12 +10,14 @@
     <tr>
         <th scope="col">Pořadí</th>
         <th scope="col">Jméno týmu</th>
+        <th scope="col">Závodní kategorie</th>
     </tr>
     {% set i = 1 %}
     {% for team in peak_results %}
     <tr scope="row">
         <td>{{i}}</td>
         <td>{{team.title}}</td>
+        <td>{{team.race_category}}</td>
     </tr>
     {% set i = i + 1 %}
     {% endfor %}
@@ -24,12 +26,18 @@
 {% if race.tasksEnabled %}
     <table class="table table-striped">
         <tr>
+            <th scope="col">Pořadí</th>
             <th scope="col">Jméno týmu</th>
+            <th scope="col">Závodní kategorie</th>
         </tr>
+        {% set i = 1 %}
         {% for team in task_results %}
         <tr scope="row">
+            <td>{{i}}</td>
             <td>{{team.title}}</td>
+            <td>{{team.race_category}}</td>
         </tr>
+        {% set i = i + 1 %}
         {% endfor %}
     </table>
 {% endif %}
