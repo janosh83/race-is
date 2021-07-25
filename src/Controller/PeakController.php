@@ -28,7 +28,7 @@ class PeakController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/peak/{id}",methods="GET|POST", name="peak_show", requirements={"_locale":"cz|en"})
+     * @Route("/peak/{id}",methods="GET|POST", name="peak_show")
      */
     public function show($id, SessionInterface $session, Request $request,  ImageUploader $imageUploader, TranslatorInterface $translator)
     {
@@ -158,7 +158,7 @@ class PeakController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/peak_map/{raceid}", name="peak_map", requirements={"_locale":"cz|en"})
+     * @Route("/peak_map/{raceid}", name="peak_map")
      */
     public function peak_map($raceid, TranslatorInterface $translator)
     {
@@ -239,7 +239,7 @@ class PeakController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/admin/racepeaks/{raceid}", name="admin_peak_table", requirements={"_locale":"cz|en"})
+     * @Route("/admin/racepeaks/{raceid}", name="admin_peak_table")
      */
     public function peak_table($raceid)
     {
@@ -247,7 +247,7 @@ class PeakController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/admin/roadbook/{raceid}", name="admin_roadbook", requirements={"_locale":"cz|en"})
+     * @Route("/admin/roadbook/{raceid}", name="admin_roadbook")
      */
     public function roadbook($raceid)
     {

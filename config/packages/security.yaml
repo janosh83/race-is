@@ -42,7 +42,7 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/admin, roles: ROLE_ADMIN }
-        - { path: ^/peak/\d+$, roles: ROLE_USER }
-        - { path: ^/race/\d+$, roles: ROLE_USER }
-        - { path: ^/all_races, roles: ROLE_USER }
+        - { path: '^/(%app_locales%)/admin', roles: ROLE_ADMIN }
+        - { path: ^/(%app_locales%)/peak/\d+$, roles: ROLE_USER }
+        - { path: ^/(%app_locales%)/race/\d+$, roles: ROLE_USER }
+        - { path: ^/(%app_locales%)/all_races, roles: ROLE_USER }

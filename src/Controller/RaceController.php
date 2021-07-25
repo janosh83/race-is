@@ -24,7 +24,7 @@ class RaceController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/all_races", name="all_races", requirements={"_locale":"cz|en"})
+     * @Route("/all_races", name="all_races")
      */
     public function index()
     {
@@ -45,7 +45,7 @@ class RaceController extends AbstractController
     }
 
      /**
-     * @Route("/{_locale}/race/{id}", name="race_show", requirements={"_locale":"cz|en"})
+     * @Route("/race/{id}", name="race_show")
      */
     public function show($id, SessionInterface $session, TranslatorInterface $translator)
     {
@@ -126,7 +126,7 @@ class RaceController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/admin/raceresults/{raceid}", name="admin_race_results", requirements={"_locale":"cz|en"})
+     * @Route("/admin/raceresults/{raceid}", name="admin_race_results")
      */
     public function admin_race_results($raceid, TranslatorInterface $translator)
     {
@@ -149,7 +149,7 @@ class RaceController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/race/results/{raceid}", name="public_race_results", requirements={"_locale":"cz|en"})
+     * @Route("/race/results/{raceid}", name="public_race_results")
      */
     public function public_race_results($raceid, TranslatorInterface $translator)
     {

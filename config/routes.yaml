@@ -1,15 +1,8 @@
 app_home:
     path: /
     controller: App\Controller\RaceController::index
-
-app_login:
-    path:       /{_locale}/login
-    controller: App\Controller\SecurityController::login
-    requirements:
-        _locale: en|cz
-
+    
 app_change_password:
-    path:       /{_locale}/change_password
+    path:       /change_password
     controller: App\Controller\SecurityController::change_password
-    requirements:
-        _locale: en|cz
+    

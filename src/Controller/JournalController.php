@@ -25,7 +25,7 @@ class JournalController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/journal/race/{raceid}",methods="GET|POST", name="journal_index", requirements={"_locale":"cz|en"})
+     * @Route("/journal/race/{raceid}",methods="GET|POST", name="journal_index")
      */
     public function index($raceid, Request $request, SessionInterface $session, ImageUploader $imageUploader, TranslatorInterface $translator)
     {
@@ -93,7 +93,7 @@ class JournalController extends AbstractController
     }
 
     /**
-     * @Route("/{_locale}/journal/show/{id}", name="journal_show", requirements={"_locale":"cz|en"})
+     * @Route("/journal/show/{id}", name="journal_show")
      */
     public function show($id)
     {

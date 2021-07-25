@@ -98,6 +98,15 @@
      
         <main>
             {% block main %}{% endblock %}
+
+            <div>
+            <h6>Menu jazyka</h6>
+            <ul >
+                {% for locale in locales() %}
+                    <li {% if app.request.locale == locale.code %} class="active"{% endif %} role="menuitem"><a href="{{ path(app.request.get('_route', 'all_races'), app.request.get('_route_params', [])|merge({_locale: locale.code})) }}">{{ locale.name|capitalize }} </a></li>
+                {% endfor %}
+            </ul>
+            </div>
         </main>
 
         <footer class="blog-footer">

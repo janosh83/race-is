@@ -1,7 +1,7 @@
 
 {% extends 'base.html.twig' %}
 
-{% block title %}Závody{% endblock %}
+{% block title %}{% trans %}Race{% endtrans %}{% endblock %}
 
 {% block main %}
 
@@ -15,13 +15,13 @@
 
         <div class="col">
             <div class="card shadow-sm">
-                <img class="card-img-top" src="img/race/logo/{{race.logoPath}}" alt="{{race.title}}">        
+                <img class="card-img-top" src="{{ asset(race.logoPath) }}" alt="{{race.title}}">        
                 <div class="card-body">
                     <div class="card-title"><h2>{{race.title}}</h2></div>
                     <p class="card-text">{{race.description|raw}}</p>
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="btn-group">
-                            <button type="button" class="btn btn-sm btn-outline-secondary"><a href="{{ path('race_show', {id:race.id}) }}">Vstoupit</a></button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary"><a href="{{ path('race_show', {id:race.id}) }}">{% trans %}Enter{% endtrans %}</a></button>
                         </div>
                     </div>
                 </div>
