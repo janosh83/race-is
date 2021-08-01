@@ -1,0 +1,32 @@
+Logining: Přihlášení
+Login: Přihlásit
+Password: Heslo
+Remember_me: Zapamatovat přihlášení
+Forgot_password: Zapomenuté heslo
+Old_password: Staré heslo
+New_password: Nové heslo
+New_password_again: Nové heslo znovu
+Change_password: Změnit heslo
+Invalid_password: Neplatné heslo
+Password_changed: Heslo změněno
+Race_not_found: Závod nenalezen
+Peak_not_found: Checkpoint nenalezen
+Team_not_found: Tým nenalezen
+Edit_visit: Uložit provedené změny
+Confirm_visit: Potvrdit návštěvu checkpointu
+Cancel_visit: Zrušit návštěvu checkpointu
+Visit_logging_disallowed: Checkpointy již nejde logovat!
+Visit_logged: Návštěva checkpointu byla zaznamenána
+Visit_unlogged: Návštěva checkpointu byla smazána
+No_peaks_found_for_race: Nenalezeny žádné checkpointy pro tento závod
+Not_enough_permissions: Nemáš dostatečné oprávnění
+Not_loggend_into_race: Pravděpodobně nejsi přihlášen k danému závodu
+Picture: Obrázek
+Note: Poznámka
+Please_upload_valid_picture: Prosím nahraj platný obrázek
+Cancel_answer: Zrušit splanění na úkol
+Confirm_answer: Potvrdit splnění úkolu
+Note_to_visit: Poznámka k návštěvě checkpointu
+Invalid_image: Prosím nahraj platný obrázek
+Race: Závod
+Enter: Vstoupit
