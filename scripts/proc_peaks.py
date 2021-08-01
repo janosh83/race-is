@@ -1,14 +1,16 @@
 import json
 import re
 from bs4 import BeautifulSoup
-#from urlextract import URLExtract
+""" 
+creates json file which is then imported into aplication from kml map data with peaks
+""" 
 
 js = []
 #extractor = URLExtract()
 
 link_regex = re.compile('((https?):((//)|(\\\\))+([\w\d:#@%/;$()~_?\+-=\\\.&](#!)?)*)', re.DOTALL)
 
-inputfile = "jizda_vrcholy.kml"
+inputfile = "streka_vrcholy.kml"
 with open(inputfile, 'r', encoding="utf8") as f:
   soup = BeautifulSoup(f, "xml")
 
@@ -16,6 +18,7 @@ with open(inputfile, 'r', encoding="utf8") as f:
   for node in soup.find_all('Placemark'):
        
        name = node.contents[1].string
+       name = name.replace("\n","")
        coords = node.Point.coordinates.string
        desc = node.contents[3].string
 
@@ -35,7 +38,8 @@ with open(inputfile, 'r', encoding="utf8") as f:
        lon = clist[0].strip()
 
        peak = {}
-       peak["short_id"] = "jizda_{}".format(i)
+       #peak["short_id"] = "jizda_{}".format(i)
+       peak["short_id"] = ""
        peak["title"] = name
        peak["description"] = desc
        peak["latitude"] = float(lat)
@@ -48,5 +52,5 @@ with open(inputfile, 'r', encoding="utf8") as f:
        #  break
        i = i + 1
 
-with open("jizda_vrcholy.json","w", encoding="utf-8") as f:
+with open("streka_vrcholy.json","w", encoding="utf-8") as f:
   json.dump(js, f, ensure_ascii=False)
