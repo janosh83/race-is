@@ -18,6 +18,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.72.0/dist/L.Control.Locate.min.js"
         charset="utf-8"></script>
+
 {% endblock %}
 
 {% block main %}
@@ -42,14 +43,6 @@
 {% else %}
 <p class="py-3">Návštěvu checkpointu již nejde logovat ani jinak změnit. Logování skončilo: {{race.stopLoggingPeaks|date('d.m.Y H:i:s')}}</p>
 {% endif %}
-
-<script>
-// Add the following code if you want the name of the file appear on select
-$(".custom-file-input").on("change", function() {
-  var fileName = $(this).val().split("\\").pop();
-  $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-});
-</script>
 
 <h2>Mapa</h2>
 <div id="map" style="width:600px; height:400px;"></div>
