@@ -32,6 +32,11 @@ class Image
      */
     private $answer;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=JournalPost::class, inversedBy="images")
+     */
+    private $post;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -69,6 +74,18 @@ class Image
     public function setAnswer(?Answer $answer): self
     {
         $this->answer = $answer;
+
+        return $this;
+    }
+
+    public function getPost(): ?JournalPost
+    {
+        return $this->post;
+    }
+
+    public function setPost(?JournalPost $post): self
+    {
+        $this->post = $post;
 
         return $this;
     }

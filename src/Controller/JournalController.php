@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use App\Entity\Race;
 use App\Entity\Team;
+use App\Entity\Image;
 use App\Entity\JournalPost;
 use App\Form\JournalForm;
 use App\Service\ImageUploader;
@@ -74,8 +75,11 @@ class JournalController extends AbstractController
                 // so the PDF file must be processed only when a file is uploaded
                 if ($imageFile) {
                     $newFilename = $imageUploader->upload($imageFile);
+                    $image = new Image();
+                    $image->setFilename($newFilename);
+                    $manager->persist($image);
 
-                    $post->setImageFilename($newFilename);
+                    $post->addImage($image);
                 }
                 $manager->persist($post);
                 $manager->flush();
@@ -102,6 +106,7 @@ class JournalController extends AbstractController
             ->find($id);
         
         return $this->render('journal/show.html.twig', [
-            'post' => $post]);
+            'post' => $post,
+            'images' => $post->getImage()]);
     }
 }

@@ -2,11 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\JournalPostRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=JournalPostRepository::class)
+ * @ORM\Entity(repositoryClass=App\Repository\JournalPostRepository::class)
  */
 class JournalPost
 {
@@ -51,9 +52,9 @@ class JournalPost
     private $team;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\OneToMany(targetEntity=Image::class, mappedBy="post")
      */
-    private $imageFilename;
+    private $images;
 
     public function getId(): ?int
     {
@@ -132,14 +133,33 @@ class JournalPost
         return $this;
     }
 
-    public function getImageFilename(): ?string
+    /**
+     * @return Collection|Image[]
+     */
+    public function getImage(): Collection
     {
-        return $this->imageFilename;
+        return $this->images;
     }
 
-    public function setImageFilename(string $imageFilename): self
+    public function addImage(Image $image): self
     {
-        $this->imageFilename = $imageFilename;
+        if (!$this->images->contains($image)) {
+            $this->images[] = $image;
+            $image->setVisit($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(Image $image): self
+    {
+        if ($this->images->contains($image)) {
+            $this->images->removeElement($image);
+            // set the owning side to null (unless already changed)
+            if ($image->getVisit() === $this) {
+                $image->setVisit(null);
+            }
+        }
 
         return $this;
     }
