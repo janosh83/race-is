@@ -47,9 +47,9 @@ class TeamRepository extends ServiceEntityRepository
     {
         $entityManager = $this->getEntityManager();
         $query = $entityManager->createQuery(
-            'SELECT t.id, t.title, rc.title AS race_category, SUM(p.pointsPerVisit) AS peak_points FROM App\Entity\Team t 
-                LEFT JOIN t.visited v LEFT JOIN v.peak p LEFT JOIN t.registration tr LEFT JOIN tr.category rc
-                WHERE tr.race = :raceid GROUP BY t.id ORDER BY peak_points DESC' 
+            'SELECT t.id, t.title, cat.title AS race_category,  SUM(p.pointsPerVisit) AS peak_points FROM App\Entity\Registration reg 
+                JOIN reg.team t JOIN reg.race rr JOIN t.visited v JOIN v.peak p JOIN reg.category cat
+                WHERE reg.race = :raceid GROUP BY reg.team ORDER BY peak_points DESC' 
         );
         $query->setParameter('raceid', $raceid);
 
@@ -60,9 +60,9 @@ class TeamRepository extends ServiceEntityRepository
     {
         $entityManager = $this->getEntityManager();
         $query = $entityManager->createQuery(
-            'SELECT t.id, t.title, rc.title AS race_category, SUM(tsk.pointsPerAnswer) AS task_points FROM App\Entity\Team t 
-                LEFT JOIN t.answered a LEFT JOIN a.task tsk LEFT JOIN t.registration tr LEFT JOIN tr.category rc 
-                WHERE tr.race = :raceid GROUP BY t.id ORDER BY task_points DESC' 
+            'SELECT t.id, t.title, cat.title AS race_category, SUM(tsk.pointsPerAnswer) AS task_points FROM App\Entity\Registration reg 
+                JOIN reg.team t JOIN reg.race rr JOIN t.answered a JOIN a.task tsk JOIN reg.category cat 
+                WHERE a.race = :raceid GROUP BY a.id ORDER BY task_points DESC' 
         );
         $query->setParameter('raceid', $raceid);
 
