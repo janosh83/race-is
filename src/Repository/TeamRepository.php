@@ -62,7 +62,7 @@ class TeamRepository extends ServiceEntityRepository
         $query = $entityManager->createQuery(
             'SELECT t.id, t.title, cat.title AS race_category, SUM(tsk.pointsPerAnswer) AS task_points FROM App\Entity\Registration reg 
                 JOIN reg.team t JOIN reg.race rr JOIN t.answered a JOIN a.task tsk JOIN reg.category cat 
-                WHERE a.race = :raceid GROUP BY a.id ORDER BY task_points DESC' 
+                WHERE reg.race = :raceid GROUP BY a.team ORDER BY task_points DESC' 
         );
         $query->setParameter('raceid', $raceid);
 
