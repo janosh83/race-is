@@ -31,6 +31,19 @@ class AnswerRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findByTaskAndRace($taskid, $raceid)
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager
+            ->createQuery('SELECT t.title as team_title, a.time, a.note FROM App\Entity\Answer a LEFT JOIN a.team t WHERE a.race = :raceid AND a.task = :taskid');
+         
+        $query->setParameter('taskid', $taskid);
+        $query->setParameter('raceid', $raceid);
+
+        return $query->getResult();
+            
+    }
+
     public function findByRaceAndTeam($raceid, $teamid)
     {
         $entityManager = $this->getEntityManager();

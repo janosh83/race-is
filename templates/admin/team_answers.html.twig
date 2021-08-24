@@ -17,14 +17,14 @@
 
 <table class="table table-striped">
     <tr>
-        <th scope="col">Vrchol</th>
+        <th scope="col">Úkol</th>
         <th scope="col">Počet bodů</th>
         <th scope="col">Čas</th>
         <th scope="col">Poznámka</th>
     </tr>
     {% for answer in answers %}
     <tr scope="row">
-        <td><a href="{{ path('admin_task_detail', {taskid:answer.id}) }}">{{answer.title}}</a></td>
+        <td><a href="{{ path('admin_task_detail', {taskid:answer.id,raceid:race.id}) }}">{{answer.title}}</a></td>
         <td>{{answer.pointsPerAnswer}}</td>
         <td>{{answer.time|date('d.m.Y H:i:s')}}</td>
         <td>{% if answer.note %}
@@ -34,5 +34,7 @@
     </tr>
     {% endfor %}
 </table>
+
+<p><a href="{{ path('admin_race_results', {raceid:race.id}) }}">Zpět na výsledky</a></p>
 
 {% endblock %}

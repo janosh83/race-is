@@ -12,4 +12,24 @@
     <div>{{peak.description}}</div>
 </div>
 
+<table class="table table-striped">
+    <tr>
+        <th scope="col">Tým</th>
+        <th scope="col">Čas</th>
+        <th scope="col">Poznámka</th>
+    </tr>
+    {% for visit in visits %}
+    <tr scope="row">
+        <td>{{visit.team_title}}</td>
+        <td>{{visit.time|date('d.m.Y H:i:s')}}</td>
+        <td>{% if visit.note %}
+                {{visit.note|sanitize_html}}
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<p><a href="{{ path('admin_race_results', {raceid:race.id}) }}">Zpět na výsledky</a></p>
+
 {% endblock %}

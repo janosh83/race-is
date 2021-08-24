@@ -44,7 +44,17 @@ class AdminController extends AbstractController
         
         if (!$team) {
             throw $this->createNotFoundException(
-                'Race not found '.$teamid
+                'Team not found '.$teamid
+            );
+        }
+
+        $race = $this->getDoctrine()
+            ->getRepository(Race::class)
+            ->find($raceid);
+        
+        if (!$race) {
+            throw $this->createNotFoundException(
+                'Race not found '.$raceid
             );
         }
 
@@ -53,6 +63,7 @@ class AdminController extends AbstractController
             ->findByRaceAndTeam($raceid, $teamid);
 
         return $this->render('admin/team_visits.html.twig', ['team' => $team,
+                                                             'race' => $race,
                                                              /*'leader' => $team->getLeader(),*/
                                                              'members' => $team->getMember(),
                                                              'visits' => $visits]);
@@ -73,20 +84,31 @@ class AdminController extends AbstractController
             );
         }
 
+        $race = $this->getDoctrine()
+            ->getRepository(Race::class)
+            ->find($raceid);
+        
+        if (!$race) {
+            throw $this->createNotFoundException(
+                'Race not found '.$raceid
+            );
+        }
+
         $answers = $this->getDoctrine()
             ->getRepository(Answer::class)
             ->findByRaceAndTeam($raceid, $teamid);
 
         return $this->render('admin/team_answers.html.twig', ['team' => $team,
+                                                             'race' => $race,
                                                              /*'leader' => $team->getLeader(),*/
                                                              'members' => $team->getMember(),
                                                              'answers' => $answers]);
     }
 
     /**
-     * @Route("/admin/peak/{peakid}", name="admin_peak_detail")
+     * @Route("/admin/peak/{peakid}/{raceid}", name="admin_peak_detail")
      */
-    public function peak_detail($peakid)
+    public function peak_detail($peakid,$raceid)
     {
         $peak = $this->getDoctrine()
             ->getRepository(Peak::class)
@@ -94,17 +116,31 @@ class AdminController extends AbstractController
 
         if (!$peak) {
             throw $this->createNotFoundException(
-                'Peak not found '.$id
+                'Peak not found '.$peakid
             );
         }
 
-        return $this->render('admin/peak.html.twig', ['peak' => $peak]);
+        $race = $this->getDoctrine()
+            ->getRepository(Race::class)
+            ->find($raceid);
+
+        if (!$race) {
+            throw $this->createNotFoundException(
+                'Race not found '.$raceid
+            );
+        }
+
+        $visits = $this->getDoctrine()
+            ->getRepository(Visit::class)
+            ->findByPeakAndRace($peakid, $raceid);
+
+        return $this->render('admin/peak.html.twig', ['peak' => $peak, 'visits' => $visits, 'race' => $race]);
     }
 
     /**
-     * @Route("/admin/task/{taskid}", name="admin_task_detail")
+     * @Route("/admin/task/{taskid}/{raceid}", name="admin_task_detail")
      */
-    public function task_detail($taskid)
+    public function task_detail($taskid, $raceid)
     {
         $task = $this->getDoctrine()
             ->getRepository(Task::class)
@@ -116,7 +152,21 @@ class AdminController extends AbstractController
             );
         }
 
-        return $this->render('admin/task.html.twig', ['task' => $task]);
+        $race = $this->getDoctrine()
+            ->getRepository(Race::class)
+            ->find($raceid);
+
+        if (!$race) {
+            throw $this->createNotFoundException(
+                'Race not found '.$raceid
+            );
+        }
+
+        $answers = $this->getDoctrine()
+            ->getRepository(Answer::class)
+            ->findByTaskAndRace($taskid, $raceid);
+
+        return $this->render('admin/task.html.twig', ['task' => $task, 'answers' => $answers, 'race' => $race]);
     }
 
     private function delete_all_peaks_by_race($race, $entityManager)
