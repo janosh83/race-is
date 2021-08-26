@@ -54,6 +54,28 @@ class VisitRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findTeamsWithoutVisit($raceid)
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager
+            ->createQuery('SELECT t.id, t.title FROM App\Entity\Team t JOIN t.registration reg WHERE 
+                            reg.race = :raceid AND
+                            t.id NOT IN (SELECT tt.id FROM App\Entity\Visit v JOIN v.team tt WHERE v.race = :raceid)');
+        $query->setParameter('raceid', $raceid);
+
+        return $query->getResult();
+    }
+
+    public function countVisits($raceid)
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager
+            ->createQuery('SELECT COUNT(v.id) FROM App\Entity\Visit v WHERE v.race = :raceid');
+        $query->setParameter('raceid', $raceid);
+
+        return $query->getSingleScalarResult();
+    }
+
     // /**
     //  * @return Visit[] Returns an array of Visit objects
     //  */

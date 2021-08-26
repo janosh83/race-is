@@ -362,13 +362,23 @@ class AdminController extends AbstractController
             ->getForm();
         */
 
+        $stats = array(
+            'num_of_visits'=> $this->getDoctrine()->getRepository(Visit::class)->countVisits($raceid),
+            'num_of_checkpoints' => $this->getDoctrine()->getRepository(Peak::class)->countPeaks($raceid),
+            'teams_without_visit' => $this->getDoctrine()->getRepository(Visit::class)->findTeamsWithoutVisit($raceid));
+        /* 
+        - number of checkpoints with at least one visit
+        - checkpoint with most visits
+        */
+
         return $this->render('admin/race.html.twig', [
             'race' => $race, 
             'peaks' => $peaks,
             'users' => $users,
             'delete_race_form' => $delete_race_form->createView(),
             'add_peaks_form' => $add_peaks_form->createView(),
-            'create_users_form' => $create_users_form->createView()
+            'create_users_form' => $create_users_form->createView(),
+            'stats' => $stats
             /*'delete_peaks_form' => $delete_peaks_form->createView(),
             'add_teams_form' => $add_teams_form->createView(),
             'signin_teams_form' => $signin_teams_form->createView(),

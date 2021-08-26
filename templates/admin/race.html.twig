@@ -5,8 +5,23 @@
 {% block main %}
 
 <h1>{{race.title}}</h1>
-<p>{{race.description}}</p>
+<div><strong>Motto závodu:</strong> {{race.description}}</div>
+<div><strong>Začátek zobrazování checkpointů:</strong> {{race.startShowingPeaks|date('d.m.Y H:i:s')}}</div>
+<div><strong>Začátek logování checkpointů:</strong> {{race.startLoggingPeaks|date('d.m.Y H:i:s')}}</div>
+<div><strong>Konec logování checkpointů:</strong> {{race.stopLoggingPeaks|date('d.m.Y H:i:s')}}</div>
+<div><strong>Povolení úkolů:</strong> {{race.tasksEnabled}}</div>
+<div><strong>Povolení deníku:</strong> {{race.journalEnabled}}</div>
 
+<h2>Statistiky</h2>
+<div>Počet zalogovaných návštěv: {{stats.num_of_visits}}</div>
+<div>Počet checkpointů: {{stats.num_of_checkpoints}}</div>
+<div>Týmy bez jediného zalogovaného checkpointu:
+{% for team in stats.teams_without_visit %}
+{{team.title}},
+{% endfor %}
+</div>
+
+<h2>Smazání závodu</h2>
 <div>
     {{ form(delete_race_form) }}
 </div>
