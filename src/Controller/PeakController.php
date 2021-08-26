@@ -83,7 +83,7 @@ class PeakController extends AbstractController
         // TODO: see https://symfony.com/doc/current/doctrine/associations.html#fetching-related-objects for performance optimization
         $visit = $this->getDoctrine()
             ->getRepository(Visit::class)
-            ->findByPeakAndTeam($id, $teamid);
+            ->findByPeak($id, $teamid);
 
         if ($visit)
         {
@@ -241,16 +241,16 @@ class PeakController extends AbstractController
     /**
      * @Route("/admin/racepeaks/{raceid}", name="admin_peak_table")
      */
-    public function peak_table($raceid)
+    public function peak_table($raceid, TranslatorInterface $translator)
     {
-        return $this->render('admin/peaks_table.html.twig', $this->get_race_peaks_data($raceid));
+        return $this->render('admin/peaks_table.html.twig', $this->get_race_peaks_data($raceid, $translator));
     }
 
     /**
      * @Route("/admin/roadbook/{raceid}", name="admin_roadbook")
      */
-    public function roadbook($raceid)
+    public function roadbook($raceid, TranslatorInterface $translator)
     {
-        return $this->render('admin/roadbook.html.twig', $this->get_race_peaks_data($raceid));
+        return $this->render('admin/roadbook.html.twig', $this->get_race_peaks_data($raceid, $translator));
     }
 }

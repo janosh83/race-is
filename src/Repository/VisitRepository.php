@@ -19,7 +19,7 @@ class VisitRepository extends ServiceEntityRepository
         parent::__construct($registry, Visit::class);
     }
 
-    public function findByPeakAndRace($peakid, $raceid)
+    public function findByPeak($peakid, $raceid)
     {
         $entityManager = $this->getEntityManager();
         $query = $entityManager
