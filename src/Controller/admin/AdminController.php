@@ -226,16 +226,16 @@ class AdminController extends AbstractController
         return implode('', $pieces);
     }
 
-    private function add_teams_from_json_text($teams_text, $race, MailerInterface $mailer, UserPasswordEncoderInterface $passwordEncoder)
+    private function add_users_from_json_text($users_text, $race, MailerInterface $mailer, UserPasswordEncoderInterface $passwordEncoder)
     {
         $entityManager = $this->getDoctrine()->getManager();
             
-        $teams_json = json_decode($teams_text, true);
+        $users_json = json_decode($users_text, true);
 
-        foreach ($teams_json as $t) {
+        foreach ($users_json as $u) {
             $user = new User();
-            $user->setName($t["name"]);
-            $user->setEmail($t["email"]);
+            $user->setName($u["name"]);
+            $user->setEmail($u["email"]);
             $user->setRoles(['ROLE_USER']);
             $password = $this->random_str(10);
             $user->setPassword($passwordEncoder->encodePassword($user, $password));
@@ -252,11 +252,11 @@ class AdminController extends AbstractController
 
             $email = (new TemplatedEmail())
             ->from(new Address('crew@picnicadventures.com', 'Picnic Adventures Mailbot'))
-            ->to($t["email"])
+            ->to($u["email"])
             ->subject('['.$race->getTitle().']: Registrace nového uživatele')
             ->htmlTemplate('admin/new_user_email.html.twig')
             ->context([
-                'name' => $t["name"],
+                'name' => $u["name"],
                 'race' => $race->getTitle(),
                 'password' => $password,
             ])
@@ -325,25 +325,30 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_home');
         }
 
-        $delete_peaks_form = $this->createFormBuilder()
+        /*$delete_peaks_form = $this->createFormBuilder()
             ->add('delete_peaks', SubmitType::class, ['label'=>'Vymazat vrcholy'])
-            ->getForm();
+            ->getForm();*/
 
         // TODO peaks deletion
 
-        $add_teams_form = $this->createFormBuilder()
-            ->add('teams_json', TextareaType::class, ['label'=>'Týmy'])
-            ->add('submit_teams', SubmitType::class, ['label'=>'Importovat týmy'])
+        $create_users_form = $this->createFormBuilder()
+            ->add('users_json', TextareaType::class, ['label'=>'Uživatelé'])
+            ->add('submit_users', SubmitType::class, ['label'=>'Vytvořit uživatele'])
             ->getForm();
 
-        $add_teams_form->handleRequest($request);
-        if($add_teams_form->isSubmitted() && $add_teams_form->isValid())
+        $create_users_form->handleRequest($request);
+        if($create_users_form->isSubmitted() && $create_users_form->isValid())
         {
-            $this->add_teams_from_json_text($add_teams_form->get('teams_json')->getData(), $race, $mailer, $passwordEncoder);
+            $this->add_users_from_json_text($create_users_form->get('users_json')->getData(), $race, $mailer, $passwordEncoder);
             
             return $this->redirectToRoute('admin_home');
         }
 
+        $users = $this->getDoctrine()
+            ->getRepository(User::class)
+            ->findUserByRace($raceid);
+
+        /*
         $delete_teams_form = $this->createFormBuilder()
             ->add('delete_teams', SubmitType::class, ['label'=>'Vymazat týmy'])
             ->getForm();
@@ -355,16 +360,19 @@ class AdminController extends AbstractController
         $signout_teams_form = $this->createFormBuilder()
             ->add('signout_teams', SubmitType::class, ['label'=>'Odhlásit týmy'])
             ->getForm();
+        */
 
         return $this->render('admin/race.html.twig', [
             'race' => $race, 
             'peaks' => $peaks,
+            'users' => $users,
             'delete_race_form' => $delete_race_form->createView(),
             'add_peaks_form' => $add_peaks_form->createView(),
-            'delete_peaks_form' => $delete_peaks_form->createView(),
+            'create_users_form' => $create_users_form->createView()
+            /*'delete_peaks_form' => $delete_peaks_form->createView(),
             'add_teams_form' => $add_teams_form->createView(),
             'signin_teams_form' => $signin_teams_form->createView(),
-            'signout_teams_form' => $signout_teams_form->createView()]);
+            'signout_teams_form' => $signout_teams_form->createView()*/]);
     }
 
     /**

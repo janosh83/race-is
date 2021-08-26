@@ -18,12 +18,19 @@ vrcholů.</p>
 <h2>Vrcholy</h2>
 {% if (peaks) %}
     <table class="table">
-        <tr><th scope="col"></th><th scope="col">Vrchol</th><th scope="col">GPS</th>{#<th>Detail</th>#}</tr>
+        <tr><th scope="col"></th>
+        <th scope="col">Vrchol</th>
+        <th scope="col">GPS</th>
+        <th scope="col">Počet bodů</th>
+        <th>Detail</th></tr>
         {% for peak in peaks %}
         <tr>
             <th scope="row">{{peak.shortid}}</th>
             <td>{{peak.title}}</td>
             <td>{{peak.GPS}}</td>
+            <td>{{peak.pointsPerVisit}}</td>
+            <td>{{peak.description|sanitize_html}}</td>
+            
             {#<td>{{peak.description}}</td>#}
         </tr>
         {% endfor %}
@@ -58,8 +65,25 @@ vrcholů.</p>
 </div> #}
 
 <h2>Přihlášené týmy</h2>
+{% if (users) %}
+    <table class="table">
+        <tr><th scope="col">Jméno</th>
+        <th scope="col">Email</th>
+        <th scope="col">Tým</th>
+        <th scope="col">Závodní kategorie</th></tr>
+        {% for user in users %}
+        <tr>
+            <td scope="row">{{user.name}}</td>
+            <td>{{user.email}}</td>
+            <td>{{user.team_title}}</td>
+            <td>{{user.race_category}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+{% endif %}
+
 <div>
-    {{ form(add_teams_form) }}
+    {{ form(create_users_form) }}
 </div> 
 
 <p>Přidá uživatele (pokud již užvatel existuje, dojde k chybě), vytvoří jednočlený 
@@ -74,7 +98,7 @@ týmu v závodě, pak tým a pak až uživatel.</p>
 <pre><code>[{
     "email": "zdenek.jancik@skaut.cz", 
     "name": "Jánošík"
-}]</code><pre>
+}]</code></pre>
 
 {#<div>
     {{ form(signin_teams_form) }}

@@ -36,6 +36,19 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
+    public function findUserByRace($raceid): array
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQuery(
+            'SELECT u.name, u.email, t.title AS team_title, cat.title AS race_category FROM App\Entity\User u
+                JOIN u.member t JOIN t.registration reg JOIN reg.race rr JOIN reg.category cat
+                WHERE reg.race = :raceid' 
+        );
+        $query->setParameter('raceid', $raceid);
+
+        return $query->getResult();
+    }
+
     // /**
     //  * @return User[] Returns an array of User objects
     //  */
