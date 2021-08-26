@@ -6,7 +6,8 @@
 {% block main %}
 <div>
     <h1>{{race.title}} - {{task.title}}</h1>
-     <div>{{task.description}}</div>
+    <div><strong>Počet bodů za splnění:</strong> {{task.pointsPerAnswer}}</div>
+    <div><strong>Zadání úkolu:</strong> {{task.description|sanitize_html}}</div>
 
     {% if images %}
         {% for image in images %}

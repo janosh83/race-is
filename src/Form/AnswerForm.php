@@ -17,7 +17,7 @@ class AnswerForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('note', CKEditorType::class, ['required' => false, 'label' => new TranslatableMessage('Note'), 'sanitize_html' => true, 'config' => ['toolbar' => 'standard']])
+            ->add('note', CKEditorType::class, ['required' => false, 'label' => new TranslatableMessage('Answer_note'), 'sanitize_html' => true, 'config' => ['toolbar' => 'standard']])
             ->add('image', FileType::class, [
                 'label' => new TranslatableMessage('Picture'),
 
