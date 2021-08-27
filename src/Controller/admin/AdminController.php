@@ -365,7 +365,8 @@ class AdminController extends AbstractController
         $stats = array(
             'num_of_visits'=> $this->getDoctrine()->getRepository(Visit::class)->countVisits($raceid),
             'num_of_checkpoints' => $this->getDoctrine()->getRepository(Peak::class)->countPeaks($raceid),
-            'teams_without_visit' => $this->getDoctrine()->getRepository(Visit::class)->findTeamsWithoutVisit($raceid));
+            'teams_without_visit' => $this->getDoctrine()->getRepository(Visit::class)->findTeamsWithoutVisit($raceid),
+            'num_of_checkpoints_with_visit' => $this->getDoctrine()->getRepository(Peak::class)->countPeaksWithVisit($raceid));
         /* 
         - number of checkpoints with at least one visit
         - checkpoint with most visits

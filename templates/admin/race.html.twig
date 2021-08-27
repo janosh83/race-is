@@ -15,6 +15,7 @@
 <h2>Statistiky</h2>
 <div>Počet zalogovaných návštěv: {{stats.num_of_visits}}</div>
 <div>Počet checkpointů: {{stats.num_of_checkpoints}}</div>
+<div>Počet checkpointů s alespoň jednou návštěvou: {{stats.num_of_checkpoints_with_visit}}</div>
 <div>Týmy bez jediného zalogovaného checkpointu:
 {% for team in stats.teams_without_visit %}
 {{team.title}},

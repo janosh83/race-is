@@ -71,6 +71,16 @@ class PeakRepository extends ServiceEntityRepository
 
         return $query->getSingleScalarResult();
     }
+
+    public function countPeaksWithVisit($raceid)
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager
+            ->createQuery('SELECT COUNT(p.id) FROM App\Entity\Visit v JOIN v.peak p WHERE v.race = :raceid');
+        $query->setParameter('raceid', $raceid);
+
+        return $query->getSingleScalarResult();
+    }
     
 
     /*
