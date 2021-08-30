@@ -83,7 +83,7 @@ class PeakController extends AbstractController
         // TODO: see https://symfony.com/doc/current/doctrine/associations.html#fetching-related-objects for performance optimization
         $visit = $this->getDoctrine()
             ->getRepository(Visit::class)
-            ->findByPeak($id, $teamid);
+            ->findByPeakAndTeam($id, $teamid);
 
         if ($visit)
         {
@@ -149,6 +149,8 @@ class PeakController extends AbstractController
 
             return $this->redirectToRoute('race_show',array('id' => $raceid));
         }
+
+        //dd($is_visited, $visit->getImages());
 
         return $this->render('peak/show.html.twig', ['peak' => $peak,
                                                      'race' => $race,

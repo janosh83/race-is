@@ -39,7 +39,7 @@ class PeakRepository extends ServiceEntityRepository
         $entityManager = $this->getEntityManager();
 
         $query = $entityManager
-            ->createQuery('SELECT p.id, p.short_id, p.title, p.latitude, p.longitude FROM App\Entity\Peak p LEFT JOIN p.visits pv WHERE pv.team = :teamid AND pv.race = :raceid');
+            ->createQuery('SELECT p.id, p.short_id, p.title, p.latitude, p.longitude FROM App\Entity\Visit v LEFT JOIN v.peak p WHERE v.team = :teamid AND v.race = :raceid');
         $query->setParameter('teamid', $teamid);
         $query->setParameter('raceid', $raceid);
 
