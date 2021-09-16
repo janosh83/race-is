@@ -141,6 +141,11 @@ class PeakController extends AbstractController
 
             elseif ($visit_form->get('delete')->isClicked())
             {
+                if($visit->getImages()){
+                    foreach($visit->getImages() as $im){
+                        $visit->removeImage($im);
+                    }
+                }
                 $manager->remove($visit);         
                 $this->addFlash('primary', $translator->trans('Visit_unlogged'));
             }

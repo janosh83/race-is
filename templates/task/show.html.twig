@@ -11,7 +11,7 @@
 
     {% if images %}
         {% for image in images %}
-        <img src="{{ asset('uploads/images/' ~ image) }}" width="600px">
+        <img src="{{ asset('uploads/images/' ~ image.filename) }}" width="600px">
         {% endfor %}
     {% endif %}
 

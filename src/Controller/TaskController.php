@@ -8,6 +8,7 @@ use App\Entity\Task;
 use App\Entity\Team;
 use App\Entity\Race;
 use App\Entity\Answer;
+use App\Entity\Image;
 use App\Form\AnswerForm;
 use App\Service\ImageUploader;
 use Symfony\Component\HttpFoundation\Request;
@@ -105,8 +106,10 @@ class TaskController extends AbstractController
                 // so the PDF file must be processed only when a file is uploaded
                 if ($imageFile) {
                     $newFilename = $imageUploader->upload($imageFile);
-
-                    $answer->setImageFilename($newFilename);
+                    $image = new Image();
+                    $image->setFilename($newFilename);
+                    $manager->persist($image);
+                    $answer->addImage($image);
                 }
                 
                 $manager->persist($answer);
@@ -115,6 +118,11 @@ class TaskController extends AbstractController
 
             elseif ($answer_form->get('delete')->isClicked())
             {
+                if($answer->getImages()){
+                    foreach( $answer->getImages() as $im){
+                    $answer->removeImage($im);
+                    }
+                }
                 $manager->remove($answer);         
                 $this->addFlash('notice', 'Odpověď smazána');
             }
