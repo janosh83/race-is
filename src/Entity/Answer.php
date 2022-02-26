@@ -7,49 +7,33 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=AnswerRepository::class)
- */
+#[ORM\Entity(repositoryClass: AnswerRepository::class)]
 class Answer
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: 'datetime')]
     private $time;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text')]
     private $note;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Task::class, inversedBy="answers")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Task::class, inversedBy: 'answers')]
+    #[ORM\JoinColumn(nullable: false)]
     private $task;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Team::class, inversedBy="answered")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Team::class, inversedBy: 'answers')]
+    #[ORM\JoinColumn(nullable: false)]
     private $team;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Race::class, inversedBy="answers")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Race::class, inversedBy: 'answers')]
+    #[ORM\JoinColumn(nullable: false)]
     private $race;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Image::class, mappedBy="answer")
-     */
+    #[ORM\OneToMany(mappedBy: 'answer', targetEntity: Image::class)]
     private $images;
 
     public function __construct()
@@ -80,7 +64,7 @@ class Answer
         return $this->note;
     }
 
-    public function setNote(?string $note): self
+    public function setNote(string $note): self
     {
         $this->note = $note;
 
@@ -143,8 +127,7 @@ class Answer
 
     public function removeImage(Image $image): self
     {
-        if ($this->images->contains($image)) {
-            $this->images->removeElement($image);
+        if ($this->images->removeElement($image)) {
             // set the owning side to null (unless already changed)
             if ($image->getAnswer() === $this) {
                 $image->setAnswer(null);

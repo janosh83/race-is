@@ -7,42 +7,28 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=TaskRepository::class)
- */
+#[ORM\Entity(repositoryClass: TaskRepository::class)]
 class Task
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=128)
-     */
+    #[ORM\Column(type: 'string', length: 128)]
     private $title;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text')]
     private $description;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Race::class, inversedBy="tasks")
-     */
+    #[ORM\ManyToOne(targetEntity: Race::class, inversedBy: 'tasks')]
     private $race;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Answer::class, mappedBy="task", orphanRemoval=true)
-     */
-    private $answers;
-
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private $pointsPerAnswer;
+
+    #[ORM\OneToMany(mappedBy: 'task', targetEntity: Answer::class, orphanRemoval: true)]
+    private $answers;
 
     public function __construct()
     {
@@ -71,7 +57,7 @@ class Task
         return $this->description;
     }
 
-    public function setDescription(?string $description): self
+    public function setDescription(string $description): self
     {
         $this->description = $description;
 
@@ -86,6 +72,18 @@ class Task
     public function setRace(?Race $race): self
     {
         $this->race = $race;
+
+        return $this;
+    }
+
+    public function getPointsPerAnswer(): ?int
+    {
+        return $this->pointsPerAnswer;
+    }
+
+    public function setPointsPerAnswer(int $pointsPerAnswer): self
+    {
+        $this->pointsPerAnswer = $pointsPerAnswer;
 
         return $this;
     }
@@ -110,25 +108,12 @@ class Task
 
     public function removeAnswer(Answer $answer): self
     {
-        if ($this->answers->contains($answer)) {
-            $this->answers->removeElement($answer);
+        if ($this->answers->removeElement($answer)) {
             // set the owning side to null (unless already changed)
             if ($answer->getTask() === $this) {
                 $answer->setTask(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getPointsPerAnswer(): ?int
-    {
-        return $this->pointsPerAnswer;
-    }
-
-    public function setPointsPerAnswer(int $pointsPerAnswer): self
-    {
-        $this->pointsPerAnswer = $pointsPerAnswer;
 
         return $this;
     }

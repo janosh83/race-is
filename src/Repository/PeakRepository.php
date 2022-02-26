@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Peak;
-use App\Entity\Visit;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -20,10 +19,6 @@ class PeakRepository extends ServiceEntityRepository
         parent::__construct($registry, Peak::class);
     }
 
-    // /**
-    //  * @return Peak[] Returns an array of Peak objects
-    //  */
-    
     public function findByRace($race)
     {
         return $this->createQueryBuilder('p')
@@ -72,16 +67,34 @@ class PeakRepository extends ServiceEntityRepository
         return $query->getSingleScalarResult();
     }
 
+    // FIXME there is a bug when peak is visited by two teams, in taht case is counted twice
     public function countPeaksWithVisit($raceid)
     {
         $entityManager = $this->getEntityManager();
         $query = $entityManager
-            ->createQuery('SELECT COUNT(p.id) FROM App\Entity\Visit v JOIN v.peak p WHERE v.race = :raceid');
+            ->createQuery('SELECT v.id FROM App\Entity\Visit v JOIN v.peak p WHERE v.race = :raceid GROUP BY p.id');
         $query->setParameter('raceid', $raceid);
 
-        return $query->getSingleScalarResult();
+        //return $query->getSingleScalarResult();
+        return $query->getResult();
     }
-    
+
+    // /**
+    //  * @return Peak[] Returns an array of Peak objects
+    //  */
+    /*
+    public function findByExampleField($value)
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.exampleField = :val')
+            ->setParameter('val', $value)
+            ->orderBy('p.id', 'ASC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+    */
 
     /*
     public function findOneBySomeField($value): ?Peak

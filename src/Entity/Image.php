@@ -5,37 +5,25 @@ namespace App\Entity;
 use App\Repository\ImageRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=ImageRepository::class)
- */
+#[ORM\Entity(repositoryClass: ImageRepository::class)]
 class Image
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: 'string', length: 255)]
     private $filename;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Visit::class, inversedBy="images")
-     */
-    private $visit;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Answer::class, inversedBy="images")
-     */
+    #[ORM\ManyToOne(targetEntity: Answer::class, inversedBy: 'images')]
     private $answer;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=JournalPost::class, inversedBy="images")
-     */
-    private $post;
+    #[ORM\ManyToOne(targetEntity: JournalPost::class, inversedBy: 'images')]
+    private $journalPost;
+
+    #[ORM\ManyToOne(targetEntity: Visit::class, inversedBy: 'images')]
+    private $visit;
 
     public function getId(): ?int
     {
@@ -54,18 +42,6 @@ class Image
         return $this;
     }
 
-    public function getVisit(): ?Visit
-    {
-        return $this->visit;
-    }
-
-    public function setVisit(?Visit $visit): self
-    {
-        $this->visit = $visit;
-
-        return $this;
-    }
-
     public function getAnswer(): ?Answer
     {
         return $this->answer;
@@ -78,14 +54,26 @@ class Image
         return $this;
     }
 
-    public function getPost(): ?JournalPost
+    public function getJournalPost(): ?JournalPost
     {
-        return $this->post;
+        return $this->journalPost;
     }
 
-    public function setPost(?JournalPost $post): self
+    public function setJournalPost(?JournalPost $journalPost): self
     {
-        $this->post = $post;
+        $this->journalPost = $journalPost;
+
+        return $this;
+    }
+
+    public function getVisit(): ?Visit
+    {
+        return $this->visit;
+    }
+
+    public function setVisit(?Visit $visit): self
+    {
+        $this->visit = $visit;
 
         return $this;
     }

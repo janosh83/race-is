@@ -2,53 +2,38 @@
 
 namespace App\Entity;
 
+use App\Repository\VisitRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\VisitRepository")
- */
+#[ORM\Entity(repositoryClass: VisitRepository::class)]
 class Visit
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: 'datetime')]
     private $time;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $note;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Peak", inversedBy="visits")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Peak::class, inversedBy: 'visits')]
+    #[ORM\JoinColumn(nullable: false)]
     private $peak;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Team", inversedBy="visited")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Team::class, inversedBy: 'visits')]
+    #[ORM\JoinColumn(nullable: false)]
     private $team;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Race", inversedBy="visits")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Race::class, inversedBy: 'visits')]
+    #[ORM\JoinColumn(nullable: false)]
     private $race;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Image::class, mappedBy="visit")
-     */
+    #[ORM\OneToMany(mappedBy: 'visit', targetEntity: Image::class)]
     private $images;
 
     public function __construct()
@@ -142,8 +127,7 @@ class Visit
 
     public function removeImage(Image $image): self
     {
-        if ($this->images->contains($image)) {
-            $this->images->removeElement($image);
+        if ($this->images->removeElement($image)) {
             // set the owning side to null (unless already changed)
             if ($image->getVisit() === $this) {
                 $image->setVisit(null);

@@ -19,19 +19,6 @@ class VisitRepository extends ServiceEntityRepository
         parent::__construct($registry, Visit::class);
     }
 
-    /*public function findByPeak($peakid, $raceid)
-    {
-        $entityManager = $this->getEntityManager();
-        $query = $entityManager
-            ->createQuery('SELECT t.title as team_title, v.time, v.note FROM App\Entity\Visit v LEFT JOIN v.team t WHERE v.race = :raceid AND v.peak = :peakid');
-         
-        $query->setParameter('peakid', $peakid);
-        $query->setParameter('raceid', $raceid);
-
-        return $query->getResult();
-            
-    }*/
-
     public function findByPeakAndTeam($peakid, $teamid)
     {
         return $this->createQueryBuilder('v')
@@ -83,7 +70,7 @@ class VisitRepository extends ServiceEntityRepository
     {
         $entityManager = $this->getEntityManager();
         $query = $entityManager
-            ->createQuery('SELECT t.id, t.title FROM App\Entity\Team t JOIN t.registration reg WHERE 
+            ->createQuery('SELECT t.id, t.title FROM App\Entity\Team t JOIN t.registrations reg WHERE 
                             reg.race = :raceid AND
                             t.id NOT IN (SELECT tt.id FROM App\Entity\Visit v JOIN v.team tt WHERE v.race = :raceid)');
         $query->setParameter('raceid', $raceid);

@@ -2,60 +2,44 @@
 
 namespace App\Entity;
 
+use App\Repository\TeamRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\TeamRepository")
- */
+#[ORM\Entity(repositoryClass: TeamRepository::class)]
 class Team
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=63)
-     */
+    #[ORM\Column(type: 'string', length: 63)]
     private $title;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="member")
-     */
-    private $member;
+    #[ORM\OneToMany(mappedBy: 'team', targetEntity: Registration::class)]
+    private $registrations;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Visit", mappedBy="team", orphanRemoval=true)
-     */
-    private $visited;
+    #[ORM\OneToMany(mappedBy: 'team', targetEntity: Answer::class)]
+    private $answers;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Answer::class, mappedBy="team", orphanRemoval=true)
-     */
-    private $answered;
-
-    /**
-     * @ORM\OneToMany(targetEntity=JournalPost::class, mappedBy="team", orphanRemoval=true)
-     */
+    #[ORM\OneToMany(mappedBy: 'team', targetEntity: JournalPost::class)]
     private $journalPosts;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Registration::class, mappedBy="team", orphanRemoval=true)
-     */
-    private $registration;
+    #[ORM\OneToMany(mappedBy: 'team', targetEntity: Visit::class)]
+    private $visits;
 
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'teams')]
+    private $members;
 
     public function __construct()
     {
-        $this->member = new ArrayCollection();
-        $this->visited = new ArrayCollection();
-        $this->answered = new ArrayCollection();
+        $this->registrations = new ArrayCollection();
+        $this->answers = new ArrayCollection();
         $this->journalPosts = new ArrayCollection();
-        $this->registration = new ArrayCollection();
+        $this->visits = new ArrayCollection();
+        $this->members = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -76,56 +60,29 @@ class Team
     }
 
     /**
-     * @return Collection|User[]
+     * @return Collection|Registration[]
      */
-    public function getMember(): Collection
+    public function getRegistrations(): Collection
     {
-        return $this->member;
+        return $this->registrations;
     }
 
-    public function addMember(User $member): self
+    public function addRegistration(Registration $registration): self
     {
-        if (!$this->member->contains($member)) {
-            $this->member[] = $member;
+        if (!$this->registrations->contains($registration)) {
+            $this->registrations[] = $registration;
+            $registration->setTeam($this);
         }
 
         return $this;
     }
 
-    public function removeMember(User $member): self
+    public function removeRegistration(Registration $registration): self
     {
-        if ($this->member->contains($member)) {
-            $this->member->removeElement($member);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Visit[]
-     */
-    public function getVisited(): Collection
-    {
-        return $this->visited;
-    }
-
-    public function addVisited(Visit $visited): self
-    {
-        if (!$this->visited->contains($visited)) {
-            $this->visited[] = $visited;
-            $visited->setTeam($this);
-        }
-
-        return $this;
-    }
-
-    public function removeVisited(Visit $visited): self
-    {
-        if ($this->visited->contains($visited)) {
-            $this->visited->removeElement($visited);
+        if ($this->registrations->removeElement($registration)) {
             // set the owning side to null (unless already changed)
-            if ($visited->getTeam() === $this) {
-                $visited->setTeam(null);
+            if ($registration->getTeam() === $this) {
+                $registration->setTeam(null);
             }
         }
 
@@ -135,15 +92,15 @@ class Team
     /**
      * @return Collection|Answer[]
      */
-    public function getAnswered(): Collection
+    public function getAnswers(): Collection
     {
-        return $this->answered;
+        return $this->answers;
     }
 
     public function addAnswer(Answer $answer): self
     {
-        if (!$this->answered->contains($answer)) {
-            $this->answered[] = $answer;
+        if (!$this->answers->contains($answer)) {
+            $this->answers[] = $answer;
             $answer->setTeam($this);
         }
 
@@ -152,8 +109,7 @@ class Team
 
     public function removeAnswer(Answer $answer): self
     {
-        if ($this->answered->contains($answer)) {
-            $this->answered->removeElement($answer);
+        if ($this->answers->removeElement($answer)) {
             // set the owning side to null (unless already changed)
             if ($answer->getTeam() === $this) {
                 $answer->setTeam(null);
@@ -183,8 +139,7 @@ class Team
 
     public function removeJournalPost(JournalPost $journalPost): self
     {
-        if ($this->journalPosts->contains($journalPost)) {
-            $this->journalPosts->removeElement($journalPost);
+        if ($this->journalPosts->removeElement($journalPost)) {
             // set the owning side to null (unless already changed)
             if ($journalPost->getTeam() === $this) {
                 $journalPost->setTeam(null);
@@ -195,33 +150,56 @@ class Team
     }
 
     /**
-     * @return Collection|Registration[]
+     * @return Collection|Visit[]
      */
-    public function getRegistration(): Collection
+    public function getVisits(): Collection
     {
-        return $this->registration;
+        return $this->visits;
     }
 
-    public function addRegistration(Registration $registration): self
+    public function addVisit(Visit $visit): self
     {
-        if (!$this->registration->contains($registration)) {
-            $this->registration[] = $registration;
-            $registration->setTeam($this);
+        if (!$this->visits->contains($visit)) {
+            $this->visits[] = $visit;
+            $visit->setTeam($this);
         }
 
         return $this;
     }
 
-    public function removeRegistration(Registration $registration): self
+    public function removeVisit(Visit $visit): self
     {
-        if ($this->registration->removeElement($registration)) {
+        if ($this->visits->removeElement($visit)) {
             // set the owning side to null (unless already changed)
-            if ($registration->getTeam() === $this) {
-                $registration->setTeam(null);
+            if ($visit->getTeam() === $this) {
+                $visit->setTeam(null);
             }
         }
 
         return $this;
     }
 
+    /**
+     * @return Collection|User[]
+     */
+    public function getMembers(): Collection
+    {
+        return $this->members;
+    }
+
+    public function addMember(User $member): self
+    {
+        if (!$this->members->contains($member)) {
+            $this->members[] = $member;
+        }
+
+        return $this;
+    }
+
+    public function removeMember(User $member): self
+    {
+        $this->members->removeElement($member);
+
+        return $this;
+    }
 }

@@ -2,59 +2,48 @@
 
 namespace App\Entity;
 
+use App\Repository\JournalPostRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass=App\Repository\JournalPostRepository::class)
- */
+#[ORM\Entity(repositoryClass: JournalPostRepository::class)]
 class JournalPost
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="journalPost")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'journalPosts')]
+    #[ORM\JoinColumn(nullable: false)]
     private $author;
 
-    /**
-     * @ORM\Column(type="string", length=64)
-     */
+    #[ORM\Column(type: 'string', length: 64)]
     private $title;
 
-    /**
-     * @ORM\Column(type="text")
-     */
+    #[ORM\Column(type: 'text')]
     private $text;
 
-    /**
-     * @ORM\Column(type="date")
-     */
+    #[ORM\Column(type: 'date')]
     private $date;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Race::class, inversedBy="journalPosts")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Race::class, inversedBy: 'journalPosts')]
+    #[ORM\JoinColumn(nullable: false)]
     private $race;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Team::class, inversedBy="journalPosts")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: Team::class, inversedBy: 'journalPosts')]
+    #[ORM\JoinColumn(nullable: false)]
     private $team;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Image::class, mappedBy="post")
-     */
+    #[ORM\OneToMany(mappedBy: 'journalPost', targetEntity: Image::class)]
     private $images;
+
+    public function __construct()
+    {
+        $this->date = new \DateTime();
+        $this->images = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -136,7 +125,7 @@ class JournalPost
     /**
      * @return Collection|Image[]
      */
-    public function getImage(): Collection
+    public function getImages(): Collection
     {
         return $this->images;
     }
@@ -145,7 +134,7 @@ class JournalPost
     {
         if (!$this->images->contains($image)) {
             $this->images[] = $image;
-            $image->setVisit($this);
+            $image->setJournalPost($this);
         }
 
         return $this;
@@ -153,11 +142,10 @@ class JournalPost
 
     public function removeImage(Image $image): self
     {
-        if ($this->images->contains($image)) {
-            $this->images->removeElement($image);
+        if ($this->images->removeElement($image)) {
             // set the owning side to null (unless already changed)
-            if ($image->getVisit() === $this) {
-                $image->setVisit(null);
+            if ($image->getJournalPost() === $this) {
+                $image->setJournalPost(null);
             }
         }
 

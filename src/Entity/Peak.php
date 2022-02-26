@@ -2,61 +2,42 @@
 
 namespace App\Entity;
 
+use App\Repository\PeakRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\PeakRepository")
- */
+#[ORM\Entity(repositoryClass: PeakRepository::class)]
 class Peak
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=32)
-     */
+    #[ORM\Column(type: 'string', length: 32)]
     private $short_id;
 
-    /**
-     * @ORM\Column(type="string", length=128)
-     */
+    #[ORM\Column(type: 'string', length: 128)]
     private $title;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $description;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     */
+    #[ORM\Column(type: 'float')]
     private $latitude;
 
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     */
+    #[ORM\Column(type: 'float')]
     private $longitude;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Race", inversedBy="peaks")
-     */
+    #[ORM\ManyToOne(targetEntity: Race::class, inversedBy: 'peaks')]
     private $race;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Visit", mappedBy="peak", orphanRemoval=true)
-     */
-    private $visits;
-
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: 'integer')]
     private $pointsPerVisit;
+
+    #[ORM\OneToMany(mappedBy: 'peak', targetEntity: Visit::class)]
+    private $visits;
 
     public function __construct()
     {
@@ -109,7 +90,7 @@ class Peak
         return $this->latitude;
     }
 
-    public function setLatitude(?float $latitude): self
+    public function setLatitude(float $latitude): self
     {
         $this->latitude = $latitude;
 
@@ -121,7 +102,7 @@ class Peak
         return $this->longitude;
     }
 
-    public function setLongitude(?float $longitude): self
+    public function setLongitude(float $longitude): self
     {
         $this->longitude = $longitude;
 
@@ -136,6 +117,18 @@ class Peak
     public function setRace(?Race $race): self
     {
         $this->race = $race;
+
+        return $this;
+    }
+
+    public function getPointsPerVisit(): ?int
+    {
+        return $this->pointsPerVisit;
+    }
+
+    public function setPointsPerVisit(int $pointsPerVisit): self
+    {
+        $this->pointsPerVisit = $pointsPerVisit;
 
         return $this;
     }
@@ -160,8 +153,7 @@ class Peak
 
     public function removeVisit(Visit $visit): self
     {
-        if ($this->visits->contains($visit)) {
-            $this->visits->removeElement($visit);
+        if ($this->visits->removeElement($visit)) {
             // set the owning side to null (unless already changed)
             if ($visit->getPeak() === $this) {
                 $visit->setPeak(null);
@@ -170,38 +162,4 @@ class Peak
 
         return $this;
     }
-
-    public function getGPS(): string
-    {
-        if ($this->latitude > 0.0){
-            $tmp = $this->latitude."N";
-        }
-        else{
-            $tmp = $this->latitude."S";
-        }
-
-        $tmp = $tmp."; ";
-
-        if ($this->longitude > 0.0){
-            $tmp = $tmp.$this->longitude."E";
-        }
-        else{
-            $tmp = $tmp.$this->longitude."W";
-        }
-
-        return $tmp;
-    }
-
-    public function getPointsPerVisit(): ?int
-    {
-        return $this->pointsPerVisit;
-    }
-
-    public function setPointsPerVisit(int $pointsPerVisit): self
-    {
-        $this->pointsPerVisit = $pointsPerVisit;
-
-        return $this;
-    }
-
 }

@@ -1,16 +1,18 @@
 <?php
 
 namespace App\DataFixtures;
-
+use App\Entity\Answer;
 use App\Entity\Peak;
 use App\Entity\User;
 use App\Entity\Race;
 use App\Entity\Team;
 use App\Entity\Task;
+use App\Entity\Visit;
 use App\Entity\Category;
 use App\Entity\Registration;
+use App\Entity\JournalPost;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Doctrine\Persistence\ObjectManager;
 use function Symfony\Component\String\u;
 
@@ -18,9 +20,9 @@ class AppFixtures extends Fixture
 {
     private $passwordEncoder;
 
-    public function __construct(UserPasswordEncoderInterface $passwordEncoder)
+    public function __construct(UserPasswordHasherInterface $passwordHasher)
     {
-        $this->passwordEncoder = $passwordEncoder;
+        $this->passwordHasher = $passwordHasher;
     }
 
     private function getPhrases(): array
@@ -78,7 +80,8 @@ class AppFixtures extends Fixture
             // $taskData = [$title, $points, $description]
             ['Schody na rozhlednu', 1, 'Vystup na rozhlednu a spočítej kolik schodů tam bylo.'],
             ['Večeře v restauraci', 1, 'Dej si nějakou dobrou večeři někde v kolibě.'],
-            ['Koupačka pod vodopádem', 2, 'Vykoupej se pod horským vodopádem']
+            ['Koupačka pod vodopádem', 2, 'Vykoupej se pod horským vodopádem'],
+            ['Koupačka v jezirku', 2, 'Vykoupej se v horskem jezirku vodopádem']
         ];
     }
 
@@ -175,7 +178,7 @@ class AppFixtures extends Fixture
         foreach ($this->getUserData() as [$name, $email, $password, $roles]) {
             $user = new User();
             $user->setName($name);
-            $user->setPassword($this->passwordEncoder->encodePassword($user, $password));
+            $user->setPassword($this->passwordHasher->hashPassword($user, $password));
             $user->setEmail($email);
             $user->setRoles($roles);
 
@@ -282,7 +285,19 @@ class AppFixtures extends Fixture
                 ["Kola", "Koloběžky"],
                 ['short_01', 'short_02', 'short_03', 'short_04', 'short_05',
                  'short_06', 'short_07', 'short_08', 'short_09', 'short_10'],
-                 ['Schody na rozhlednu', 'Večeře v restauraci', 'Koupačka pod vodopádem']
+                 ['Schody na rozhlednu', 'Večeře v restauraci', 'Koupačka pod vodopádem','Koupačka v jezirku']
+        ],
+        [   'Hill Bill Rally 2022', 
+                '<p>Nějaký text, to je jedno</p>', 
+                '2021-03-02 19:01:58',
+                '2021-03-02 19:01:58',
+                '2021-03-02 22:01:58',
+                false,
+                false,
+                '',
+                [],
+                [],
+                []
             ]
         ];
     }
@@ -297,10 +312,10 @@ class AppFixtures extends Fixture
             $race->setTitle($title);
             $race->setDescription($description);
             $race->setStartShowingPeaks(new \DateTime($start_showing_peaks));
-            $race->setStartLoggingPeaks(new \DateTime($start_logging));
-            $race->setStopLoggingPeaks(new \DateTime($stop_logging));
+            $race->setStartLoggingVisits(new \DateTime($start_logging));
+            $race->setStopLoggingVisists(new \DateTime($stop_logging));
             $race->setTasksEnabled($task_enabled);
-            $race->setJournalEnabled($journal_enabled);
+            $race->setJournalEmabled($journal_enabled);
             $race->setLogoPath($logo_path);
 
             foreach($categories as $catid)
@@ -355,6 +370,79 @@ class AppFixtures extends Fixture
         $manager->flush();
     }
 
+    private function getVisitsData()
+    {
+        return [
+            ['vrchol_01', 'Team 1', 'Hill Bill Rally 2020'],
+            ['vrchol_02', 'Team 1', 'Hill Bill Rally 2020'],
+            ['vrchol_03', 'Team 1', 'Hill Bill Rally 2020'],
+            ['vrchol_02', 'Team 2', 'Hill Bill Rally 2020'],
+            ['vrchol_04', 'Team 2', 'Hill Bill Rally 2020']
+        ];
+    }
+
+    private function loadVisits(ObjectManager $manager) : void
+    {
+        foreach($this->getVisitsData() as [$peak, $team, $race]){
+            $visit = new Visit();
+            $visit->setPeak($this->getReference($peak));
+            $visit->setTeam($this->getReference($team));
+            $visit->setRace($this->getReference($race));
+            $manager->persist($visit);
+        }
+        $manager->flush();
+
+    }
+
+    private function getAnswersData()
+    {
+        return [
+            ['Schody na rozhlednu', 'Team A', 'Pálavská štreka', 'Bylo jich hodne'],
+            ['Večeře v restauraci', 'Team A', 'Pálavská štreka', ''],
+            ['Koupačka pod vodopádem', 'Team B', 'Pálavská štreka', 'Pekelne studena voda'],
+            ['Schody na rozhlednu', 'Team B', 'Pálavská štreka', 'Bylo jich vic nez bysme chteli']
+        ];
+    }
+
+    private function loadAnswers(ObjectManager $manager) : void
+    {
+        foreach($this->getAnswersData() as [$task, $team, $race, $description]){
+            $answer = new Answer();
+            $answer->setTask($this->getReference($task));
+            $answer->setTeam($this->getReference($team));
+            $answer->setRace($this->getReference($race));
+            $answer->setNote($description);
+            $manager->persist($answer);
+        }
+        $manager->flush();
+
+    }
+
+    private function getJournalPostsData()
+    {
+        return [
+            ['john_user@symfony.com', 'Den prvni', 'Nejaky nahodny text z prvniho dne co me az takj uplne nezajima jestli tady je nebo neni.' , 'Hill Bill Rally 2020', 'Team 1'],
+            ['jack_user@symfony.com', 'Jackuv Den prvni', 'Nejaky nahodny text z prvniho dne od Jacka' , 'Hill Bill Rally 2020', 'Team 1'],
+            ['annie_user@symfony.com', 'Den druhy', 'Nejaky nahodny text z druheho dne co me az takj uplne nezajima jestli tady je nebo neni.' , 'Hill Bill Rally 2020', 'Team 2'],
+        ];
+    }
+
+    private function loadJournalPosts(ObjectManager $manager) : void
+    {
+        foreach($this->getJournalPostsData() as [$author, $title, $text, $race, $team]){
+            $post = new JournalPost();
+            $post->setAuthor($this->getReference($author));
+            $post->setTitle($title);
+            $post->setText($text);
+            $post->setRace($this->getReference($race));
+            $post->setTeam($this->getReference($team));
+            
+            $manager->persist($post);
+        }
+        $manager->flush();
+
+    }
+
     /* load fictures by command:
          php bin/console doctrine:fixtures:load 
     */
@@ -367,6 +455,9 @@ class AppFixtures extends Fixture
         $this->loadCategories($manager);
         $this->loadRaces($manager);
         $this->loadRegistrations($manager);
+        $this->loadVisits($manager);
+        $this->loadAnswers($manager);
+        $this->loadJournalPosts($manager);
         $manager->flush();
     }
 }

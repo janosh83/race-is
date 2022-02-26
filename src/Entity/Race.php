@@ -2,106 +2,73 @@
 
 namespace App\Entity;
 
+use App\Repository\RaceRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\RaceRepository")
- */
+#[ORM\Entity(repositoryClass: RaceRepository::class)]
 class Race
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(type: 'integer')]
     private $id;
 
-    /**
-     * @ORM\Column(type="string", length=63)
-     */
+    #[ORM\Column(type: 'string', length: 63)]
     private $title;
 
-    /**
-     * @ORM\Column(type="text", nullable=true)
-     */
+    #[ORM\Column(type: 'text', nullable: true)]
     private $description;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Peak", mappedBy="race")
-     */
+    #[ORM\OneToMany(mappedBy: 'race', targetEntity: Peak::class)]
     private $peaks;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Visit", mappedBy="race", orphanRemoval=true)
-     */
-    private $visits;
+    #[ORM\OneToMany(mappedBy: 'race', targetEntity: Registration::class)]
+    private $registrations;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Task::class, mappedBy="race", orphanRemoval=true)
-     */
+    #[ORM\OneToMany(mappedBy: 'race', targetEntity: Task::class)]
     private $tasks;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Answer::class, mappedBy="race", orphanRemoval=true)
-     */
+    #[ORM\OneToMany(mappedBy: 'race', targetEntity: Answer::class)]
     private $answers;
 
-    /**
-     * @ORM\OneToMany(targetEntity=JournalPost::class, mappedBy="race", orphanRemoval=true)
-     */
+    #[ORM\OneToMany(mappedBy: 'race', targetEntity: JournalPost::class)]
     private $journalPosts;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\OneToMany(mappedBy: 'race', targetEntity: Visit::class)]
+    private $visits;
+
+    #[ORM\Column(type: 'datetime', nullable: true)]
     private $startShowingPeaks;
 
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $startLoggingPeaks;
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private $startLoggingVisits;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
     private $logoPath;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $journalEnabled;
+    #[ORM\Column(type: 'boolean')]
+    private $journalEmabled;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: 'boolean')]
     private $tasksEnabled;
 
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $stopLoggingPeaks;
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private $stopLoggingVisists;
 
-    /**
-     * @ORM\ManyToMany(targetEntity=Category::class)
-     */
+    #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'races')]
     private $categories;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Registration::class, mappedBy="race")
-     */
-    private $registration;
 
     public function __construct()
     {
         $this->peaks = new ArrayCollection();
-        $this->visits = new ArrayCollection();
+        $this->registrations = new ArrayCollection();
         $this->tasks = new ArrayCollection();
         $this->answers = new ArrayCollection();
         $this->journalPosts = new ArrayCollection();
+        $this->visits = new ArrayCollection();
         $this->categories = new ArrayCollection();
-        $this->registration = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -153,8 +120,7 @@ class Race
 
     public function removePeak(Peak $peak): self
     {
-        if ($this->peaks->contains($peak)) {
-            $this->peaks->removeElement($peak);
+        if ($this->peaks->removeElement($peak)) {
             // set the owning side to null (unless already changed)
             if ($peak->getRace() === $this) {
                 $peak->setRace(null);
@@ -165,30 +131,29 @@ class Race
     }
 
     /**
-     * @return Collection|Visit[]
+     * @return Collection|Registration[]
      */
-    public function getVisits(): Collection
+    public function getRegistrations(): Collection
     {
-        return $this->visits;
+        return $this->registrations;
     }
 
-    public function addVisit(Visit $visit): self
+    public function addRegistration(Registration $registration): self
     {
-        if (!$this->visits->contains($visit)) {
-            $this->visits[] = $visit;
-            $visit->setRace($this);
+        if (!$this->registrations->contains($registration)) {
+            $this->registrations[] = $registration;
+            $registration->setRace($this);
         }
 
         return $this;
     }
 
-    public function removeVisit(Visit $visit): self
+    public function removeRegistration(Registration $registration): self
     {
-        if ($this->visits->contains($visit)) {
-            $this->visits->removeElement($visit);
+        if ($this->registrations->removeElement($registration)) {
             // set the owning side to null (unless already changed)
-            if ($visit->getRace() === $this) {
-                $visit->setRace(null);
+            if ($registration->getRace() === $this) {
+                $registration->setRace(null);
             }
         }
 
@@ -215,8 +180,7 @@ class Race
 
     public function removeTask(Task $task): self
     {
-        if ($this->tasks->contains($task)) {
-            $this->tasks->removeElement($task);
+        if ($this->tasks->removeElement($task)) {
             // set the owning side to null (unless already changed)
             if ($task->getRace() === $this) {
                 $task->setRace(null);
@@ -246,8 +210,7 @@ class Race
 
     public function removeAnswer(Answer $answer): self
     {
-        if ($this->answers->contains($answer)) {
-            $this->answers->removeElement($answer);
+        if ($this->answers->removeElement($answer)) {
             // set the owning side to null (unless already changed)
             if ($answer->getRace() === $this) {
                 $answer->setRace(null);
@@ -277,11 +240,40 @@ class Race
 
     public function removeJournalPost(JournalPost $journalPost): self
     {
-        if ($this->journalPosts->contains($journalPost)) {
-            $this->journalPosts->removeElement($journalPost);
+        if ($this->journalPosts->removeElement($journalPost)) {
             // set the owning side to null (unless already changed)
             if ($journalPost->getRace() === $this) {
                 $journalPost->setRace(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Visit[]
+     */
+    public function getVisits(): Collection
+    {
+        return $this->visits;
+    }
+
+    public function addVisit(Visit $visit): self
+    {
+        if (!$this->visits->contains($visit)) {
+            $this->visits[] = $visit;
+            $visit->setRace($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVisit(Visit $visit): self
+    {
+        if ($this->visits->removeElement($visit)) {
+            // set the owning side to null (unless already changed)
+            if ($visit->getRace() === $this) {
+                $visit->setRace(null);
             }
         }
 
@@ -293,21 +285,21 @@ class Race
         return $this->startShowingPeaks;
     }
 
-    public function setStartShowingPeaks(\DateTimeInterface $startShowingPeaks): self
+    public function setStartShowingPeaks(?\DateTimeInterface $startShowingPeaks): self
     {
         $this->startShowingPeaks = $startShowingPeaks;
 
         return $this;
     }
 
-    public function getStartLoggingPeaks(): ?\DateTimeInterface
+    public function getStartLoggingVisits(): ?\DateTimeInterface
     {
-        return $this->startLoggingPeaks;
+        return $this->startLoggingVisits;
     }
 
-    public function setStartLoggingPeaks(\DateTimeInterface $startLoggingPeaks): self
+    public function setStartLoggingVisits(?\DateTimeInterface $startLoggingVisits): self
     {
-        $this->startLoggingPeaks = $startLoggingPeaks;
+        $this->startLoggingVisits = $startLoggingVisits;
 
         return $this;
     }
@@ -324,14 +316,14 @@ class Race
         return $this;
     }
 
-    public function getJournalEnabled(): ?bool
+    public function getJournalEmabled(): ?bool
     {
-        return $this->journalEnabled;
+        return $this->journalEmabled;
     }
 
-    public function setJournalEnabled(bool $journalEnabled): self
+    public function setJournalEmabled(bool $journalEmabled): self
     {
-        $this->journalEnabled = $journalEnabled;
+        $this->journalEmabled = $journalEmabled;
 
         return $this;
     }
@@ -348,14 +340,14 @@ class Race
         return $this;
     }
 
-    public function getStopLoggingPeaks(): ?\DateTimeInterface
+    public function getStopLoggingVisists(): ?\DateTimeInterface
     {
-        return $this->stopLoggingPeaks;
+        return $this->stopLoggingVisists;
     }
 
-    public function setStopLoggingPeaks(?\DateTimeInterface $stopLoggingPeaks): self
+    public function setStopLoggingVisists(?\DateTimeInterface $stopLoggingVisists): self
     {
-        $this->stopLoggingPeaks = $stopLoggingPeaks;
+        $this->stopLoggingVisists = $stopLoggingVisists;
 
         return $this;
     }
@@ -380,45 +372,6 @@ class Race
     public function removeCategory(Category $category): self
     {
         $this->categories->removeElement($category);
-
-        return $this;
-    }
-
-    public function getRegistration(): ?Registration
-    {
-        return $this->registration;
-    }
-
-    public function setRegistration(Registration $registration): self
-    {
-        // set the owning side of the relation if necessary
-        if ($registration->getRace() !== $this) {
-            $registration->setRace($this);
-        }
-
-        $this->registration = $registration;
-
-        return $this;
-    }
-
-    public function addRegistration(Registration $registration): self
-    {
-        if (!$this->registration->contains($registration)) {
-            $this->registration[] = $registration;
-            $registration->setRace($this);
-        }
-
-        return $this;
-    }
-
-    public function removeRegistration(Registration $registration): self
-    {
-        if ($this->registration->removeElement($registration)) {
-            // set the owning side to null (unless already changed)
-            if ($registration->getRace() === $this) {
-                $registration->setRace(null);
-            }
-        }
 
         return $this;
     }
