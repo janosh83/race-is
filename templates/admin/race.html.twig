@@ -80,6 +80,38 @@ vrcholů.</p>
     {{ form(delete_peaks_form) }}
 </div> #}
 
+{% if (race.tasksEnabled) %}
+<h2>Úkoly</h2>
+<table class="table">
+    <tr><th scope="col">Úkol</th>
+    <th scope="col">Počet bodů</th>
+    <th>Detail</th></tr>
+    {% for task in tasks %}
+    <tr>
+        <td scope="row">{{task.title}}</td>
+        <td>{{task.pointsPerAnswer}}</td>
+        <td>{{task.description|sanitize_html}}</td>
+    </tr>
+    {% endfor %}
+</table>
+<div>
+    {{ form(add_tasks_form) }}
+</div> 
+
+<p>Přidá úkoly k závodu. Úkoly jsou předpokládané v json formátu:</p>
+<pre><code>
+[{
+    "title": "Schody na rozhlednu", 
+    "description": "Spočítej schody na rozhlednu.",
+    "points": 2
+},
+{
+    "title": "Navštiv muzemu", 
+    "description": "Podívej se do nějakého pěkného muzea.",
+    "points": 2
+}]</code></pre>
+{% endif %}
+
 <h2>Přihlášené týmy</h2>
 {% if (users) %}
     <table class="table">
@@ -102,18 +134,18 @@ vrcholů.</p>
     {{ form(create_users_form) }}
 </div> 
 
-<p>Přidá uživatele (pokud již užvatel existuje, dojde k chybě), vytvoří jednočlený 
-tým pro přidaného uživatele se jménem uživatele a tým přihlásí k závodu (existence 
-týmu se nekontroluje a pokud tým již existuje dojde k chybě). Heslo uživatele je 
-generováno automaticky a je odesláno uživately v úvodním emailu. </p>
-
-<p>Mazání je potřeba provádět přímo v databázi a to, tak že se nejprve smaže účast 
-týmu v závodě, pak tým a pak až uživatel.</p>
+<p>Přidá tým a uživatele do databáze. Tým je zaregistrován do závodu danou kategorií. </p>
 
 <p>Předpokládá se následující json pro přidání týmu</p>
 <pre><code>[{
-    "email": "zdenek.jancik@skaut.cz", 
-    "name": "Jánošík"
+    "team": "Vomackovi",
+    "category": "Auta",
+    "members": [{"name": "Pepa Vomacka", "email":"pepa@seznam.cz"},{"name": "Marek Vomacka", "email":"marek@seznam.cz"}]
+},
+{
+    "team": "Novaci",
+    "category": "Auta",
+    "members": [{"name": "Jan Novak", "email":"novak1@seznam.cz"},{"name": "Pert Novak", "email":"novak2@seznam.cz"}]
 }]</code></pre>
 
 {#<div>

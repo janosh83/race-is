@@ -47,6 +47,16 @@ class TaskRepository extends ServiceEntityRepository
 
     }
 
+    public function findByRace($race)
+    {
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.race = :race')
+            ->setParameter('race', $race)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     // /**
     //  * @return Task[] Returns an array of Task objects
     //  */

@@ -3,6 +3,7 @@ namespace App\Controller\admin;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -12,6 +13,8 @@ use Symfony\Component\Mime\Address;
 use App\Form\NewRaceFormType;
 use App\Entity\Race;
 use App\Entity\Team;
+use App\Entity\Category;
+use App\Entity\Registration;
 use App\Entity\User;
 use App\Entity\Visit;
 use App\Entity\Peak;
@@ -196,6 +199,23 @@ class AdminController extends AbstractController
         $entityManager->flush();
     }
 
+    private function add_tasks_from_json_text($tasks_text, $race)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $tasks_json = json_decode($tasks_text, true);
+
+        foreach ($tasks_json as $t) {
+            $task = new Task();
+            $task->setTitle($t["title"]);
+            $task->setDescription($t['description']);
+            $task->setPointsPerAnswer($t["points"]);
+            $task->setRace($race);
+            $entityManager->persist($task);
+        }
+
+        $entityManager->flush();
+    }
+
     /**
      * Generate a random string, using a cryptographically secure 
      * pseudorandom number generator (random_int)
@@ -226,46 +246,72 @@ class AdminController extends AbstractController
         return implode('', $pieces);
     }
 
-    private function add_users_from_json_text($users_text, $race, MailerInterface $mailer, UserPasswordEncoderInterface $passwordEncoder)
+    private function add_users_from_json_text($text, $race, UserPasswordEncoderInterface $passwordEncoder)
     {
         $entityManager = $this->getDoctrine()->getManager();
             
-        $users_json = json_decode($users_text, true);
+        $parsed_json = json_decode($text, true);
 
-        foreach ($users_json as $u) {
-            $user = new User();
-            $user->setName($u["name"]);
-            $user->setEmail($u["email"]);
-            $user->setRoles(['ROLE_USER']);
-            $password = $this->random_str(10);
-            $user->setPassword($passwordEncoder->encodePassword($user, $password));
-            // TODO: generate random password and send email to user
+        $response = new Response();
+        $response->headers->set('Content-Type', 'text/csv; charset=UTF-8');
+        $response->headers->set('Content-Disposition', 'attachment; filename=sample.csv');
 
-            //$team = new Team();
-            //$team->setTitle($t["name"]);
-            //$team->setLeader($user);
-            //$team->addMember($user);
-            //$team->addSigned($race);
+        $content = ["name, email, team, exits, password"];
+        $i = 1;
 
-            $entityManager->persist($user);
-            //$entityManager->persist($team);
+        foreach($parsed_json as $team_json)
+        {
+            $team = $this->getDoctrine()->getRepository(Team::class)->findByTitle($team_json["team"]);
+            if(!$team)
+            {
+                $team = new Team();
+                $team->setTitle($team_json["team"]);
+            }
 
-            $email = (new TemplatedEmail())
-            ->from(new Address('crew@picnicadventures.com', 'Picnic Adventures Mailbot'))
-            ->to($u["email"])
-            ->subject('['.$race->getTitle().']: Registrace nového uživatele')
-            ->htmlTemplate('admin/new_user_email.html.twig')
-            ->context([
-                'name' => $u["name"],
-                'race' => $race->getTitle(),
-                'password' => $password,
-            ])
-        ;
+            foreach ($team_json["members"] as $u) {
+                $user = $this->getDoctrine()->getRepository(User::class)->findUserByEmail($u["email"]);
 
-        $mailer->send($email);
+                $row = ['exist' => "true"];
+                if(!$user)
+                {
+                    $user = new User();
+                    $user->setName($u["name"]);
+                    $user->setEmail($u["email"]);
+                    $user->setRoles(['ROLE_USER']);
+                    $row['exist'] = "false";
+                }
+
+                $password = $this->random_str(10);
+                $user->setPassword($passwordEncoder->encodePassword($user, $password));
+                $entityManager->persist($user);
+                $team->addMember($user);
+
+                $row = ["name"=>$u["name"], "email"=>$u["email"], "team"=>$team_json["team"], "password"=>$password];
+                $content[$i] = implode(",",$row);
+                $i = $i + 1;
+            }
+ 
+            $category = $this->getDoctrine()->getRepository(Category::class)->findByTitle($team_json["category"]);
+            if(!$category)
+            {
+                $category = new Category();
+                $category->setTitle($team_json["category"]);
+                $entityManager->persist($category);
+            }
+            $race->addCategory($category);
+        
+            $reg = new Registration();
+            $reg->setTeam($team);
+            $reg->setRace($race);
+            $reg->setCategory($category);
+
+            $entityManager->persist($race);
+            $entityManager->persist($team);
+            $entityManager->persist($reg);
         }
-
         $entityManager->flush();
+        $response->setContent(implode("\n",$content));
+        return $response;
     }
 
     /**
@@ -287,6 +333,10 @@ class AdminController extends AbstractController
             ->getRepository(Peak::class)
             ->findByRace($raceid);
         // NOTE: it shall be fine to pass empty object into template
+
+        $tasks = $this->getDoctrine()
+            ->getRepository(Task::class)
+            ->findByRace($raceid);
 
         $delete_race_form = $this->createFormBuilder($race)
             ->add('delete', SubmitType::class, ['label'=>'Smazat závod'])
@@ -325,11 +375,19 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('admin_home');
         }
 
-        /*$delete_peaks_form = $this->createFormBuilder()
-            ->add('delete_peaks', SubmitType::class, ['label'=>'Vymazat vrcholy'])
-            ->getForm();*/
+        $add_tasks_form = $this->createFormBuilder()
+            ->add('tasks_json', TextareaType::class, ['label'=>'Úkoly'])
+            ->add('add_tasks', SubmitType::class, ['label'=>'Importovat úkoly'])
+            ->getForm();
 
-        // TODO peaks deletion
+        // Import tasks
+        $add_tasks_form->handleRequest($request);
+        if($add_tasks_form->isSubmitted() && $add_tasks_form->isValid())
+        {
+            $this->add_tasks_from_json_text($add_tasks_form->get('tasks_json')->getData(), $race);
+
+            return $this->redirectToRoute('admin_home');
+        }
 
         $create_users_form = $this->createFormBuilder()
             ->add('users_json', TextareaType::class, ['label'=>'Uživatelé'])
@@ -339,28 +397,15 @@ class AdminController extends AbstractController
         $create_users_form->handleRequest($request);
         if($create_users_form->isSubmitted() && $create_users_form->isValid())
         {
-            $this->add_users_from_json_text($create_users_form->get('users_json')->getData(), $race, $mailer, $passwordEncoder);
+            $response = $this->add_users_from_json_text($create_users_form->get('users_json')->getData(), $race, $passwordEncoder);
             
-            return $this->redirectToRoute('admin_home');
+            return $response;
         }
 
         $users = $this->getDoctrine()
             ->getRepository(User::class)
             ->findUserByRace($raceid);
 
-        /*
-        $delete_teams_form = $this->createFormBuilder()
-            ->add('delete_teams', SubmitType::class, ['label'=>'Vymazat týmy'])
-            ->getForm();
-
-        $signin_teams_form = $this->createFormBuilder()
-            ->add('signin_teams', SubmitType::class, ['label'=>'Přihlásit týmy'])
-            ->getForm();
-        
-        $signout_teams_form = $this->createFormBuilder()
-            ->add('signout_teams', SubmitType::class, ['label'=>'Odhlásit týmy'])
-            ->getForm();
-        */
 
         $stats = array(
             'num_of_visits'=> $this->getDoctrine()->getRepository(Visit::class)->countVisits($raceid),
@@ -376,14 +421,12 @@ class AdminController extends AbstractController
             'race' => $race, 
             'peaks' => $peaks,
             'users' => $users,
+            'tasks' => $tasks,
             'delete_race_form' => $delete_race_form->createView(),
             'add_peaks_form' => $add_peaks_form->createView(),
+            'add_tasks_form' => $add_tasks_form->createView(),
             'create_users_form' => $create_users_form->createView(),
-            'stats' => $stats
-            /*'delete_peaks_form' => $delete_peaks_form->createView(),
-            'add_teams_form' => $add_teams_form->createView(),
-            'signin_teams_form' => $signin_teams_form->createView(),
-            'signout_teams_form' => $signout_teams_form->createView()*/]);
+            'stats' => $stats]);
     }
 
     /**

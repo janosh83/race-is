@@ -84,14 +84,14 @@ class Race
     private $stopLoggingPeaks;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Category::class)
-     */
-    private $categories;
-
-    /**
      * @ORM\OneToMany(targetEntity=Registration::class, mappedBy="race")
      */
     private $registration;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Category::class, inversedBy="races")
+     */
+    private $categories;
 
     public function __construct()
     {
@@ -360,30 +360,6 @@ class Race
         return $this;
     }
 
-    /**
-     * @return Collection|Category[]
-     */
-    public function getCategories(): Collection
-    {
-        return $this->categories;
-    }
-
-    public function addCategory(Category $category): self
-    {
-        if (!$this->categories->contains($category)) {
-            $this->categories[] = $category;
-        }
-
-        return $this;
-    }
-
-    public function removeCategory(Category $category): self
-    {
-        $this->categories->removeElement($category);
-
-        return $this;
-    }
-
     public function getRegistration(): ?Registration
     {
         return $this->registration;
@@ -419,6 +395,30 @@ class Race
                 $registration->setRace(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Category>
+     */
+    public function getCategories(): Collection
+    {
+        return $this->categories;
+    }
+
+    public function addCategory(Category $category): self
+    {
+        if (!$this->categories->contains($category)) {
+            $this->categories[] = $category;
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(Category $category): self
+    {
+        $this->categories->removeElement($category);
 
         return $this;
     }

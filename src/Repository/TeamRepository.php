@@ -69,6 +69,16 @@ class TeamRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
+    public function findByTitle($title)
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.title = :val')
+            ->setParameter('val', $title)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
     // /**
     //  * @return Team[] Returns an array of Team objects
     //  */
