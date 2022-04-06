@@ -24,10 +24,13 @@ Not_loggend_into_race: Pravděpodobně nejsi přihlášen k danému závodu
 Picture: Obrázek
 Note: Poznámka
 Please_upload_valid_picture: Prosím nahraj platný obrázek
-Cancel_answer: Zrušit splanění na úkol
+Cancel_answer: Zrušit splnění na úkol
 Confirm_answer: Potvrdit splnění úkolu
 Note_to_visit: Poznámka k návštěvě checkpointu
 Invalid_image: Prosím nahraj platný obrázek
 Race: Závod
 Enter: Vstoupit
 Answer_note: Text odpovědi
+Answer_logged: Odpověď uložena
+Answer_deleted: Odpověď smazána
+Task_logging_disallowed: Splnnění úkolu již nejde uložit!

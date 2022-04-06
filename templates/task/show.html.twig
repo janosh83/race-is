@@ -15,7 +15,18 @@
         {% endfor %}
     {% endif %}
 
-    {{ form(answer_form) }}
+    {% if date(race.stopLoggingPeaks) > date() %}
+        <div class="py-3">
+        {{ form(answer_form) }}
+        <p>Poznámka: nahráním obrázku do aplikace souhlasíte s jeho použitím Picnic Adventures pro další propagaci.</p>
+        <p>Poznámka: aplikace nezmenšuje soubory obrázky při nahrávání, proto pokud máte omezené množství dat nahrávejte 
+        obrázky na wifi, nebo počítejte ss větší spotřebou dat. V případě problémy s nahrátím obrázku (nedostatek dat, 
+        špatný signál) je možné toto neudělat. Mějte prosím potvrzující obrázky připravené pro případnou kontrolu organizátorem.</p>
+        </div>
+
+    {% else %}
+        <p class="py-3">Splnnění úkolu již nejde logovat ani jinak změnit. Logování skončilo: {{race.stopLoggingPeaks|date('d.m.Y H:i:s')}}</p>
+    {% endif %}
 
     <script>
     // Add the following code if you want the name of the file appear on select

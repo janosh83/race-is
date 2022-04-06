@@ -14,6 +14,7 @@ use App\Service\ImageUploader;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TaskController extends AbstractController
 {
@@ -29,7 +30,7 @@ class TaskController extends AbstractController
     /**
      * @Route("/task/{id}",methods="GET|POST", name="task_show")
      */
-    public function show($id, SessionInterface $session, Request $request,  ImageUploader $imageUploader)
+    public function show($id, SessionInterface $session, Request $request,  ImageUploader $imageUploader, TranslatorInterface $translator)
     {
         $task = $this->getDoctrine()
             ->getRepository(Task::class)
@@ -63,6 +64,18 @@ class TaskController extends AbstractController
             );
         }
 
+        if($task->getRace() != $race){
+            return $this->render('peak/not_in_race.html.twig', ['race' => $race]);
+        }
+
+        if ($race->getStartShowingPeaks() > new \DateTime('NOW')){
+            return $this->render('race/not_started.html.twig', ['race' => $race]);
+        }
+
+        if ($race->getStartLoggingPeaks() > new \DateTime('NOW')){
+            return $this->render('peak/not_allowed.html.twig', ['race' => $race]);
+        }
+
         // TODO: see https://symfony.com/doc/current/doctrine/associations.html#fetching-related-objects for performance optimization
         $answer = $this->getDoctrine()
             ->getRepository(Answer::class)
@@ -92,7 +105,12 @@ class TaskController extends AbstractController
             $answer = $answer_form->getData();
             $manager = $this->getDoctrine()->getManager();
 
-            if ($answer_form->get('save')->isClicked())
+            if (new \DateTime('NOW') < $race->getStartLoggingPeaks() || new \DateTime('NOW') > $race->getStopLoggingPeaks())
+            {
+                // Peaks looging is not enabled
+                $this->addFlash('danger', $translator->trans('Task_logging_disallowed'));
+            }
+            elseif ($answer_form->get('save')->isClicked())
             {
                 // FIXME: delete old image file when new one is uploaded
                 // FIXME: validate that uploaded file is image
@@ -113,7 +131,7 @@ class TaskController extends AbstractController
                 }
                 
                 $manager->persist($answer);
-                $this->addFlash('notice', 'Odpověď uložena');                
+                $this->addFlash('primary', $translator->trans('Answer_logged'));              
             }
 
             elseif ($answer_form->get('delete')->isClicked())
@@ -124,7 +142,7 @@ class TaskController extends AbstractController
                     }
                 }
                 $manager->remove($answer);         
-                $this->addFlash('notice', 'Odpověď smazána');
+                $this->addFlash('primary', $translator->trans('Answer_deleted'));  
             }
 
             $manager->flush();

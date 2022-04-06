@@ -30,3 +30,6 @@ Note_to_visit: 'Note'
 Invalid_image: 'Please upload a valid image file'
 Race: Race
 Enter: Enter
+Answer_logged: Answer stored
+Answer_deleted: Answer deleted
+Task_logging_disallowed: Task loggon is not allowed ano more!

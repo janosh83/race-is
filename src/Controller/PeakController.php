@@ -109,7 +109,7 @@ class PeakController extends AbstractController
             $visit = $visit_form->getData();
             $manager = $this->getDoctrine()->getManager();
 
-            if (new \DateTime('NOW') > $race->getStopLoggingPeaks())
+            if (new \DateTime('NOW') < $race->getStartLoggingPeaks() || new \DateTime('NOW') > $race->getStopLoggingPeaks())
             {
                 // Peaks looging is not enabled
                 $this->addFlash('danger', $translator->trans('Visit_logging_disallowed'));
