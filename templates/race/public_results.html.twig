@@ -5,7 +5,7 @@
 {% block main %}
 
 <h1>Aktuální výsledky: {{race.title}}</h1>
-
+<h2>Pořadí podle navštívených checkpointů</h2>
 <table class="table table-striped">
     <tr>
         <th scope="col">Pořadí</th>
@@ -23,6 +23,7 @@
     {% endfor %}
 </table>
 
+<h2>Pořadí podle splněných úkolů</h2>
 {% if race.tasksEnabled %}
     <table class="table table-striped">
         <tr>
