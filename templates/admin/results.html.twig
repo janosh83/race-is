@@ -5,35 +5,36 @@
 {% block main %}
 
 <h1>Aktuální výsledky: {{race.title}}</h1>
-<h2>Pořadí podle navštívených checkpointů</h2>
+
 <table class="table table-striped">
     <tr>
+        <th scope="col">Pořadí</th>
         <th scope="col">Jméno týmu</th>
         <th scope="col">Závodní kategorie</th>
-        <th scope="col">Počet bodů za vrcholy</th>
+        <th scope="col">Body za vrcholy</th>
+        {% if race.tasksEnabled %}
+            <th scope="col">Body za úkoly</th>
+        {% endif %}
+        <th scope="col">Celkem</th>
     </tr>
-    {% for team in peak_results %}
+    {% set i = 1 %}
+    {% for teamres in results %}
     <tr scope="row">
-        <td><a href="{{ path('admin_visit_detail', {raceid:race.id,teamid:team.id}) }}">{{team.title}}</a></td>
-        <td>{{team.race_category}}</td>
-        <td>{{team.peak_points}}</td>
+        {% if teamres.order_low == teamres.order_high %}
+            <td>{{teamres.order_low}}.</td>
+        {% else %}
+            <td>{{teamres.order_low}}. - {{teamres.order_high}}.</td>
+        {% endif %}
+        <td><a href="{{ path('admin_visit_detail', {raceid:race.id,teamid:teamres.teamid}) }}">{{teamres.title}}</a></td>
+        <td>{{teamres.race_category}}</td>
+        <td>{{teamres.peak_points}}</td>
+        {% if race.tasksEnabled %}
+            <td>{{teamres.task_points}}</td>
+        {% endif %}
+        <td>{{teamres.total_points}}</td>
     </tr>
+    {% set i = i + 1 %}
     {% endfor %}
 </table>
 
-<h2>Pořadí podle splněných úkolů</h2>
-<table class="table table-striped">
-    <tr>
-        <th scope="col">Jméno týmu</th>
-        <th scope="col">Závodní kategorie</th>
-        <th scope="col">Počet bodů za úkoly</th>
-    </tr>
-    {% for team in task_results %}
-    <tr scope="row">
-        <td><a href="{{ path('admin_answer_detail', {raceid:race.id,teamid:team.id}) }}">{{team.title}}</a></td>
-        <td>{{team.race_category}}</td>
-        <td>{{team.task_points}}</td>
-    </tr>
-    {% endfor %}
-</table>
 {% endblock %}

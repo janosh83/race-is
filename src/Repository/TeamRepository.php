@@ -69,6 +69,20 @@ class TeamRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
+    public function findByRace($raceid): array
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQuery(
+            'SELECT t.id, t.title, cat.title AS race_category FROM App\Entity\Registration reg 
+                JOIN reg.team t JOIN reg.category cat 
+                WHERE reg.race = :raceid' 
+        );
+        $query->setParameter('raceid', $raceid);
+
+        return $query->getResult();
+    }
+
+
     public function findByTitle($title)
     {
         return $this->createQueryBuilder('u')

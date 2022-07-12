@@ -140,12 +140,107 @@ class RaceController extends AbstractController
             );
         }
 
-        $peak_results = $this->getDoctrine()->getRepository(Team::class)->countByVisistedPeaks($raceid);
+        $teams = $this->getDoctrine()->getRepository(Team::class)->findByRace($raceid);
         $task_results = $this->getDoctrine()->getRepository(Team::class)->countByAnsweredTasks($raceid);
+        $peaks_results = $this->getDoctrine()->getRepository(Team::class)->countByVisistedPeaks($raceid);
+
+        foreach($teams as $team)
+        {
+            $results[$team["title"]] = [
+                "order_low"=>0, 
+                "order_high"=>0,
+                "title"=> $team["title"], 
+                "teamid"=> $team["id"], 
+                "race_category"=> $team["race_category"], 
+                "peak_points" => 0,
+                "task_points" => 0,
+                "total_points" => 0];
+        }
+
+        foreach($task_results as $team_result)
+        {
+            $results[$team_result["title"]]["task_points"] = $team_result["task_points"];
+        }
+
+        foreach($peaks_results as $team_result)
+        {
+            $results[$team_result["title"]]["peak_points"] = $team_result["peak_points"];
+        }
+
+        foreach($teams as $team)
+        {
+            $results[$team["title"]]["total_points"] = $results[$team["title"]]["peak_points"] + $results[$team["title"]]["task_points"];
+        }
+
+        usort($results, function($r1, $r2){
+
+            if($r1["total_points"] == $r2["total_points"])
+            {
+                return 0;
+            }
+            else
+            {
+                return $r1["total_points"] > $r2["total_points"] ? -1 : 1;
+            }
+        });
+
+        //dd($results);
+
+        $i = 0;
+        $same_points_low = 0;
+        $same_points_high = 0;
+        $prev_points = 0;
+        foreach($teams as $team)
+        {
+            if($prev_points != $results[$i]["total_points"])
+            {
+                $results[$i]["order_low"] = $i+1;
+                $results[$i]["order_high"] = $i+1;
+                $prev_points = $results[$i]["total_points"];
+                $same_points_low = 0;
+                $same_points_high = 0;
+            }
+            else
+            {
+                if($same_points_low == 0 && $same_points_high == 0)
+                {
+                    $k = $i;
+                    while($k < count($teams) && $prev_points == $results[$k]["total_points"])
+                    {
+                        $k++;
+                    }
+                    
+                    $same_points_low = $i;
+                    $same_points_high = $k;
+                    $results[$i-1]["order_low"] = $same_points_low;
+                    $results[$i-1]["order_high"] = $same_points_high;
+                }
+                $results[$i]["order_low"] = $same_points_low;
+                $results[$i]["order_high"] = $same_points_high;
+            }
+
+            $i++;
+        }
+
+        /*dd($teams, $task_results, $peaks_results, $results);
+
+        $results = [
+            [
+            "order"=>1, 
+            "title"=> "Tym 1", 
+            "race_category"=> "Auta", 
+            "peak_points" => 21,
+            "task_points" => 10,
+            "total_points" => 31],
+            ["order"=>2, 
+            "title"=> "Tym 2", 
+            "race_category"=> "Auta", 
+            "peak_points" => 15,
+            "task_points" => 8,
+            "total_points" => 23]];*/
 
         return $this->render('admin/results.html.twig', ['race' => $race,
-                                                         'peak_results' => $peak_results,
-                                                         'task_results' => $task_results]);
+                                                         'results' => $results]);
     }
 
     /**
