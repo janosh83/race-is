@@ -184,7 +184,7 @@ class RaceController extends AbstractController
             }
         });
 
-        //dd($results);
+        
 
         $i = 0;
         $same_points_low = 0;
@@ -212,8 +212,11 @@ class RaceController extends AbstractController
                     
                     $same_points_low = $i;
                     $same_points_high = $k;
-                    $results[$i-1]["order_low"] = $same_points_low;
-                    $results[$i-1]["order_high"] = $same_points_high;
+                    if($i > 0)
+                    {
+                        $results[$i-1]["order_low"] = $same_points_low;
+                        $results[$i-1]["order_high"] = $same_points_high;
+                    }
                 }
                 $results[$i]["order_low"] = $same_points_low;
                 $results[$i]["order_high"] = $same_points_high;
@@ -221,6 +224,8 @@ class RaceController extends AbstractController
 
             $i++;
         }
+
+        //dd($results);
 
         /*dd($teams, $task_results, $peaks_results, $results);
 
