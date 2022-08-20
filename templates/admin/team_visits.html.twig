@@ -12,11 +12,11 @@
 {% endfor %}
 </ul>
 
-<h2>Návštěny vrcholů</h2>
+<h2>Návštěny checkpoint;</h2>
 
 <table class="table table-striped">
     <tr>
-        <th scope="col">Vrchol</th>
+        <th scope="col">Checkpoint</th>
         <th scope="col">Počet bodů</th>
         <th scope="col">Čas</th>
         <th scope="col">Poznámka</th>
@@ -28,6 +28,28 @@
         <td>{{visit.time|date('d.m.Y H:i:s')}}</td>
         <td>{% if visit.note %}
                 {{visit.note|sanitize_html}}
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h2>Splněné úkoly</h2>
+
+<table class="table table-striped">
+    <tr>
+        <th scope="col">Úkol</th>
+        <th scope="col">Počet bodů</th>
+        <th scope="col">Čas</th>
+        <th scope="col">Poznámka</th>
+    </tr>
+    {% for answer in answers %}
+    <tr scope="row">
+        <td><a href="{{ path('admin_task_detail', {taskid:answer.id,raceid:race.id}) }}">{{answer.title}}</a></td>
+        <td>{{answer.pointsPerAnswer}}</td>
+        <td>{{answer.time|date('d.m.Y H:i:s')}}</td>
+        <td>{% if answer.note %}
+                {{answer.note|sanitize_html}}
             {% endif %}
         </td>
     </tr>

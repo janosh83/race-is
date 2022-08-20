@@ -65,11 +65,16 @@ class AdminController extends AbstractController
             ->getRepository(Visit::class)
             ->findByRaceAndTeam($raceid, $teamid);
 
+        $answers = $this->getDoctrine()
+            ->getRepository(Answer::class)
+            ->findByRaceAndTeam($raceid, $teamid);
+
         return $this->render('admin/team_visits.html.twig', ['team' => $team,
                                                              'race' => $race,
                                                              /*'leader' => $team->getLeader(),*/
                                                              'members' => $team->getMember(),
-                                                             'visits' => $visits]);
+                                                             'visits' => $visits,
+                                                             'answers' => $answers]);
     }
 
     /**
@@ -203,6 +208,8 @@ class AdminController extends AbstractController
     {
         $entityManager = $this->getDoctrine()->getManager();
         $tasks_json = json_decode($tasks_text, true);
+
+        //dd($tasks_json);
 
         foreach ($tasks_json as $t) {
             $task = new Task();
